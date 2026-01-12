@@ -1,0 +1,26 @@
+.firstHeader {
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400; /* tăng đậm */
+  font-style: normal; /* hoặc italic nếu muốn nghiêng */
+  font-size: clamp(2.5rem, 6vw, 6rem); /* responsive: min 2.5rem, max 6rem */
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.all_information {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.images_information {
+  height: 400px;
+  padding: 0 200px 200px 200px;
+}
+.infor_img {
+  height: 400px;
+  width: 400px;
+}
+.text_information {
+  padding: 0 300px 200px 200px;
+  font-size: 20px;
+}
