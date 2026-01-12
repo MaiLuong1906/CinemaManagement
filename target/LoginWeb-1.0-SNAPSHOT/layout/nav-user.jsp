@@ -1,42 +1,25 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href=""><img src="${pageContext.request.contextPath}/image/logo.png" alt="Logo" width="300" height="240"></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/views/user/booking.jsp">Mua vé</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="${pageContext.request.contextPath}/views/user/movies.jsp">Phim đang chiếu</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+
+    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="${pageContext.request.contextPath}/views/user/home.jsp" class="nav-link px-2 text-white">Home</a>
+        </li>
+        <li><a href="${pageContext.request.contextPath}/views/user/booking.jsp"
+                class="nav-link px-2 text-white">Booking</a></li>
+        <li><a href="${pageContext.request.contextPath}/views/user/movies.jsp"
+                class="nav-link px-2 text-white">Movies</a></li>
+    </ul>
+
+    <div class="text-end">
+        <c:choose>
+            <c:when test="${sessionScope.user == null}">
+                <a href="${pageContext.request.contextPath}/views/auth/login.jsp"
+                    class="btn btn-outline-light me-2">Login</a>
+                <a href="${pageContext.request.contextPath}/views/auth/register.jsp" class="btn btn-warning">Sign-up</a>
+            </c:when>
+            <c:when test="${sessionScope.user != null && sessionScope.user.role == 2}" >
+                <span class="text-warning me-3">Hello ${sessionScope.user.fullname}</span>
+                <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn btn-outline-danger">Logout</a>
+            </c:when>
+        </c:choose>
+    </div>
