@@ -23,32 +23,41 @@ nguye --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
       <!-- chua text -->
       <div class="text_information">
         <div><h1 class="firstHeader">Information</h1></div>
+        <!-- jsp tai day -->
+        <% String username = request.getParameter("username"); UserDAO userDAO =
+        new UserDAO(); User user = userDAO.getUserByUsername(); %> User: <%=
+        username %> <br />
+        Name: <%= user.getFullname() %> <br />
+        Email: <%= user.getEmail() %> <br />
+        Phone: <%= user.getPhone() %> <br />
+        Address: <%= user.getAddress() %> <br />
         <p>This is the profile user page for admin view.</p>
-      </div>
-      <!-- cac nut tien ich -->
-      <div class="Update">
-        <p>
-          Update your information:
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick="window.location.href='../../../homepage.jsp'"
-          >
-            Update Information
-          </button>
-        </p>
-      </div>
-      <div class="Back">
-        <p>
-          Back to homepage:
-          <button
-            type="button"
-            class="btn btn-primary"
-            onclick="window.location.href=''"
-          >
-            Back to homepage
-          </button>
-        </p>
+        <br />
+        <!-- cac nut tien ich -->
+        <div class="Update">
+          <p>
+            Update your information:
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="window.location.href='updateInformation.jsp'"
+            >
+              Update Information
+            </button>
+          </p>
+        </div>
+        <div class="Back">
+          <p>
+            Back to homepage:
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="window.location.href='homepage.jsp'"
+            >
+              Back to homepage
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   </body>
