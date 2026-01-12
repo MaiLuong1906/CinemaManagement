@@ -1,9 +1,0 @@
-com\mycompany\cinema\JakartaRestConfiguration.class
-controller\LoginServlet.class
-dao\DBConnect.class
-util\Encoding.class
-controller\LogoutServlet.class
-dao\UserDAO.class
-com\mycompany\cinema\resources\JakartaEE10Resource.class
-controller\RegisterServlet.class
-model\User.class
