@@ -3,8 +3,8 @@ package model;
 import java.time.LocalDateTime;
 
 public class Account {
-    private int accountId;
-    private String email;
+    private int id;
+    private String phoneNumber;
     private String passwordHash;
     private String roleId;
     private boolean status;
@@ -16,21 +16,29 @@ public class Account {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Account(int accountId, String email, String passwordHash, String roleId, boolean status, LocalDateTime createdAt) {
-        this.accountId = accountId;
-        this.email = email;
+    public Account(int id, String phoneNumber, String passwordHash, String roleId, boolean status, LocalDateTime createdAt) {
+        this.id = id;
+        this.phoneNumber = phoneNumber;
         this.passwordHash = passwordHash;
         this.roleId = roleId;
         this.status = status;
         this.createdAt = createdAt;
     }
 
-    // Getters and Setters
-    public int getAccountId() { return accountId; }
-    public void setAccountId(int accountId) { this.accountId = accountId; }
+    public Account(String phoneNumber, String passwordHash, String roleId, LocalDateTime createdAt) {
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+        this.phoneNumber = phoneNumber;
+        this.passwordHash = passwordHash;
+        this.roleId = roleId;
+        this.createdAt = createdAt;
+    }
+
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getphoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
