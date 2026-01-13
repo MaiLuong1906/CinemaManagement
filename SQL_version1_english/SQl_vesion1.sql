@@ -1,7 +1,7 @@
 ﻿/* =========================================================
    DATABASE: CINEMA MANAGEMENT SYSTEM (Hệ thống Quản lý Rạp phim)
    ========================================================= */
-DROP DATABASE IF EXISTS CinemaManagement;
+
 CREATE DATABASE CinemaManagement;
 GO
 USE CinemaManagement;
@@ -143,7 +143,8 @@ CREATE TABLE ticket_details (
 /* =========================
    12. Foods_Drinks (Danh mục đồ ăn thức uống)
    ========================= */
-CREATE TABLE foods_drinks (
+
+CREATE TABLE products (
     item_id INT IDENTITY(1,1) PRIMARY KEY,
     item_name NVARCHAR(100),
     price DECIMAL(10,2),
@@ -153,13 +154,13 @@ CREATE TABLE foods_drinks (
 /* =========================
    13. Food_Order_Details (Chi tiết đồ ăn kèm theo hóa đơn)
    ========================= */
-CREATE TABLE food_order_details (
+CREATE TABLE products_details (
     invoice_id INT,
     item_id INT,
     quantity INT,
     PRIMARY KEY (invoice_id, item_id),
     FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
-    FOREIGN KEY (item_id) REFERENCES foods_drinks(item_id)
+    FOREIGN KEY (item_id) REFERENCES products(item_id)
 );
 
 /* =========================
