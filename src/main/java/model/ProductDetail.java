@@ -1,13 +1,13 @@
 package model;
 
-public class FoodOrderDetail {
+public class    ProductDetail {
     private int invoiceId;
     private int itemId;
     private int quantity;
 
-    public FoodOrderDetail() {}
+    public ProductDetail() {}
 
-    public FoodOrderDetail(int invoiceId, int itemId, int quantity) {
+    public ProductDetail(int invoiceId, int itemId, int quantity) {
         this.invoiceId = invoiceId;
         this.itemId = itemId;
         this.quantity = quantity;

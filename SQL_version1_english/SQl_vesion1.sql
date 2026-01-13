@@ -130,15 +130,25 @@ CREATE TABLE invoices (
    11. Ticket_Details (Chi tiết ghế đã đặt)
    ========================= */
 CREATE TABLE ticket_details (
-    invoice_id INT,
-    seat_id INT,
-    hall_id INT,
-    actual_price DECIMAL(10,2), -- base_price + extra_fee
-    PRIMARY KEY (invoice_id, seat_id, hall_id),
-    FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
-    FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
-    FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id)
+    invoice_id INT NOT NULL,       -- liên kết hóa đơn
+    seat_id INT NOT NULL,          -- ghế được đặt
+    hall_id INT NOT NULL,          -- phòng chứa ghế
+    showtime_id INT NOT NULL,      -- suất chiếu ghế thuộc
+    actual_price DECIMAL(10,2),   -- base_price + extra_fee
+
+    -- PRIMARY KEY (1 lần đặt ghế duy nhất trong 1 invoice)
+    CONSTRAINT PK_TicketDetails PRIMARY KEY (invoice_id, seat_id, hall_id),
+
+    -- UNIQUE constraint để chống trùng ghế cùng suất chiếu
+    CONSTRAINT UQ_Showtime_Seat UNIQUE (showtime_id, seat_id),
+
+    -- FOREIGN KEY
+    CONSTRAINT FK_Ticket_Invoice FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
+    CONSTRAINT FK_Ticket_Seat FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
+    CONSTRAINT FK_Ticket_Hall FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
+    CONSTRAINT FK_Ticket_Showtime FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
 );
+
 
 /* =========================
    12. Foods_Drinks (Danh mục đồ ăn thức uống)
