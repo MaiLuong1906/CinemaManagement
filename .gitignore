@@ -1,2 +1,22 @@
 # Cau hinh database
 src/main/resources/db.properties
+# ===== Maven build =====
+/target/
+
+# ===== Java compiled files =====
+*.class
+*.war
+*.ear
+
+# ===== IDE =====
+/nbproject/
+.idea/
+.vscode/
+*.iml
+
+# ===== Logs =====
+*.log
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
