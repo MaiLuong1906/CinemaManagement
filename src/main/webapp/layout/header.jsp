@@ -14,7 +14,7 @@
 
                     <c:choose>
 
-                        <c:when test="${sessionScope.user != null && sessionScope.user.role == 1}">
+                        <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'Admin'}">
                             <jsp:include page="/layout/nav-admin.jsp" />
                         </c:when>
 
