@@ -3,33 +3,42 @@ package model;
 import java.time.LocalDate;
 
 public class UserProfile {
-    private int userId;
+    private int id;
     private String fullName;
-    private String phoneNumber;
+    private String email;
     private boolean gender;
     private String address;
     private LocalDate dateOfBirth;
 
     public UserProfile() {}
 
-    public UserProfile(int userId, String fullName, String phoneNumber, boolean gender, String address, LocalDate dateOfBirth) {
-        this.userId = userId;
+    public UserProfile(int id, String fullName, String email, boolean gender, String address, LocalDate dateOfBirth) {
         this.fullName = fullName;
-        this.phoneNumber = phoneNumber;
+        this.email = email;
         this.gender = gender;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
     }
 
+    public UserProfile( String fullName, String email, boolean gender, String address, LocalDate dateOfBirth) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.gender = gender;
+        this.address = address;
+        this.dateOfBirth = dateOfBirth;
+    }
+    
+
     // Getters and Setters
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
+    public int getUserId() { return id; }
+    public void setUserId(int userId) { this.id = userId; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public boolean isGender() { return gender; }
     public void setGender(boolean gender) { this.gender = gender; }

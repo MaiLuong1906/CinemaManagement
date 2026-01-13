@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Date;
-import model.User;
+import model.Account;
 
 /**
  *
@@ -17,25 +17,25 @@ import model.User;
  */
 public class UserDAO {
 
-    public static User checkLogin(User user) {
-        User res = null;
+    public static Account checkLogin(Account account) {
+        Account res = null;
         try {
             Connection con = DBConnect.getConnection();
 
             String sql = "select * from [Users] where phone = ? and password_hash = ?";
 
             PreparedStatement pst = con.prepareStatement(sql);
-            pst.setString(1, user.getPhone());
-            pst.setString(2, user.getPassword());
+            pst.setString(1, account.getphoneNumber());
+            pst.setString(2, account.getPasswordHash());
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 String fullname = rs.getString("full_name");
-                String email = rs.getString("email");
                 String phone = rs.getString("phone");
                 String password = rs.getString("password_hash");
                 int role = Integer.parseInt(rs.getString("role_id"));
 
-                res = new User(fullname, email, phone, password, role, new Date());
+                res = new Account(fullname, phone, password, role, new Date());
+                res
             }
         } catch (Exception e) {
         }
