@@ -14,7 +14,7 @@ public class JDBCUtils {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
             // URL JDBC: SQL Server Express, tắt SSL để tránh lỗi PKIX
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=Version1;encrypt=true;trustServerCertificate=true";
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=CinemaManagement;encrypt=true;trustServerCertificate=true";
             String user = "sa";
             String password = "30042005";
 

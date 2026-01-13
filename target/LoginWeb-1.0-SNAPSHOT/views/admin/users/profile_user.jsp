@@ -1,5 +1,7 @@
 <%-- Document : profile_user Created on : Jan 12, 2026, 1:37:42 PM Author :
-nguye --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
+nguye --%> <%@page import="com.mycompany.cinema.entity.User"%>
+<%@page import="com.mycompany.cinema.dao.UserDAO"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -24,14 +26,17 @@ nguye --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
       <div class="text_information">
         <div><h1 class="firstHeader">Information</h1></div>
         <!-- jsp tai day -->
-        <% String username = request.getParameter("username"); UserDAO userDAO =
-        new UserDAO(); User user = userDAO.getUserByUsername(); %> User: <%=
-        username %> <br />
-        Name: <%= user.getFullname() %> <br />
-        Email: <%= user.getEmail() %> <br />
-        Phone: <%= user.getPhone() %> <br />
+        <% 
+//            String idRequest = request.getParameter("id");
+//        int id = Integer.parseInt(idRequest);
+            int id = 1;
+        UserDAO userDAO = new UserDAO();
+        User user = userDAO.getById(1); %>
+        ID: <%= user.getId() %> <br />
+        Name: <%= user.getUsername() %> <br />
+        Gender <%= user.getGender() %> <br />
+        Birthday: <%=user.getDob()%> <br />
         Address: <%= user.getAddress() %> <br />
-        <p>This is the profile user page for admin view.</p>
         <br />
         <!-- cac nut tien ich -->
         <div class="Update">
