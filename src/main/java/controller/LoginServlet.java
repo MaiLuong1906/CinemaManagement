@@ -73,26 +73,25 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String phoneNumber = request.getParameter("phoneNumber" +
-"");
+        String phoneNumber = request.getParameter("phoneNumber"
+                + "");
         String password = request.getParameter("password");
-        
+
         User u = new User();
         u.setPhone(phoneNumber);
         u.setPassword(password);
-        
+
         User user = UserDAO.checkLogin(u);
         String url = "";
-        if(user != null){
+        if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             url = "/views/user/home.jsp";
-        }
-        else{
+        } else {
             request.setAttribute("Error", "Phone Number or password are in correct !");
             url = "/views/auth/login.jsp";
         }
-        
+
         RequestDispatcher rd = getServletContext().getRequestDispatcher(url);
         rd.forward(request, response);
     }
