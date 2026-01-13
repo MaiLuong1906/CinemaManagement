@@ -7,6 +7,7 @@ public class Product {
     private String itemName;
     private BigDecimal price;
     private int stockQuantity;
+    private String productImgUrl;
 
     public Product() {
         this.stockQuantity = 0;
@@ -20,6 +21,11 @@ public class Product {
     }
 
     // Getters and Setters
+
+
+    public String getProductImgUrl() {return productImgUrl;}
+    public void setProductImgUrl(String productImgUrl) {this.productImgUrl = productImgUrl;}
+
     public int getItemId() { return itemId; }
     public void setItemId(int itemId) { this.itemId = itemId; }
 

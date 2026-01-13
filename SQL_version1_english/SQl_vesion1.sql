@@ -158,6 +158,7 @@ CREATE TABLE products (
     item_id INT IDENTITY(1,1) PRIMARY KEY,
     item_name NVARCHAR(100),
     price DECIMAL(10,2),
+    img_user_url VARCHAR(500),
     stock_quantity INT DEFAULT 0
 );
 
