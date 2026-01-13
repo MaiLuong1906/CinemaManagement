@@ -1,0 +1,52 @@
+/* Background */
+.register-bg {
+    min-height: 100vh;
+    background-image: url("https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp");
+    background-size: cover;
+    background-position: center;
+}
+
+/* Red */
+.required{
+    color: red;
+}
+
+/* Overlay mask */
+.register-mask {
+    min-height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+/* Card */
+.register-card {
+    border-radius: 15px;
+}
+
+/* Title */
+.register-title {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Input */
+.register-card input {
+    border-radius: 10px;
+}
+
+/* Button */
+.register-btn {
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 18px;
+}
+
+/* Error box */
+.register-error {
+    border-radius: 10px;
+}
+
+h4{
+    font-style: italic;
+}
+
+

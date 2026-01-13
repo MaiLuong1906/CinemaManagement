@@ -17,43 +17,66 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css"/>
     </head>
-    <body>
-        <jsp:include page="../../layout/header.jsp"></jsp:include>
-            <div class="container">
-                <div style="text-align: center">
-                    <h1>Sign-In</h1>
-                </div>
+    <body class="text-center login-bg">
+        <div class="d-flex align-items-center justify-content-center vh-100">
+            <div style="width: 100%; max-width: 380px;">
+                <div class="container">
+                   
 
-                <form class="px-4 py-3" action="${pageContext.request.contextPath}/LoginServlet" method="post">
-                <% if (request.getAttribute("Error") != null && !request.getAttribute("Error").toString().isEmpty()) {%>
-                <div class="col-12">
-                    <div class="alert alert-danger" role="alert">
-                        <%= request.getAttribute("Error")%>
-                    </div>
+                    <form action="${pageContext.request.contextPath}/LoginServlet" method="post" class="text-center" style=" padding: 0 50px">
+
+                        <!-- Logo (tuỳ chọn) -->
+                        <img class="mb-4" src="${pageContext.request.contextPath}/image/logo1.jpg" alt="" width="200" height="200">
+
+                        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+                        <% if (request.getAttribute("Error") != null && !request.getAttribute("Error").toString().isEmpty()) {%>
+                        <div class="alert alert-danger" role="alert">
+                            <%= request.getAttribute("Error")%>
+                        </div>
+                        <% }%>
+
+                        <div class="form-floating mb-3">
+                            <input type="tel"
+                                   class="form-control"
+                                   id="floatingPhone"
+                                   placeholder="Phone number"
+                                   name="phoneNumber"
+                                   required>
+                            <label for="floatingPhone">Phone number</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="password"
+                                   class="form-control"
+                                   id="floatingPassword"
+                                   placeholder="Password"
+                                   name="password"
+                                   required>
+                            <label for="floatingPassword">Password</label>
+                        </div>
+
+                        <div class="form-check text-start my-3">
+                            <input class="form-check-input" type="checkbox" value="remember-me" id="checkRemember">
+                            <label class="form-check-label" for="checkRemember">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button class="w-100 btn btn-lg btn-primary" type="submit">
+                            Sign in
+                        </button>
+
+                        <p class="mt-5 mb-3 text-muted">&copy; 2025</p>
+
+                    </form>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="btn" href="register.jsp">New around here? Register</a>
                 </div>
-                <% }%>
-                <div class="mb-3">
-                    <label for="phoneNumber" class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phoneNumber">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password" name="password">
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="dropdownCheck">
-                        <label class="form-check-label" for="dropdownCheck">
-                            Remember me
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Sign in</button>
-            </form>
-            <div class="dropdown-divider"></div>
-            <a class="btn" href="register.jsp">New around here? Sign up</a>
+            </div>
         </div>
-        <jsp:include page="../../layout/footer.jsp"></jsp:include>
     </body>
 </html>

@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.User;
+import model.UserDTO;
 
 /**
  *
@@ -73,15 +73,10 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String phoneNumber = request.getParameter("phoneNumber"
-                + "");
+        String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
 
-        User u = new User();
-        u.setPhone(phoneNumber);
-        u.setPassword(password);
-
-        User user = UserDAO.checkLogin(u);
+        UserDTO user = UserDAO.login(phoneNumber, password);
         String url = "";
         if (user != null) {
             HttpSession session = request.getSession();

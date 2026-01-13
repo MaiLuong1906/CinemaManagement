@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
-import java.util.Date;
-import model.User;
 
 /**
  *
@@ -25,10 +23,10 @@ public class RegisterServlet extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,10 +50,10 @@ public class RegisterServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -66,25 +64,26 @@ public class RegisterServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String fullname = request.getParameter("fullname");
-        String phone = request.getParameter("tel");
-        String email = request.getParameter("email");
+        String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
         String cpassword = request.getParameter("cpassword");
+
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
         String gender = request.getParameter("gender");
         String dob = request.getParameter("dob");
         String address = request.getParameter("address");
 
         request.setAttribute("fullname", fullname);
-        request.setAttribute("phone", phone);
+        request.setAttribute("phoneNumber", phoneNumber);
         request.setAttribute("email", email);
         request.setAttribute("dob", dob);
         request.setAttribute("gender", gender);
@@ -92,32 +91,35 @@ public class RegisterServlet extends HttpServlet {
 
         String error = "";
 
-        if (UserDAO.checkPhoneNumber(phone)) {
-            error += "Phone number already exits</br>";
+        // Validate
+        if (!UserDAO.checkPhoneNumber(phoneNumber)) {
+            error += "Phone number already exists<br>";
         }
-        if (fullname.trim().isEmpty()) {
-            error += "Fullname is Empty";
+        if (fullname == null || fullname.trim().isEmpty()) {
+            error += "Fullname is empty<br>";
         }
-        if (!phone.matches("[0-9]{10,11}")) {
-            error += "Invalid phone number</br>";
+        if (phoneNumber == null || !phoneNumber.matches("[0-9]{10,11}")) {
+            error += "Invalid phone number<br>";
         }
-        if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}") || email.trim().isEmpty()) {
-            error += "Invalid email </br>";
+        if (email == null || email.trim().isEmpty()
+                || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+            error += "Invalid email<br>";
         }
         if (password == null || password.trim().isEmpty()
-                || !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$")) {
-            error += "Invalid password</br>";
+                || !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$")) {
+            error += "Invalid password<br>";
         }
         if (!password.equals(cpassword)) {
             error += "Password and confirm password do not match<br>";
         }
+
+        LocalDate dateOfBirth = null;
         if (dob == null || dob.trim().isEmpty()) {
-            error += ("Date of birth is required<br>");
+            error += "Date of birth is required<br>";
         } else {
             try {
-                LocalDate dateOfBirth = LocalDate.parse(dob);
-                LocalDate currentDate = LocalDate.now();
-                if (dateOfBirth.isAfter(currentDate)) {
+                dateOfBirth = LocalDate.parse(dob);
+                if (dateOfBirth.isAfter(LocalDate.now())) {
                     error += "Date of birth cannot be in the future<br>";
                 }
             } catch (Exception e) {
@@ -128,10 +130,27 @@ public class RegisterServlet extends HttpServlet {
         if (!error.isEmpty()) {
             request.setAttribute("Error", error);
             request.getRequestDispatcher("views/auth/register.jsp").forward(request, response);
+            return;
+        }
+
+        // Convert gender
+        boolean genderValue = "female".equals(gender);
+
+        boolean success = UserDAO.register(
+                phoneNumber,
+                email,
+                password,
+                fullname,
+                genderValue,
+                address,
+                dateOfBirth
+        );
+
+        if (success) {
+            response.sendRedirect("views/auth/login.jsp"); 
         } else {
-            User user = new User(fullname, email, phone, password, 2);
-            UserDAO.insert(user);
-            request.getRequestDispatcher("views/auth/register.jsp").forward(request, response);
+            request.setAttribute("Error", "Register failed. Please try again.");
+            request.getRequestDispatcher("/views/auth/register.jsp").forward(request, response);
         }
     }
 

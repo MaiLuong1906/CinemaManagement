@@ -17,8 +17,8 @@
                     class="btn btn-outline-light me-2">Login</a>
                 <a href="${pageContext.request.contextPath}/views/auth/register.jsp" class="btn btn-warning">Sign-up</a>
             </c:when>
-            <c:when test="${sessionScope.user != null && sessionScope.user.role == 2}" >
-                <span class="text-warning me-3">Hello ${sessionScope.user.fullname}</span>
+            <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'User'}" >
+                <span class="text-warning me-3">Hello ${sessionScope.user.fullName}</span>
                 <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn btn-outline-danger">Logout</a>
             </c:when>
         </c:choose>
