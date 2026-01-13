@@ -28,7 +28,7 @@
                     <form action="${pageContext.request.contextPath}/LoginServlet" method="post" class="text-center" style=" padding: 0 50px">
 
                         <!-- Logo (tuỳ chọn) -->
-                        <img class="mb-4" src="${pageContext.request.contextPath}/image/logo1.jpg" alt="" width="200" height="200">
+                        <img class="mb-4" src="${pageContext.request.contextPath}/image/logoCC.png" alt="" width="200" height="200">
 
                         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
