@@ -2,17 +2,17 @@ package model;
 
 import java.math.BigDecimal;
 
-public class FoodDrink {
+public class Product {
     private int itemId;
     private String itemName;
     private BigDecimal price;
     private int stockQuantity;
 
-    public FoodDrink() {
+    public Product() {
         this.stockQuantity = 0;
     }
 
-    public FoodDrink(int itemId, String itemName, BigDecimal price, int stockQuantity) {
+    public Product(int itemId, String itemName, BigDecimal price, int stockQuantity) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.price = price;
