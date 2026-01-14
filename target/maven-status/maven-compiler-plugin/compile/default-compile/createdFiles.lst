@@ -1,4 +1,3 @@
-dao\DBConnect.class
 model\ProductDetail.class
 dao\InvoiceDAO.class
 dao\AccountDAO.class
@@ -6,20 +5,15 @@ com\mycompany\cinema\resources\JakartaEE10Resource.class
 model\Movie.class
 model\Seat.class
 com\mycompany\cinema\JakartaRestConfiguration.class
-dao\ProductDetailDAO.class
-dao\UserProfileDAO.class
 util\Encoding.class
 model\Product.class
 dao\ShowtimeDAO.class
-dao\UserDAO.class
 dao\MovieDAO.class
 model\MovieGenre.class
 model\Account.class
 model\UserProfile.class
 model\CinemaHall.class
 model\Showtime.class
-controller\LoginServlet.class
-dao\TicketDetailDAO.class
 model\Invoice.class
 dao\SeatDAO.class
 model\TicketDetail.class
@@ -27,5 +21,3 @@ controller\LogoutServlet.class
 model\MovieGenreRel.class
 model\SeatType.class
 model\UserDTO.class
-controller\RegisterServlet.class
-dao\ProductDAO.class

@@ -1,6 +1,5 @@
 package dao;
 
-
 import model.Movie;
 
 import java.sql.*;
@@ -128,5 +127,47 @@ public class MovieDAO {
         m.setAgeRating(rs.getString("age_rating"));
         m.setPosterUrl(rs.getString("poster_url"));
         return m;
+    }
+
+    // lay toan bo film
+    public List<Movie> getAllMovies() {
+        List<Movie> list = new ArrayList<>();
+        String sql = "SELECT * FROM movies ORDER BY release_date DESC";
+
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // lay toan bo phim dang chieu
+    public List<Movie> getNowShowingMovies() {
+        List<Movie> list = new ArrayList<>();
+        String sql = """
+        SELECT DISTINCT m.*
+        FROM movies m
+        WHERE EXISTS (
+            SELECT 1
+            FROM showtimes s
+            WHERE s.movie_id = m.movie_id
+              AND s.start_time >= GETDATE()
+        )
+        ORDER BY m.release_date DESC
+    """;
+        try (
+            Connection conn = DBConnect.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
