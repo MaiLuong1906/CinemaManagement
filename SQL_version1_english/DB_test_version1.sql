@@ -1,90 +1,168 @@
-﻿USE CinemaManagement;
-GO
+﻿-- Admin
+DROP DATABASE CinemaManagement
+-- Bật chế độ insert IDENTITY cho accounts
+SET IDENTITY_INSERT accounts ON;
 
-/* =========================
-   1. Test Data for Accounts & User Profiles
-   ========================= */
--- Password hash mẫu (giả lập)
-INSERT INTO accounts (email, password_hash, role_id, status)
-VALUES 
-('admin@cinema.com', 'hash_admin_123', 'Admin', 1),
-('user1@gmail.com', 'hash_user_456', 'User', 1),
-('user2@gmail.com', 'hash_user_789', 'User', 1);
+-- Password: Admin123456 = 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU='
+INSERT INTO accounts (account_id, phone_number, password_hash, role_id, created_at)
+VALUES (1, '0980', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
+       (2, '0981', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
+       (3, '0982', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
+       (4, '0983', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
+       (5, '0984', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE());
 
-INSERT INTO user_profiles (user_id, full_name, phone_number, gender, address, date_of_birth)
-VALUES 
-(1, N'Nguyễn Quản Trị', '0901234567', 1, N'123 Lê Lợi, Đà Nẵng', '1990-01-01'),
-(2, N'Trần Khách Hàng', '0912345678', 1, N'456 Hùng Vương, Đà Nẵng', '2005-05-20'),
-(3, N'Lê Thị User', '0923456789', 0, N'789 Nguyễn Văn Linh, Đà Nẵng', '2010-10-10');
+-- Tắt chế độ insert IDENTITY cho accounts
+SET IDENTITY_INSERT accounts OFF;
 
-/* =========================
-   2. Test Data for Movie Genres & Movies
-   ========================= */
+-- Insert user_profiles với user_id khớp với account_id
+-- Vì user_id là FK reference đến account_id nên phải khớp
+INSERT INTO user_profiles(user_id, full_name, email, gender, date_of_birth)
+VALUES (1, 'Admin1', 'admin1@gmail.com', 1, '1995-03-10'),
+       (2, 'Admin2', 'admin2@gmail.com', 1, '1995-03-10'),
+       (3, 'Admin3', 'admin3@gmail.com', 1, '1995-03-10'),
+       (4, 'Admin4', 'admin4@gmail.com', 1, '1995-03-10'),
+       (5, 'Admin5', 'admin5@gmail.com', 1, '1995-03-10');
+
+
+-- User
+
+-- Bật chế độ insert IDENTITY cho accounts
+SET IDENTITY_INSERT accounts ON;
+
+-- Password: User1234 = 'Teet7gKhJrIe0PtnyD3KjqAC+CU='
+INSERT INTO accounts (account_id, phone_number, password_hash, role_id, created_at)
+VALUES (11, '1111', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
+       (12, '2222', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
+       (13, '3333', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
+       (14, '4444', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
+       (15, '5555', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE());
+
+-- Tắt chế độ insert IDENTITY cho accounts
+SET IDENTITY_INSERT accounts OFF;
+
+-- Insert user_profiles với user_id khớp với account_id
+-- Vì user_id là FK reference đến account_id nên phải khớp
+INSERT INTO user_profiles(user_id, full_name, email, gender, date_of_birth)
+VALUES (11, 'User1', 'User1@gmail.com', 1, '1995-03-10'),
+       (12, 'User2', 'User2@gmail.com', 1, '1995-03-10'),
+       (13, 'User3', 'User3@gmail.com', 1, '1995-03-10'),
+       (14, 'User4', 'User4@gmail.com', 1, '1995-03-10'),
+       (15, 'User5', 'User5@gmail.com', 1, '1995-03-10');
+
+--Thêm phim
 INSERT INTO movie_genres (genre_name)
-VALUES (N'Action'), (N'Comedy'), (N'Horror'), (N'Romance'), (N'Sci-Fi');
+VALUES
+    (N'Hành động'),
+    (N'Kinh dị'),
+    (N'Hoạt hình'),
+    (N'Tình cảm'),
+    (N'Khoa học viễn tưởng');
 
-INSERT INTO movies (title, duration, description, release_date, age_rating)
-VALUES 
-(N'Spider-Man: No Way Home', 148, N'Spider-Man seeks help from Doctor Strange.', '2025-12-15', 'T13'),
-(N'The Conjuring', 112, N'Paranormal investigators work to help a family.', '2025-11-20', 'T18'),
-(N'Doraemon: Nobita Mini-Dora', 95, N'Animation for children.', '2026-01-01', 'P');
+
+--Set loại ghế
+INSERT INTO seat_types (type_name, extra_fee)
+VALUES
+    (N'Thường', 0),
+    (N'VIP', 20000),
+    (N'Ghế đôi', 50000);
+
+--Phòng chiếu
+INSERT INTO cinema_halls (hall_name)
+VALUES
+    (N'Phòng 1'),
+    (N'Phòng 2'),
+    (N'Phòng IMAX');
+
+--Set ghế
+-- Phòng 1
+INSERT INTO seats (hall_id, seat_code, seat_type_id)
+VALUES
+    (1, 'A1', 1),
+    (1, 'A2', 1),
+    (1, 'A3', 2),
+    (1, 'B1', 2),
+    (1, 'B2', 3);
+
+-- Phòng 2
+INSERT INTO seats (hall_id, seat_code, seat_type_id)
+VALUES
+    (2, 'A1', 1),
+    (2, 'A2', 1),
+    (2, 'B1', 2);
+
+-- Phòng IMAX
+INSERT INTO seats (hall_id, seat_code, seat_type_id)
+VALUES
+    (3, 'A1', 2),
+    (3, 'A2', 2),
+    (3, 'A3', 3);
+
+
+--Thêm phim
+INSERT INTO movies (title, duration, description, release_date, age_rating, poster_url)
+VALUES
+    (N'Avengers: Endgame', 181, N'Biệt đội siêu anh hùng đối đầu Thanos', '2019-04-26', 'T13', 'avengers.jpg'),
+    (N'The Nun', 96, N'Ác quỷ Valak ám ảnh tu viện', '2018-09-07', 'T18', 'thenun.jpg'),
+    (N'Doraemon Movie', 110, N'Cuộc phiêu lưu của Doraemon', '2024-06-01', 'P', 'doraemon.jpg');
 
 INSERT INTO movie_genre_rel (movie_id, genre_id)
-VALUES (1, 1), (1, 5), (2, 3), (3, 2);
+VALUES
+    (1, 1), -- Avengers - Action
+    (1, 5), -- Avengers - Sci-Fi
+    (2, 2), -- The Nun - Horror
+    (3, 3); -- Doraemon - Animation
 
-/* =========================
-   3. Test Data for Halls, Seat Types & Seats
-   ========================= */
-INSERT INTO cinema_halls (hall_name)
-VALUES (N'Hall 01 - IMAX'), (N'Hall 02 - Standard');
-
-INSERT INTO seat_types (type_name, extra_fee)
-VALUES 
-(N'Standard', 0), 
-(N'VIP', 20000), 
-(N'Double (Sweetbox)', 50000);
-
--- Thêm ghế cho Hall 1 (Dòng A: Standard, Dòng B: VIP)
-INSERT INTO seats (hall_id, seat_code, seat_type_id)
-VALUES 
-(1, 'A1', 1), (1, 'A2', 1), (1, 'A3', 1),
-(1, 'B1', 2), (1, 'B2', 2), (1, 'B3', 2);
-
--- Thêm ghế cho Hall 2
-INSERT INTO seats (hall_id, seat_code, seat_type_id)
-VALUES (2, 'A1', 1), (2, 'A2', 1), (2, 'S1', 3);
-
-/* =========================
-   4. Test Data for Showtimes
-   ========================= */
--- Lưu ý: start_time phải lớn hơn ngày hiện tại
+--Lich chieu
 INSERT INTO showtimes (movie_id, hall_id, start_time, base_price)
-VALUES 
-(1, 1, '2026-02-01 19:00:00', 80000),
-(2, 1, '2026-02-01 22:30:00', 90000),
-(3, 2, '2026-02-02 10:00:00', 60000);
+VALUES
+    (1, 1, DATEADD(HOUR, 2, GETDATE()), 90000),
+    (1, 1, DATEADD(HOUR, 5, GETDATE()), 100000),
+    (2, 2, DATEADD(DAY, 1, GETDATE()), 85000),
+    (3, 3, DATEADD(DAY, 1, DATEADD(HOUR, 3, GETDATE())), 70000);
 
-/* =========================
-   5. Test Data for Foods & Drinks
-   ========================= */
-INSERT INTO foods_drinks (item_name, price, stock_quantity)
-VALUES 
-(N'Popcorn Size L', 55000, 100),
-(N'Pepsi Size L', 35000, 200),
-(N'Combo 1 (1 Pop + 1 Water)', 80000, 50);
 
-/* =========================
-   6. Test Data for Invoices (Booking)
-   ========================= */
--- Giả lập 1 hóa đơn đang chờ thanh toán cho User 2
-INSERT INTO invoices (user_id, showtime_id, booking_time, expiry_time, status, total_amount)
-VALUES (2, 1, GETDATE(), DATEADD(MINUTE, 5, GETDATE()), N'Pending', 100000);
+--Product
+INSERT INTO products (item_name, price, img_user_url, stock_quantity)
+VALUES
+    (N'Bắp rang bơ', 45000, 'popcorn.jpg', 100),
+    (N'Coca Cola', 30000, 'coca.jpg', 200),
+    (N'Combo Bắp + Coca', 70000, 'combo.jpg', 50);
 
--- Chi tiết ghế cho hóa đơn trên (Ghế B1 là VIP: 80k + 20k = 100k)
-INSERT INTO ticket_details (invoice_id, seat_id, hall_id, actual_price)
-VALUES (1, 4, 1, 100000);
 
--- Chi tiết đồ ăn cho hóa đơn trên
-INSERT INTO food_order_details (invoice_id, item_id, quantity)
-VALUES (1, 1, 1); -- Mua thêm 1 bắp L
-GO
+--Hóa Đơn
+INSERT INTO invoices (user_id, showtime_id, expiry_time, status, total_amount)
+VALUES
+    (11, 1, DATEADD(MINUTE, 5, GETDATE()), N'Paid', 160000),
+    (12, 2, DATEADD(MINUTE, 5, GETDATE()), N'Pending', 120000),
+    (13, 3, DATEADD(MINUTE, 5, GETDATE()), N'Paid', 135000);
+
+
+--ghế đã đặt
+INSERT INTO ticket_details
+(invoice_id, seat_id, hall_id, showtime_id, actual_price)
+VALUES
+    (1, 1, 1, 1, 90000),
+    (1, 3, 1, 1, 110000),
+    (2, 2, 1, 2, 100000),
+    (3, 6, 2, 3, 85000);
+
+
+INSERT INTO products_details (invoice_id, item_id, quantity)
+VALUES
+    (1, 1, 1),
+    (1, 2, 1),
+    (3, 3, 1);
+
+
+-- Login test
+SELECT * FROM accounts WHERE phone_number = '1111';
+
+-- Vé user
+SELECT i.invoice_id, i.ticket_code, i.status, i.total_amount
+FROM invoices i
+WHERE i.user_id = 11;
+
+-- Ghế đã đặt theo suất chiếu
+SELECT *
+FROM ticket_details
+WHERE showtime_id = 1;
