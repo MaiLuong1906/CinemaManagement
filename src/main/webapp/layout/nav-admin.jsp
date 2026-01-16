@@ -20,5 +20,5 @@
 
 <div class="text-end">
     <span class="text-warning me-3">Admin</span>
-    <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn btn-outline-danger">Logout</a>
+    <a href="${pageContext.request.contextPath}/AccountServlet?action=logout" class="btn btn-outline-danger">Logout</a>
 </div>
