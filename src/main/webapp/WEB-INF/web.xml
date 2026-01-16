@@ -16,6 +16,19 @@
         <servlet-name>ViewFilmServlet</servlet-name>
         <servlet-class>controller.ViewFilmServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddMovieServlet</servlet-name>
+        <servlet-class>controller.AddMovieServlet</servlet-class>
+        <multipart-config>
+            <file-size-threshold>1048576</file-size-threshold>
+            <max-file-size>5242880</max-file-size>
+            <max-request-size>10485760</max-request-size>
+        </multipart-config>
+    </servlet>
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>controller.ImageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -31,6 +44,14 @@
     <servlet-mapping>
         <servlet-name>ViewFilmServlet</servlet-name>
         <url-pattern>/ViewFilmServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddMovieServlet</servlet-name>
+        <url-pattern>/AddMovieServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImageServlet</servlet-name>
+        <url-pattern>/ImageServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -54,6 +54,11 @@
                   >Gio hang</a
                 >
               </li>
+              <li>
+                <a href="../movies/addFilm.jsp" class="btn-next"
+                  >Them phim</a
+                >
+              </li>
             </ul>
           </div>
         </div>

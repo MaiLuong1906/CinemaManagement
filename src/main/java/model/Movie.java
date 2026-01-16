@@ -24,7 +24,15 @@ public class Movie {
         this.ageRating = ageRating;
         this.posterUrl = posterUrl;
     }
-
+    // construct them vao db
+    public Movie(String title, Integer duration, String description, LocalDate releaseDate, String ageRating, String posterUrl) {
+        this.title = title;
+        this.duration = duration;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.ageRating = ageRating;
+        this.posterUrl = posterUrl;
+    }
     // Getters and Setters
     public int getMovieId() { return movieId; }
     public void setMovieId(int movieId) { this.movieId = movieId; }
