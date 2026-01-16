@@ -18,7 +18,7 @@ public class EncodingFilter implements Filter {
         
         // 2. Set UTF-8 cho dữ liệu trả về (Response)
         response.setCharacterEncoding(ENCODING);
-        response.setContentType("text/html; charset=" + ENCODING);
+//        response.setContentType("text/html; charset=" + ENCODING);
         
         // 3. Cho phép đi tiếp
         chain.doFilter(request, response);

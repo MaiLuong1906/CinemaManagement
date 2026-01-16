@@ -18,7 +18,7 @@
       <div class="images_information">
         <img
           class="infor_img"
-          src="../../../image/logo.png"
+          src="../../../images/logo.png"
           alt="User's images"
         />
       </div>

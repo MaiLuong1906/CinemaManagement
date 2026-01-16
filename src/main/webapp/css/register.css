@@ -1,5 +1,5 @@
 body {
-    background-image: url('../image/background1.png');
+    background-image: url('../images/background1.png') ;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -7,7 +7,6 @@ body {
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 .register-card {
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);

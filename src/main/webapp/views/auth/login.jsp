@@ -28,7 +28,7 @@
 
                     <form action="${pageContext.request.contextPath}/AccountServlet" method="post" class="text-center">
                         <input type="hidden" name="action" value="login">
-                        <img class="mb-4" src="${pageContext.request.contextPath}/image/logo.png" alt="" width="200" height="200">
+                        <img class="mb-4" src="${pageContext.request.contextPath}/images/logo.png" alt="" width="200" height="200">
 
                         <% if (request.getAttribute("Error") != null && !request.getAttribute("Error").toString().isEmpty()) {%>
                         <div class="alert alert-danger" role="alert">
@@ -69,7 +69,7 @@
 
                         <p class="mt-5 mb-3 text-muted">&copy; 2025</p>
                     </form>
-                        <div class="text-center">
+                    <div class="text-center">
                         <a class="btn" href="register.jsp">New around here? Register</a>
                     </div>
                 </div>
