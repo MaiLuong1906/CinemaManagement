@@ -102,7 +102,7 @@ public class AddMovieServlet extends HttpServlet {
         fileName = System.currentTimeMillis() + "_" +
                    Paths.get(posterPart.getSubmittedFileName())
                         .getFileName().toString();
-        posterUrl = baseImageDir + "/" + fileName;
+        posterUrl = fileName;
     }
     // insert db truoc moi luu file
     Movie movie = new Movie(name, duration, description, date, age, posterUrl);
