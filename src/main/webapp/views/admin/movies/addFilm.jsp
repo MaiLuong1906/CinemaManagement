@@ -5,10 +5,12 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Them phim</title>
+    <link rel="stylesheet" href="../../../css/for_addFilm.css">
+
   </head>
   <body>
     <div class="container">
-      <h2 class="text-center">Them phim moiI</h2>
+      <h2 class="text-center">Them phim moi</h2>
       <hr />
 
       <!-- Form add movie -->
