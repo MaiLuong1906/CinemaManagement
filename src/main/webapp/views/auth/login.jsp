@@ -19,18 +19,16 @@
         crossorigin="anonymous"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css"/>
     </head>
-    <body class="text-center login-bg">
-        <div class="d-flex align-items-center justify-content-center vh-100">
-            <div style="width: 100%; max-width: 380px;">
-                <div class="container">
-                   
+    <body>
 
-                    <form action="${pageContext.request.contextPath}/LoginServlet" method="post" class="text-center" style=" padding: 0 50px">
+        <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
+            <div class="login-card bg-white" style="max-width: 400px; width: 100%;">
 
-                        <!-- Logo (tuỳ chọn) -->
-                        <img class="mb-4" src="${pageContext.request.contextPath}/image/logoCC.png" alt="" width="200" height="200">
+                <div class="p-4 p-md-5">
 
-                        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+                    <form action="${pageContext.request.contextPath}/AccountServlet" method="post" class="text-center">
+                        <input type="hidden" name="action" value="login">
+                        <img class="mb-4" src="${pageContext.request.contextPath}/images/logo.png" alt="" width="200" height="200">
 
                         <% if (request.getAttribute("Error") != null && !request.getAttribute("Error").toString().isEmpty()) {%>
                         <div class="alert alert-danger" role="alert">
@@ -65,16 +63,15 @@
                             </label>
                         </div>
 
-                        <button class="w-100 btn btn-lg btn-primary" type="submit">
+                        <button class="w-100 btn btn-lg login-btn" type="submit">
                             Sign in
                         </button>
 
                         <p class="mt-5 mb-3 text-muted">&copy; 2025</p>
-
                     </form>
-
-                    <div class="dropdown-divider"></div>
-                    <a class="btn" href="register.jsp">New around here? Register</a>
+                    <div class="text-center">
+                        <a class="btn" href="register.jsp">New around here? Register</a>
+                    </div>
                 </div>
             </div>
         </div>

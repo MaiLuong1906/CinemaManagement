@@ -19,7 +19,7 @@
             </c:when>
             <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'User'}" >
                 <span class="text-warning me-3">Hello ${sessionScope.user.fullName}</span>
-                <a href="${pageContext.request.contextPath}/LogoutServlet" class="btn btn-outline-danger">Logout</a>
+                <a href="${pageContext.request.contextPath}/AccountServlet?action=logout" class="btn btn-outline-danger">Logout</a>
             </c:when>
         </c:choose>
     </div>
