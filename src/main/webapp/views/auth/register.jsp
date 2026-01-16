@@ -1,15 +1,16 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta charset="UTF-8">
-        <title>Register</title>
+        <title>Register - Create Your Account</title>
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"><!-- comment -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
-
-        <!-- Register CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>     
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/register.css"/>
     </head>
 
@@ -24,130 +25,112 @@
             String address = request.getAttribute("address") != null ? request.getAttribute("address").toString() : "";
         %>
 
-        <div class="register-bg">
-            <div class="register-mask d-flex align-items-center justify-content-center">
-
-                <div class="container">
-
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-
-                            <div class="card register-card">
-                                <div class="card-body p-5">
-                                    <% if (request.getAttribute("Error") != null && !request.getAttribute("Error").toString().isEmpty()) {%>
-                                    <div class="col-12">
-                                        <div class="alert alert-danger register-error" role="alert">
-                                            <%= request.getAttribute("Error")%>
-                                        </div>
-                                    </div>
-                                    <% }%>
-
-                                    <h1 class="text-uppercase text-center mb-4 register-title">Register</h1>
-
-                                    <h4 class="text-uppercase text-center mb-4 register-title">Account Information</h4>
-
-                                    <form action="${pageContext.request.contextPath}/RegisterServlet" method="post">
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Phone number <span class="required">*</span></label>
-                                            <input type="tel" class="form-control form-control-lg"
-                                                   name="phoneNumber" required="required" pattern="[0-9]{10,11}"
-                                                   value="<%= phone%>">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Password <span class="required">*</span></label>
-                                            <input type="password" class="form-control form-control-lg"
-                                                   id="password"
-                                                   name="password" required="required"
-                                                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                Confirm Password <span class="required">*</span>
-                                                <span id="confirm" class="text-danger"></span>
-                                            </label>
-                                            <input type="password" class="form-control form-control-lg"
-                                                   id="cpassword"
-                                                   name="cpassword"
-                                                   required="required"
-                                                   onkeyup="confirmPass()">
-                                        </div>
-
-                                        <h4 class="text-uppercase text-center mb-4 register-title">Personal Information</h4>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Full name <span class="required">*</span></label>
-                                            <input type="text" class="form-control form-control-lg"
-                                                   name="fullname" required="required" value="<%= fullname%>">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Email <span class="required">*</span></label>
-                                            <input type="email" class="form-control form-control-lg"
-                                                   name="email" required="required" value="<%= email%>">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label d-block">Gender</label>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gender" value="male"
-                                                       <%= gender.equals("male") ? "checked" : ""%>>
-                                                <label class="form-check-label">Male</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gender" value="female"
-                                                       <%= gender.equals("female") ? "checked" : ""%>>
-                                                <label class="form-check-label">Female</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Date of birth <span class="required">*</span></label>
-                                            <input type="date" class="form-control form-control-lg"
-                                                   name="dob" required="required" value="<%= dobStr%>">
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Address</label>
-                                            <input type="text" class="form-control form-control-lg"
-                                                   name="address" value="<%= address%>">
-                                        </div>
-
-                                        <div class="form-check d-flex justify-content-center mb-4">
-                                            <input class="form-check-input me-2" type="checkbox" id="gridCheck" onchange="hidenSignUp()">
-                                            <label class="form-check-label">
-                                                I agree to <a href="#">Terms of service</a>
-                                            </label>
-                                        </div>
-
-                                        <div class="d-flex justify-content-center">
-                                            <button type="submit" id="signup"
-                                                    class="btn btn-success btn-lg register-btn"
-                                                    style="visibility: hidden">
-                                                Register
-                                            </button>
-                                        </div>
-
-                                        <p class="text-center text-muted mt-4 mb-0">
-                                            Have already an account?
-                                            <a href="login.jsp" class="fw-bold">Login here</a>
-                                        </p>
-
-                                    </form>
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+        <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
+            <div class="register-card bg-white" style="max-width: 500px; width: 100%;">
+                <div class="register-header text-center">
+                    <h2 class="mb-2">Create Account</h2>
                 </div>
 
+                <div class="p-4 p-md-5">
+                    <% if (request.getAttribute("Error") != null
+                                && !request.getAttribute("Error").toString().isEmpty()) {%>
+                    <div class="alert alert-danger mb-3" role="alert">
+                        <%= request.getAttribute("Error")%>
+                    </div>
+                    <% }%>
+
+                    <form action="${pageContext.request.contextPath}/AccountServlet" method="post">
+                        <input type="hidden" name="action" value="register">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="phoneNumber">Phone Number</label>
+                            <input type="tel" class="form-control" name="phoneNumber"
+                                   placeholder="Enter your phone number" id="phoneNumber" required="required"
+                                   value="<%= phone%>" onkeyup="validatePhone()">
+                            <span id="phoneError" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="password">Password</label>
+                            <input type="password" class="form-control" name="password" id="password"
+                                   placeholder="Create a password" required onkeyup="validatePass()">
+                            <span id="passwordError" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="cpassword">Confirm Password</label>
+                            <input type="password" class="form-control" name="cpassword" id="cpassword"
+                                   required onkeyup="confirmPass()" placeholder="Re-enter your password">
+                            <span id="confirm" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="fullname">Full Name</label>
+                            <input type="text" class="form-control" name="fullname" id="fullname"
+                                   placeholder="Enter your full name" required value="<%= fullname%>"
+                                   onkeyup="validateName()">
+                            <span id="nameError" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="email">Email Address</label>
+                            <input type="email" class="form-control" name="email" id="email"
+                                   placeholder="Enter your email" required value="<%= email%>"
+                                   onkeyup="validateEmail()">
+                            <span id="emailError" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium d-block">Gender</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="male"
+                                           value="male" <%=gender.equals("male") ? "checked" : ""%>>
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="female"
+                                           value="female" <%=gender.equals("female") ? "checked" : ""%>>
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="dob">Date of Birth</label>
+                            <input type="date" class="form-control" name="dob" required value="<%= dobStr%>"
+                                   id="dob">
+                            <span id="dobError" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium" for="address">Address (Optional)</label>
+                            <input type="text" class="form-control" name="address" id="address"
+                                   placeholder="Enter your address" value="<%= address%>">
+                        </div>
+
+                        <div class="form-check d-flex justify-content-center align-items-center gap-2 my-4 terms-check">
+                            <input class="form-check-input m-0" type="checkbox" id="gridCheck"
+                                   onchange="hidenSignUp()">
+                            <label class="form-check-label small" for="gridCheck">
+                                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" id="signup" class="btn btn-primary w-100 register-btn"
+                                style="visibility: hidden">
+                            Create Account
+                        </button>
+
+                        <div class="text-center text-muted mt-3 small login-link">
+                            Already have an account?
+                            <a href="login.jsp" class="text-decoration-none">Login here</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
         <script src="${pageContext.request.contextPath}/js/register.js"></script>
-
     </body>
+
 </html>

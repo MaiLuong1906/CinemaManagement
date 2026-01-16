@@ -1,52 +1,109 @@
-/* Background */
-.register-bg {
-    min-height: 100vh;
-    background-image: url("https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp");
+body {
+    background-image: url('../image/background1.png');
     background-size: cover;
     background-position: center;
-}
-
-/* Red */
-.required{
-    color: red;
-}
-
-/* Overlay mask */
-.register-mask {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     min-height: 100vh;
-    background-color: rgba(0, 0, 0, 0.45);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Card */
 .register-card {
-    border-radius: 15px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: slideUp 0.5s ease-out;
 }
 
-/* Title */
-.register-title {
-    font-weight: bold;
-    letter-spacing: 1px;
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Input */
-.register-card input {
+.register-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+    color: white;
+}
+
+.register-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.register-header p {
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.form-control {
+    border: 2px solid #e0e0e0;
     border-radius: 10px;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
 }
 
-/* Button */
+.form-control:focus {
+    border-color: #667eea;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #667eea;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-label {
+    cursor: pointer;
+}
+
 .register-btn {
-    border-radius: 30px;
-    padding: 10px 30px;
-    font-size: 18px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
 }
 
-/* Error box */
-.register-error {
+.register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.register-btn:active {
+    transform: translateY(0);
+}
+
+.login-link a,
+.terms-check a {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.login-link a:hover,
+.terms-check a:hover {
+    color: #764ba2;
+}
+
+.alert {
     border-radius: 10px;
 }
-
-h4{
-    font-style: italic;
-}
-
-
