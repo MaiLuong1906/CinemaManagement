@@ -43,7 +43,7 @@
                   <a href="../dashboard.jsp">
                     <img
                       class="logo"
-                      src="../../../image/logo1.jpg"
+                      src="../../../images/logo.png"
                       alt="Logo rạp phim"
                     />
                   </a>
@@ -59,12 +59,18 @@
                   >Them phim</a
                 >
               </li>
+              <li>
+                <a href="../movies/updateFilm.jsp" class="btn-next"
+                  >Update phim</a
+                >
+              </li>
             </ul>
           </div>
         </div>
       </nav>
     </div>
     <!-- phim  -->
+     <!-- phim dang chieu  -->
     <div class="phimDangChieu">
         <div class="row">
         <div class="col-md-3">Phim dang chieu</div>
@@ -74,7 +80,7 @@
     </div>
 </div>
 <!-- phim chuan bi chieu  -->
-    <div class="phimDangChieu">
+    <div class="phimChuanBiChieu">
     <div class="row">
         <div class="col-md-3">Phim chuan bi chieu</div>
         <div class="col-md-3">Phim 1</div>
