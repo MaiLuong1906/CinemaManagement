@@ -9,16 +9,45 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>JSP Page</title>
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/for_addShowTime.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/addShowTime.css">
     </head>
     <body>
         <div>
-            <h2>Them lich chieu</h2>
+            <h2>Thêm lịch chiếu</h2>
+        <!--tra ket qua-->
+        <%
+        HttpSession sessionObj = request.getSession(false); // li do false la neu da co session thi lay khong thi tra null, khong tao moi
+        if (sessionObj != null) {
+            String message = (String) sessionObj.getAttribute("message");
+            Boolean success = (Boolean) sessionObj.getAttribute("success");
+            String messageDb = (String) sessionObj.getAttribute("dbError");
+            if (message != null) {
+        %>  
+        <div style="
+            padding:10px;
+            margin-bottom:15px;
+            border-radius:5px;
+            color:white;
+            background-color:<%= success != null && success ? "#28a745" : "#dc3545" %>;">
+            <%= message %> : 
+            <%= messageDb %>
+        </div>
+        <%
+            // FLASH MESSAGE → xoa sau khi hien thi hoac f5
+            sessionObj.removeAttribute("message");
+            sessionObj.removeAttribute("success");
+            sessionObj.removeAttribute("dbError");
+                }
+            }
+        %>
+
+        
+        <!--input dau vao-->
         <form action="<%=request.getContextPath()%>/AddShowTimeServlet"
                 method="post">
         <!--cac hang muc-->
        <div class="form-group">
-    <label for="movieSelect">Chon phim</label>
+    <label for="movieSelect">Chọn phim</label>
     <select id="movieSelect" name="movieId" class="form-control">
         <%
             List<Movie> movieList = (List<Movie>) request.getAttribute("movieList");
@@ -37,11 +66,11 @@
     <!--cac thuoc tinh con lai--> 
     <!--phong chieu-->
     <div class="form-group">
-    <label for="movieSelect">Chon phong chieu</label>
+    <label for="movieSelect">Chọn phòng chiếu:</label>
     <select id="movieSelect" name="hallId" class="form-control">
         <%
             List<CinemaHall> hallList = (List<CinemaHall>) request.getAttribute("hallList");
-            if (movieList != null) {
+            if (hallList != null) {
                 for (CinemaHall m : hallList) {
         %>
         <option value="<%= m.getHallId() %>">
@@ -55,11 +84,11 @@
     </div>
     <!--gio chieu-->
     <div class="form-group">
-    <label for="movieSelect">Chon gio chieu</label>
-    <select id="movieSelect" name="hallId" class="form-control">
+    <label for="movieSelect">Chọn giờ chiếu:</label>
+    <select id="movieSelect" name="gioChieu" class="form-control">
         <%
             List<LocalTime> listChieu = (List<LocalTime>) request.getAttribute("listChieu");
-            if (movieList != null) {
+            if (listChieu != null) {
                 for (LocalTime gioChieu : listChieu) {
         %>
         <option value="<%= gioChieu %>">
@@ -72,17 +101,18 @@
     </select>
     </div>
     <div class="form-group">
-        Chon ngay chieu : <input type="date" name="showDate">
+        Chọn ngày chiếu: <input type="date" name="showDate">
     </div>
     <div class="form-group">
-        Gia goc: <input type="number" name="basePrice" placeholder="Nhap gia">
+        Giá gốc: <input type="number" name="basePrice" placeholder="Nhap gia">
     </div>
     <input type="submit" name="Them">
 </form>
 </div>
             
     <a href="${pageContext.request.contextPath}/home" class="btn btn-success">
-        Quay ve trang chu
+        Quay lại trang chủ
     </a>
+        
 </body>
 </html>

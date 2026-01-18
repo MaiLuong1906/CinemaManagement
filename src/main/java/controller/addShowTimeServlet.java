@@ -8,27 +8,31 @@ import dao.CinemaHallDAO;
 import dao.DBConnect;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDate;
 import java.util.List;
-
 import dao.MovieDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import dao.ShowtimeDAO;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpSession;
 
 import model.CinemaHall;
 import model.Movie;
+import model.Showtime;
 
 /**
  *
  * @author nguye
  */
+@WebServlet("/AddShowTimeServlet")
 public class addShowTimeServlet extends HttpServlet {
 
     /**
@@ -69,6 +73,7 @@ public class addShowTimeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // du lieu dau vao
         MovieDAO movieDAO = new MovieDAO();
         List<Movie> movieList = movieDAO.getAllMovies();
         request.setAttribute("movieList", movieList);
@@ -92,7 +97,6 @@ public class addShowTimeServlet extends HttpServlet {
         request.setAttribute("listChieu", listChieu);
         request.getRequestDispatcher("/views/admin/movies/addShowTime.jsp")
                .forward(request, response);
-
     }
 
     /**
@@ -106,7 +110,32 @@ public class addShowTimeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        // dung session de luu 
+        HttpSession session = request.getSession();
+        // logic sau khi nhan form
+        int movieId = Integer.parseInt(request.getParameter("movieId"));
+        int hallId = Integer.parseInt(request.getParameter("hallId"));
+        BigDecimal basePrice = new BigDecimal(request.getParameter("basePrice"));
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.parse(request.getParameter("showDate")),
+        LocalTime.parse(request.getParameter("gioChieu")));
+        //
+        Showtime showtime = new Showtime(movieId, hallId, startTime, basePrice);
+        ShowtimeDAO showtimeDAO = new ShowtimeDAO();
+        boolean flag = true;
+        try{
+            showtimeDAO.insert(DBConnect.getConnection(), showtime);
+            flag = true;
+            session.setAttribute("dbError", "");
+        }catch(SQLException ex){
+            flag = false;
+            session.setAttribute("dbError", ex.getMessage()); // in loi tu procedure
+        }
+        if(flag==true) session.setAttribute("message", "Thêm phim thành công");
+        else session.setAttribute("message", "Thêm phim thất bại");
+        session.setAttribute("success", flag);
+        // goi lai doGet tra ket qua
+        response.sendRedirect(request.getContextPath() + "/AddShowTimeServlet");
+
     }
 
     /**
