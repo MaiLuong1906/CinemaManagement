@@ -88,25 +88,6 @@ public class ShowtimeDAO {
     }
 
     /* =========================
-       INSERT (ADMIN)
-       ========================= */
-    public void insert(Connection conn, Showtime st) throws SQLException {
-        String sql = """
-            INSERT INTO showtimes
-            (movie_id, hall_id, start_time, base_price)
-            VALUES (?, ?, ?, ?)
-        """;
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, st.getMovieId());
-            ps.setInt(2, st.getHallId());
-            ps.setTimestamp(3, Timestamp.valueOf(st.getStartTime()));
-            ps.setBigDecimal(4, st.getBasePrice());
-            ps.executeUpdate();
-        }
-    }
-
-    /* =========================
        UPDATE (ADMIN)
        ========================= */
     public void update(Connection conn, Showtime st) throws SQLException {
@@ -148,6 +129,17 @@ public class ShowtimeDAO {
         st.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
         st.setBasePrice(rs.getBigDecimal("base_price"));
         return st;
+    }
+    // insert showtime nguoi dung nhap thoi gian se co procedure check trung time
+    public void insert(Connection conn, Showtime st) throws SQLException {
+        String sql = "{CALL sp_InsertShowtime(?, ?, ?, ?)}";
+        try (CallableStatement cs = conn.prepareCall(sql)) {
+            cs.setInt(1, st.getMovieId());
+            cs.setInt(2, st.getHallId());
+            cs.setTimestamp(3, Timestamp.valueOf(st.getStartTime()));
+            cs.setBigDecimal(4, st.getBasePrice());
+            cs.execute(); // procedure check trung neu khong trung moi insert
+        }
     }
 }
 

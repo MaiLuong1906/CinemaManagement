@@ -1,10 +1,14 @@
 <%-- Document : view_film Created on : Jan 14, 2026, 2:57:11 PM Author : nguye
 --%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="model.MovieShowtimeDTO" %>
 <!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>JSP Page</title>
+    <!--sau 1p se load lai trang 1 lan-->
+    <meta http-equiv="refresh" content="60">
     <!-- Bootstrap -->
     <link
       rel="stylesheet"
@@ -64,6 +68,11 @@
                   >Update phim</a
                 >
               </li>
+              <li>
+                <a href="<%= request.getContextPath() %>//addShowTimeServlet" class="btn-next"
+                  >Lua chon khung gio</a
+                >
+              </li>
             </ul>
           </div>
         </div>
@@ -71,6 +80,11 @@
     </div>
     <!-- phim  -->
      <!-- phim dang chieu  -->
+    <%
+        List<MovieShowtimeDTO> listNowShowing = (List<MovieShowtimeDTO>) request.getAttribute("listNowShowing");
+        List<MovieShowtimeDTO> listCommingShowing = (List<MovieShowtimeDTO>) request.getAttribute("listCommingShowing");
+        List<MovieShowtimeDTO> listImax = (List<MovieShowtimeDTO>) request.getAttribute("listImax");
+    %>
     <div class="phimDangChieu">
         <div class="row">
         <div class="col-md-3">Phim dang chieu</div>
@@ -83,9 +97,25 @@
     <div class="phimChuanBiChieu">
     <div class="row">
         <div class="col-md-3">Phim chuan bi chieu</div>
-        <div class="col-md-3">Phim 1</div>
-        <div class="col-md-3">Phim 2</div>
-        <div class="col-md-3">Phim 3</div>
+        <%
+            if (listNowShowing != null) {
+                for (MovieShowtimeDTO m : listNowShowing) {
+        %>
+            <div class="col-md-3">
+                <img
+                  src="<%= request.getContextPath() %>/image?name=<%= m.getPosterUrl() %>"
+                  class="img-responsive"
+                />
+                <p><%= m.getMovieTitle() %></p>
+            </div>
+        <%
+                }
+            } else{
+        %>
+            <div class="col-md-3">Khong co phim nao</div>
+        <%
+            }
+        %>
     </div>
     </div>
 <!-- phim 3d  -->

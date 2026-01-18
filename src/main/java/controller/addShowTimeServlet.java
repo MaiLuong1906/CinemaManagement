@@ -4,24 +4,32 @@
  */
 package controller;
 
-import dao.MovieDAO;
-import dao.MovieShowtimeDAO;
-
+import dao.CinemaHallDAO;
+import dao.DBConnect;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.List;
 
+import dao.MovieDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.MovieShowtimeDTO;
+import java.sql.SQLException;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import model.CinemaHall;
+import model.Movie;
 
 /**
  *
  * @author nguye
  */
-public class ViewFilmServlet extends HttpServlet {
+public class addShowTimeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +48,10 @@ public class ViewFilmServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewFilmServlet</title>");
+            out.println("<title>Servlet addShowTimeServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewFilmServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet addShowTimeServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,17 +69,32 @@ public class ViewFilmServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // xu li logic
-        List<MovieShowtimeDTO> listNowShowing = new MovieShowtimeDAO().getNowShowing();
-        List<MovieShowtimeDTO> listCommingShowing = new MovieShowtimeDAO().getComingSoon();
-        List<MovieShowtimeDTO> listImax = new MovieShowtimeDAO().getByHallNameLike("imax");
-        // set data len request
-        request.setAttribute("listNowShowing", listNowShowing);
-        request.setAttribute("listCommingShowing", listCommingShowing);
-        request.setAttribute("listImax", listImax);
-        // chuyen tiep toi trang jsp
-        request.getRequestDispatcher("view_film.jsp").forward(request, response);
+        MovieDAO movieDAO = new MovieDAO();
+        List<Movie> movieList = movieDAO.getAllMovies();
+        request.setAttribute("movieList", movieList);
+        // chon phong
+        CinemaHallDAO cinemaHallDAO = new CinemaHallDAO(DBConnect.getConnection());
+        List<CinemaHall> hallList = new ArrayList<>();
+        try {
+            hallList = cinemaHallDAO.getAllHalls();
+        } catch (SQLException ex) {
+            System.out.println("Khong co phong nao");
+        }
+        request.setAttribute("hallList", hallList);
+        // gio chieu
+        List<LocalTime> listChieu = new ArrayList<>();
+        listChieu.add(LocalTime.parse("08:00"));
+        listChieu.add(LocalTime.parse("12:00"));
+        listChieu.add(LocalTime.parse("15:00"));
+        listChieu.add(LocalTime.parse("18:00"));
+        listChieu.add(LocalTime.parse("21:00"));
+        listChieu.add(LocalTime.parse("23:00"));
+        request.setAttribute("listChieu", listChieu);
+        request.getRequestDispatcher("/views/admin/movies/addShowTime.jsp")
+               .forward(request, response);
+
     }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -83,7 +106,7 @@ public class ViewFilmServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
     }
 
     /**
