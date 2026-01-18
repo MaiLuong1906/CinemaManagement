@@ -5,12 +5,17 @@
 package controller;
 
 import dao.MovieDAO;
+import dao.MovieShowtimeDAO;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.MovieShowtimeDTO;
 
 /**
  *
@@ -57,15 +62,16 @@ public class ViewFilmServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // xu li logic
-        MovieDAO movies = new MovieDAO();
-        movies.getNowShowingMovies();
-        // Dat tat ca phim vao attribute
-        request.setAttribute("movieList", movies);
-        request.setAttribute("PageTitle", "Phim dang chieu - HDBQL Cinema");
+        List<MovieShowtimeDTO> listNowShowing = new MovieShowtimeDAO().getNowShowing();
+        List<MovieShowtimeDTO> listCommingShowing = new MovieShowtimeDAO().getComingSoon();
+        List<MovieShowtimeDTO> listImax = new MovieShowtimeDAO().getByHallNameLike("imax");
+        // set data len request
+        request.setAttribute("listNowShowing", listNowShowing);
+        request.setAttribute("listCommingShowing", listCommingShowing);
+        request.setAttribute("listImax", listImax);
         // chuyen tiep toi trang jsp
         request.getRequestDispatcher("view_film.jsp").forward(request, response);
     }
-
     /**
      * Handles the HTTP <code>POST</code> method.
      *

@@ -19,6 +19,13 @@ public class Showtime {
         this.startTime = startTime;
         this.basePrice = basePrice;
     }
+    // cons them db
+    public Showtime(int movieId, int hallId, LocalDateTime startTime, BigDecimal basePrice) {
+        this.movieId = movieId;
+        this.hallId = hallId;
+        this.startTime = startTime;
+        this.basePrice = basePrice;
+    }
 
     // Getters and Setters
     public int getShowtimeId() { return showtimeId; }
