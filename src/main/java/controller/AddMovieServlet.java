@@ -22,7 +22,13 @@ import model.Movie;
  *
  * @author nguye
  */
-public class AddMovieServlet extends HttpServlet {
+public class
+
+
+
+
+
+AddMovieServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
