@@ -70,22 +70,22 @@ public class ShowtimeDAO {
     /* =========================
        FIND UPCOMING
        ========================= */
-    public List<Showtime> findUpcoming(Connection conn) throws SQLException {
-        String sql = """
-            SELECT * FROM showtimes
-            WHERE start_time >= GETDATE()
-            ORDER BY start_time
-        """;
+        public List<Showtime> findUpcoming(Connection conn) throws SQLException {
+            String sql = """
+                SELECT * FROM showtimes
+                WHERE start_time >= GETDATE()
+                ORDER BY start_time
+            """;
 
-        List<Showtime> list = new ArrayList<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(mapRow(rs));
+            List<Showtime> list = new ArrayList<>();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
+            return list;
         }
-        return list;
-    }
 
     /* =========================
        UPDATE (ADMIN)
