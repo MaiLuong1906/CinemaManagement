@@ -17,7 +17,13 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import model.Movie;
-
+import model.MovieGenre;
+import dao.MovieGenreDAO;
+import java.util.List;
+import dao.MovieGenreRelDAO;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 /**
  *
  * @author nguye
@@ -68,11 +74,14 @@ AddMovieServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // lay gia tri ban dau
+        MovieGenreDAO movieGenreDAO = new MovieGenreDAO();
+        List<MovieGenre> movieGenre = movieGenreDAO.getAllGenres();
+        request.setAttribute("movieGenreList", movieGenre);
         // chuyen tiep toi addFilm.jsp
         request.getRequestDispatcher("views/admin/movies/addFilm.jsp")
                .forward(request, response);
     }
-
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -84,6 +93,8 @@ AddMovieServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    // dung session de luu 
+        HttpSession session = request.getSession();
     // xu li logic them phim
     // lay ra cac thuoc tinh da duoc submit tren form
     String name = request.getParameter("title"); 
@@ -91,6 +102,7 @@ AddMovieServlet extends HttpServlet {
     LocalDate date = LocalDate.parse(request.getParameter("release_date"));
     String age = request.getParameter("age_rating");
     String description = request.getParameter("description");
+    int movieGenreId = Integer.parseInt(request.getParameter("movieGenreId"));
     MovieDAO movieDao = new MovieDAO();
     // bien flag
     boolean success = false;
@@ -109,7 +121,10 @@ AddMovieServlet extends HttpServlet {
     }
     // insert db truoc moi luu file
     Movie movie = new Movie(name, duration, description, date, age, posterUrl);
-    movieDao.insert(DBConnect.getConnection(), movie);
+    int movieId = movieDao.insertAndReturnId(DBConnect.getConnection(), movie);
+    // luu them vao bang MovieGenreRel
+    MovieGenreRelDAO movieGenreRelDAO = new MovieGenreRelDAO();
+    movieGenreRelDAO.insert(DBConnect.getConnection(), movieId, movieGenreId);
     // insert thanh cong moi luu file ve server
      if (posterPart != null && posterPart.getSize() > 0) {
         File dir = new File(baseImageDir);
@@ -120,17 +135,16 @@ AddMovieServlet extends HttpServlet {
     }
     
     success = true;
-    request.setAttribute("message", "Them phim thanh cong!");
-    } catch (Exception e) {
-        e.printStackTrace();
-        request.setAttribute("message", "Loi ket noi toi co so du lieu!");
+    session.setAttribute("message", "Thêm phim thành công!");
+    session.setAttribute("dbError", "");
+    } catch (SQLException e) {
+        session.setAttribute("dbError", e.getMessage());
+        session.setAttribute("message", "Thêm phim thất bại!");
     }
     // forward sang view de hien thi thong tin
-    request.setAttribute("success", success);
-    request.getRequestDispatcher("views/admin/movies/addFilm.jsp")
-       .forward(request, response);
+    session.setAttribute("success", success);
+    response.sendRedirect(request.getContextPath() + "/AddMovieServlet");
     }
-
     /**
      * Returns a short description of the servlet.
      *
