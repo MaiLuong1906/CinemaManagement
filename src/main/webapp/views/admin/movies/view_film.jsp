@@ -55,22 +55,22 @@
               </li>
               <li>
                 <a href="../bookings/BookTicket.jsp" class="btn-next"
-                  >Gio hang</a
+                  >Giỏ hàng</a
                 >
               </li>
               <li>
-                <a href="../movies/addFilm.jsp" class="btn-next"
-                  >Them phim</a
+                <a href="<%= request.getContextPath() %>/AddMovieServlet" class="btn-next"
+                  >Thêm phim</a
                 >
               </li>
               <li>
-                <a href="../movies/updateFilm.jsp" class="btn-next"
+                <a href="<%= request.getContextPath() %>/UpdateMovieServlet" class="btn-next"
                   >Update phim</a
                 >
               </li>
               <li>
                 <a href="<%= request.getContextPath() %>//addShowTimeServlet" class="btn-next"
-                  >Lua chon khung gio</a
+                  >Thêm khung giờ chiếu</a
                 >
               </li>
             </ul>
