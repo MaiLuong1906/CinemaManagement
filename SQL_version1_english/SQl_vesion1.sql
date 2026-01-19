@@ -210,3 +210,5 @@ CREATE INDEX idx_search_showtime
 CREATE INDEX idx_movie_title ON movies(title);
 
 GO
+
+-- cc
