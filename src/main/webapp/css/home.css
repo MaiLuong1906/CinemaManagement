@@ -1,268 +1,20 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* ==========================================
+   MINIMAL CUSTOM STYLES
+   Chỉ style những gì Bootstrap không có
+   ========================================== */
 
+/* Body padding for fixed header */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0a0a0a;
-    color: #fff;
+    padding-top: 80px !important;
+    transition: padding-left 0.3s ease;
 }
 
-/* ========================================
-   NAVBAR CUSTOM STYLES
-   ======================================== */
-.navbar-custom {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    padding: 0.6rem 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid #667eea;
-}
+/* IMPORTANT: Admin layout padding is now controlled by JavaScript in nav-admin.jsp */
+/* Do NOT set padding-left here to avoid conflicts */
 
-.navbar-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: nowrap;
-}
-
-.navbar-container > ul,
-.navbar-container > .nav {
-    display: flex !important;
-    list-style: none;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    flex: 1;
-    justify-content: center;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-    align-items: center;
-}
-
-.navbar-container > ul li,
-.navbar-container > .nav li {
-    list-style: none;
-    flex-shrink: 0;
-}
-
-.navbar-container > div:not(.navbar-brand):not(.navbar-user) {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    justify-content: center;
-}
-
-/* ========================================
-   LOGO / BRAND
-   ======================================== */
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #667eea;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    user-select: none;
-    flex-shrink: 0;
-    white-space: nowrap;
-    min-width: 150px;
-}
-
-.navbar-brand i {
-    font-size: 1.4rem;
-}
-
-.navbar-brand:hover {
-    transform: scale(1.05);
-}
-
-/* ========================================
-   NAVIGATION LINKS
-   ======================================== */
-.navbar-nav {
-    display: flex;
-    list-style: none;
-    gap: 0.3rem;
-    margin: 0;
-    padding: 0;
-    flex: 1;
-    justify-content: center;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-}
-
-.nav-item {
-    list-style: none;
-    flex-shrink: 0;
-}
-
-.nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1.5rem;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.nav-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
-    transition: left 0.5s ease;
-}
-
-.nav-link:hover::before {
-    left: 100%;
-}
-
-.nav-link:hover {
-    background: rgba(102, 126, 234, 0.15);
-    color: #667eea;
-    transform: translateY(-2px);
-}
-
-.nav-link.active {
-    background: #667eea;
-    color: #fff;
-}
-
-.nav-link i {
-    font-size: 1rem;
-}
-
-/* ========================================
-   USER SECTION
-   ======================================== */
-.navbar-user {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    flex-shrink: 0;
-    white-space: nowrap;
-    min-width: 250px;
-    justify-content: flex-end;
-}
-
-/* User Info (when logged in) */
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.4rem 0.9rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    border: 1px solid rgba(102, 126, 234, 0.3);
-}
-
-.user-avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 1.3rem;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-}
-
-.user-name {
-    color: #ffc107;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-/* ========================================
-   BUTTONS
-   ======================================== */
-.btn-login,
-.btn-signup,
-.btn-logout {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1.2rem;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    cursor: pointer;
-}
-
-/* Login Button */
-.btn-login {
-    background: transparent;
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.btn-login:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-}
-
-/* Sign-up Button */
-.btn-signup {
-    background: linear-gradient(135deg, #ffc107, #ff9800);
-    color: #1a1a2e;
-    border-color: #ffc107;
-}
-
-.btn-signup:hover {
-    background: linear-gradient(135deg, #ffca28, #ffa726);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
-}
-
-/* Logout Button */
-.btn-logout {
-    background: transparent;
-    color: #ff4757;
-    border-color: rgba(255, 71, 87, 0.5);
-}
-
-.btn-logout:hover {
-    background: rgba(255, 71, 87, 0.1);
-    border-color: #ff4757;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
-}
-
-/* ========================================
-   HERO SLIDER BANNER
-   ======================================== */
+/* Hero Slider */
 .hero-slider {
-    margin-top: 60px;
+    margin-top: 0;
     height: 600px;
     position: relative;
     overflow: hidden;
@@ -285,10 +37,7 @@ body {
 .slide::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
 }
 
@@ -299,98 +48,38 @@ body {
     transform: translateY(-50%);
     max-width: 600px;
     z-index: 10;
-}
-
-.slide-title {
-    font-size: 3.5em;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     animation: fadeInUp 0.8s;
 }
 
-.slide-description {
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin-bottom: 30px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    animation: fadeInUp 1s;
-}
-
-.slide-info {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-    animation: fadeInUp 1.2s;
-}
-
-.info-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    backdrop-filter: blur(10px);
-}
-
-.slide-actions {
-    display: flex;
-    gap: 15px;
-    animation: fadeInUp 1.4s;
-}
-
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 35px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1.1em;
-    transition: all 0.3s;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-}
-
-.btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 35px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1.1em;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
 /* Slider Controls */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    z-index: 20;
+}
+
+.slider-arrow:hover {
+    background: rgba(102, 126, 234, 0.8);
+}
+
+.slider-arrow.prev { left: 20px; }
+.slider-arrow.next { right: 20px; }
+
 .slider-controls {
     position: absolute;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
     z-index: 20;
 }
 
@@ -409,97 +98,11 @@ body {
     background: #667eea;
 }
 
-.slider-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s;
-    z-index: 20;
-}
-
-.slider-arrow:hover {
-    background: rgba(102, 126, 234, 0.8);
-}
-
-.slider-arrow.prev {
-    left: 20px;
-}
-
-.slider-arrow.next {
-    right: 20px;
-}
-
-/* ========================================
-   MOVIE SECTIONS
-   ======================================== */
-.movie-section {
-    max-width: 1400px;
-    margin: 60px auto;
-    padding: 0 30px;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.section-header h2 {
-    font-size: 2em;
-    font-weight: 700;
-}
-
-.view-all {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.3s;
-}
-
-.view-all:hover {
-    gap: 10px;
-}
-
-/* Movie Slider */
-.movie-slider {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 20px;
-    scroll-behavior: smooth;
-}
-
-.movie-slider::-webkit-scrollbar {
-    height: 8px;
-}
-
-.movie-slider::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.movie-slider::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
-}
-
+/* Movie Cards */
 .movie-card {
     min-width: 220px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: transform 0.3s;
     position: relative;
     border-radius: 12px;
     overflow: hidden;
@@ -533,37 +136,49 @@ body {
     opacity: 1;
 }
 
-.movie-title {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 8px;
+/* Custom Buttons */
+.btn-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
 }
 
-.movie-info {
-    display: flex;
-    gap: 10px;
-    font-size: 0.9em;
-    color: #ccc;
+.btn-gradient-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
 }
 
-.movie-rating {
-    color: #ffd700;
+.btn-glass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: #666;
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
-.empty-state i {
-    font-size: 80px;
-    margin-bottom: 20px;
-    opacity: 0.3;
+/* Info Badge */
+.info-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
-/* Animations */
+/* Scrollbar cho movie slider */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+/* Animation */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -575,105 +190,32 @@ body {
     }
 }
 
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-@media (max-width: 992px) {
-    .navbar-container {
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    
-    .navbar-nav {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .navbar-user {
-        order: 2;
-    }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-    /* Navbar */
-    .navbar-container {
-        padding: 0 1rem;
+    body {
+        padding-top: 80px !important;
     }
     
-    .navbar-brand {
-        font-size: 1.4rem;
+    body.admin-layout {
+        padding-top: 80px !important;
+        padding-left: 0 !important;
     }
     
-    .navbar-brand i {
-        font-size: 1.6rem;
-    }
-    
-    .navbar-nav {
-        gap: 0.3rem;
-    }
-    
-    .nav-link {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .nav-link i {
-        display: none;
-    }
-    
-    .btn-login,
-    .btn-signup,
-    .btn-logout {
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-    }
-    
-    .user-name {
-        max-width: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .hero-slider {
+        height: 400px;
+        margin-top: 0;
     }
 
-    /* Hero Slider */
     .slide-content {
         left: 30px;
         max-width: 90%;
     }
 
-    .slide-title {
-        font-size: 2em;
-    }
-
-    .slide-description {
-        font-size: 1em;
-    }
-
-    /* Movies */
     .movie-card {
         min-width: 150px;
     }
-}
 
-@media (max-width: 480px) {
-    .navbar-brand span {
-        display: none;
-    }
-    
-    .user-info {
-        padding: 0.4rem 0.8rem;
-    }
-    
-    .user-name {
-        font-size: 0.8rem;
-        max-width: 80px;
-    }
-    
-    .btn-login i,
-    .btn-signup i,
-    .btn-logout i {
-        display: none;
+    .movie-poster {
+        height: 225px;
     }
 }

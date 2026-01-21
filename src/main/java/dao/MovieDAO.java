@@ -22,7 +22,7 @@ public class MovieDAO {
         }
         return null;
     }
-    
+
     public Movie findById(int id) throws SQLException {
         String sql = "SELECT * FROM movies WHERE movie_id = ?";
         Connection con = DBConnect.getConnection();
@@ -156,34 +156,58 @@ public class MovieDAO {
         }
         return list;
     }
+
+    // lay phim theo the loai
+    public List<Movie> getMoviesByGenre(String genre) {
+        List<Movie> list = new ArrayList<>();
+        String sql = "select * \n"
+                + "from movie_genre_rel mgl\n"
+                + "join movies m on mgl.movie_id = m.movie_id\n"
+                + "join movie_genres mg on mg.genre_id = mgl.genre_id\n"
+                + "where mg.genre_name = ?";
+        
+        try (Connection con = DBConnect.getConnection()){
+            PreparedStatement ps = con.prepareStatement(sql); 
+            ps.setString(1, genre);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                list.add(mapRow(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+
     // insert va tra ve id cua phim vua them
     public int insertAndReturnId(Connection conn, Movie movie) throws SQLException {
 
-    String sql = """
+        String sql = """
         INSERT INTO movies
         (title, duration, description, release_date, age_rating, poster_url)
         VALUES (?, ?, ?, ?, ?, ?)
     """;
 
-    try (PreparedStatement ps =
-             conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps
+                = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        ps.setString(1, movie.getTitle());
-        ps.setInt(2, movie.getDuration());
-        ps.setString(3, movie.getDescription());
-        ps.setDate(4, Date.valueOf(movie.getReleaseDate()));
-        ps.setString(5, movie.getAgeRating());
-        ps.setString(6, movie.getPosterUrl());
+            ps.setString(1, movie.getTitle());
+            ps.setInt(2, movie.getDuration());
+            ps.setString(3, movie.getDescription());
+            ps.setDate(4, Date.valueOf(movie.getReleaseDate()));
+            ps.setString(5, movie.getAgeRating());
+            ps.setString(6, movie.getPosterUrl());
 
-        ps.executeUpdate();
+            ps.executeUpdate();
 
-        ResultSet rs = ps.getGeneratedKeys();
-        if (rs.next()) {
-            return rs.getInt(1); // movie_id vừa insert
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1); // movie_id vừa insert
+            }
         }
-    }
 
-    throw new SQLException("Insert movie failed, no ID returned.");
+        throw new SQLException("Insert movie failed, no ID returned.");
     }
 
 }

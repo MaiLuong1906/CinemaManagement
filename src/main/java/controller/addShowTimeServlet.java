@@ -107,36 +107,36 @@ public class addShowTimeServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // dung session de luu 
-        HttpSession session = request.getSession();
-        // logic sau khi nhan form
-        int movieId = Integer.parseInt(request.getParameter("movieId"));
-        int hallId = Integer.parseInt(request.getParameter("hallId"));
-        BigDecimal basePrice = new BigDecimal(request.getParameter("basePrice"));
-        LocalDateTime startTime = LocalDateTime.of(LocalDate.parse(request.getParameter("showDate")),
-        LocalTime.parse(request.getParameter("gioChieu")));
-        //
-        Showtime showtime = new Showtime(movieId, hallId, startTime, basePrice);
-        ShowtimeDAO showtimeDAO = new ShowtimeDAO();
-        boolean flag = true;
-        try{
-            showtimeDAO.insert(DBConnect.getConnection(), showtime);
-            flag = true;
-            session.setAttribute("dbError", "");
-        }catch(SQLException ex){
-            flag = false;
-            session.setAttribute("dbError", ex.getMessage()); // in loi tu procedure
-        }
-        if(flag==true) session.setAttribute("message", "Thêm phim thành công");
-        else session.setAttribute("message", "Thêm phim thất bại");
-        session.setAttribute("success", flag);
-        // goi lai doGet tra ket qua
-        response.sendRedirect(request.getContextPath() + "/AddShowTimeServlet");
-
-    }
+//    @Override
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        // dung session de luu 
+//        HttpSession session = request.getSession();
+//        // logic sau khi nhan form
+//        int movieId = Integer.parseInt(request.getParameter("movieId"));
+//        int hallId = Integer.parseInt(request.getParameter("hallId"));
+//        BigDecimal basePrice = new BigDecimal(request.getParameter("basePrice"));
+//        LocalDateTime startTime = LocalDateTime.of(LocalDate.parse(request.getParameter("showDate")),
+//        LocalTime.parse(request.getParameter("gioChieu")));
+//        //
+//        Showtime showtime = new Showtime(movieId, hallId, startTime, basePrice);
+//        ShowtimeDAO showtimeDAO = new ShowtimeDAO();
+//        boolean flag = true;
+//        try{
+//            showtimeDAO.insert(DBConnect.getConnection(), showtime);
+//            flag = true;
+//            session.setAttribute("dbError", "");
+//        }catch(SQLException ex){
+//            flag = false;
+//            session.setAttribute("dbError", ex.getMessage()); // in loi tu procedure
+//        }
+//        if(flag==true) session.setAttribute("message", "Thêm phim thành công");
+//        else session.setAttribute("message", "Thêm phim thất bại");
+//        session.setAttribute("success", flag);
+//        // goi lai doGet tra ket qua
+//        response.sendRedirect(request.getContextPath() + "/AddShowTimeServlet");
+//
+//    }
 
     /**
      * Returns a short description of the servlet.
