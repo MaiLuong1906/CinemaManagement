@@ -85,7 +85,7 @@
     </div>
     <div class="form-group">
     <label for="movieSelect">Chọn giờ chiếu:</label>
-    <select id="movieSelect" name="gioChieu" class="form-control">
+    <select id="movieSelect" name="timeSlotId" class="form-control">
         <%
             List<TimeSlot> listChieu = (List<TimeSlot>) request.getAttribute("listChieu");
             if (listChieu != null) {
