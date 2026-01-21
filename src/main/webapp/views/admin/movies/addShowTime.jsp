@@ -10,7 +10,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>JSP Page</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/addShowTime.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/showtime.css">
     </head>
     <body>
         <div>
@@ -30,7 +30,7 @@
             border-radius:5px;
             color:white;
             background-color:<%= success != null && success ? "#28a745" : "#dc3545" %>;">
-            <%= message %> : 
+            <%= message %>!  
             <%= messageDb %>
         </div>
         <%
@@ -103,7 +103,7 @@
     <div class="form-group">
         Chọn ngày chiếu: <input type="date" name="showDate">
     </div>
-    <button type="submit" name="Thêm">
+    <button type="submit" class="submit-btn">Thêm suất chiếu</button>
 </form>
 </div>            
     <a href="${pageContext.request.contextPath}/home" class="btn btn-success">

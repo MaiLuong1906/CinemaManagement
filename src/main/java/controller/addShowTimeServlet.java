@@ -118,7 +118,6 @@ public class addShowTimeServlet extends HttpServlet {
         // logic sau khi nhan form
         int movieId = Integer.parseInt(request.getParameter("movieId"));
         int hallId = Integer.parseInt(request.getParameter("hallId"));
-        BigDecimal basePrice = new BigDecimal(request.getParameter("basePrice"));
         int startTimeId = Integer.parseInt(request.getParameter("timeSlotId"));
         LocalDate showDate = LocalDate.parse(request.getParameter("showDate"));
         Showtime showtime = new Showtime(movieId, hallId, showDate, startTimeId);
@@ -130,7 +129,11 @@ public class addShowTimeServlet extends HttpServlet {
             session.setAttribute("dbError", "");
         }catch(SQLException ex){
             flag = false;
-            session.setAttribute("dbError", ex.getMessage()); // in loi tu procedure
+            if(ex.getMessage().contains("UQ_Showtime")){
+                session.setAttribute("dbError", "Lịch chiếu bị trùng!");
+            }else{
+                session.setAttribute("dbError", "Lỗi từ hệ thống SQL!");
+            }
         }
         if(flag==true) session.setAttribute("message", "Thêm phim thành công");
         else session.setAttribute("message", "Thêm phim thất bại");
