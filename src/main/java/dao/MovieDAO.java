@@ -22,6 +22,19 @@ public class MovieDAO {
         }
         return null;
     }
+    
+    public Movie findById(int id) throws SQLException {
+        String sql = "SELECT * FROM movies WHERE movie_id = ?";
+        Connection con = DBConnect.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRow(rs);
+            }
+        }
+        return null;
+    }
 
     /* =========================
        FIND ALL

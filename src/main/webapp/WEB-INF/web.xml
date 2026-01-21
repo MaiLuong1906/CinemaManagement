@@ -33,6 +33,10 @@
         <servlet-name>addShowTimeServlet</servlet-name>
         <servlet-class>controller.addShowTimeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MovieDetailServlet</servlet-name>
+        <servlet-class>controller.MovieDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -61,12 +65,16 @@
         <servlet-name>addShowTimeServlet</servlet-name>
         <url-pattern>/addShowTimeServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MovieDetailServlet</servlet-name>
+        <url-pattern>/MovieDetailServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>views/user/home.jsp</welcome-file>
+        <welcome-file>home</welcome-file>
     </welcome-file-list>
 </web-app>

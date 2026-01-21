@@ -1,29 +1,58 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-        <header class="p-3 bg-dark text-white">
-            <div class="container">
-                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-
-                    <!-- Logo -->
-                    <a href="${pageContext.request.contextPath}/home"
-                        class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                        <img src="${pageContext.request.contextPath}/image/logo.png" alt="Logo" width="40" height="32"
-                            class="me-2" />
+<nav class="navbar-custom">
+    <div class="navbar-container">
+        <!-- Logo -->
+        <div class="navbar-brand" onclick="location.href = '${pageContext.request.contextPath}/home'">
+            <i class="fas fa-film"></i>
+            <span>CINEMA</span>
+        </div>
+        <!-- Navigation Links -->
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            <li>
+                <a href="${pageContext.request.contextPath}/home" class="nav-link px-2 text-white">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/booking" class="nav-link px-2 text-white">
+                    Booking
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/movies" class="nav-link px-2 text-white">
+                    Movies
+                </a>
+            </li>
+        </ul>
+        <!-- User Section -->
+        <div class="navbar-user text-end">
+            <c:choose>
+                <c:when test="${sessionScope.user == null}">
+                    <a href="${pageContext.request.contextPath}/views/auth/login.jsp" class="btn-login me-2">
+                        Login
                     </a>
-
-                    <c:choose>
-
-                        <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'Admin'}">
-                            <jsp:include page="/layout/nav-admin.jsp" />
-                        </c:when>
-
-                        <c:otherwise>
-                            <jsp:include page="/layout/nav-user.jsp" />
-                        </c:otherwise>
-
-                    </c:choose>
-
-                </div>
-            </div>
-        </header>
+                    <a href="${pageContext.request.contextPath}/views/auth/register.jsp" class="btn-signup">
+                        Sign-up
+                    </a>
+                </c:when>
+                <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'User'}">
+                    <span class="text-warning me-3" style="font-weight: 600;">
+                        <i class="fas fa-user"></i> Hello, ${sessionScope.user.fullName}
+                    </span>
+                    <a href="${pageContext.request.contextPath}/logout" class="btn-logout">
+                        Logout
+                    </a>
+                </c:when>
+                <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'Admin'}">
+                    <span class="text-warning me-3" style="font-weight: 600;">
+                        <i class="fas fa-crown"></i> Admin: ${sessionScope.user.fullName}
+                    </span>
+                    <a href="${pageContext.request.contextPath}/logout" class="btn-logout">
+                        Logout
+                    </a>
+                </c:when>
+            </c:choose>
+        </div>
+    </div>
+</nav>
