@@ -99,16 +99,36 @@ CREATE TABLE seats (
 /* =========================
    9. Showtimes (Suất chiếu)
    ========================= */
+CREATE TABLE time_slots (
+    slot_id INT IDENTITY(1,1) PRIMARY KEY,
+    slot_name NVARCHAR(50),
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    slot_price DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT CK_TimeSlot_Time CHECK (start_time < end_time),
+    CONSTRAINT CK_TimeSlot_Price CHECK (slot_price > 0)
+);
+
+
 CREATE TABLE showtimes (
     showtime_id INT IDENTITY(1,1) PRIMARY KEY,
-    movie_id INT,
-    hall_id INT,
-    start_time DATETIME NOT NULL,
-    base_price DECIMAL(10,2) NOT NULL, -- Giá gốc của suất chiếu
-    CONSTRAINT CK_start_time CHECK (start_time >= GETDATE()),
+    movie_id INT NOT NULL,
+    hall_id INT NOT NULL,
+    show_date DATE NOT NULL,         -- Ngày chiếu
+    slot_id INT NOT NULL,             -- Khung giờ chiếu
+
+    CONSTRAINT UQ_Showtime UNIQUE (hall_id, show_date, slot_id),
+
+
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
-    FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id)
+    FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
+    FOREIGN KEY (slot_id) REFERENCES time_slots(slot_id)
 );
+
+
+
+
 
 /* =========================
    10. Invoices (Hóa đơn vé tổng quát)
@@ -132,12 +152,10 @@ CREATE TABLE invoices (
 CREATE TABLE ticket_details (
     invoice_id INT NOT NULL,       -- liên kết hóa đơn
     seat_id INT NOT NULL,          -- ghế được đặt
-    hall_id INT NOT NULL,          -- phòng chứa ghế
     showtime_id INT NOT NULL,      -- suất chiếu ghế thuộc
     actual_price DECIMAL(10,2),   -- base_price + extra_fee
 
-    -- PRIMARY KEY (1 lần đặt ghế duy nhất trong 1 invoice)
-    CONSTRAINT PK_TicketDetails PRIMARY KEY (invoice_id, seat_id, hall_id),
+
 
     -- UNIQUE constraint để chống trùng ghế cùng suất chiếu
     CONSTRAINT UQ_Showtime_Seat UNIQUE (showtime_id, seat_id),
@@ -145,7 +163,6 @@ CREATE TABLE ticket_details (
     -- FOREIGN KEY
     CONSTRAINT FK_Ticket_Invoice FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
     CONSTRAINT FK_Ticket_Seat FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
-    CONSTRAINT FK_Ticket_Hall FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
     CONSTRAINT FK_Ticket_Showtime FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
 );
 
@@ -185,9 +202,13 @@ CREATE INDEX idx_showtime_status ON invoices(showtime_id, status);
 CREATE UNIQUE INDEX idx_ticket_code_unique ON invoices(ticket_code);
 
 -- Tìm lịch chiếu theo thời gian và phim
-CREATE INDEX idx_search_showtime ON showtimes(start_time, movie_id);
+CREATE INDEX idx_search_showtime
+    ON showtimes(show_date, slot_id, movie_id);
+
 
 -- Tìm tên phim nhanh hơn
 CREATE INDEX idx_movie_title ON movies(title);
 
 GO
+
+-- cc

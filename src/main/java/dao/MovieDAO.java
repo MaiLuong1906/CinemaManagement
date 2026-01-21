@@ -156,4 +156,34 @@ public class MovieDAO {
         }
         return list;
     }
+    // insert va tra ve id cua phim vua them
+    public int insertAndReturnId(Connection conn, Movie movie) throws SQLException {
+
+    String sql = """
+        INSERT INTO movies
+        (title, duration, description, release_date, age_rating, poster_url)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """;
+
+    try (PreparedStatement ps =
+             conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        ps.setString(1, movie.getTitle());
+        ps.setInt(2, movie.getDuration());
+        ps.setString(3, movie.getDescription());
+        ps.setDate(4, Date.valueOf(movie.getReleaseDate()));
+        ps.setString(5, movie.getAgeRating());
+        ps.setString(6, movie.getPosterUrl());
+
+        ps.executeUpdate();
+
+        ResultSet rs = ps.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1); // movie_id vừa insert
+        }
+    }
+
+    throw new SQLException("Insert movie failed, no ID returned.");
+    }
+
 }

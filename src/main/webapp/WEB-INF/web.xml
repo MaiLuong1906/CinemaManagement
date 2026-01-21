@@ -36,6 +36,8 @@
     <servlet>
         <servlet-name>MovieDetailServlet</servlet-name>
         <servlet-class>controller.MovieDetailServlet</servlet-class>
+        <servlet-name>UpdateMovie</servlet-name>
+        <servlet-class>controller.UpdateMovieServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -68,6 +70,8 @@
     <servlet-mapping>
         <servlet-name>MovieDetailServlet</servlet-name>
         <url-pattern>/MovieDetailServlet</url-pattern>
+        <servlet-name>UpdateMovie</servlet-name>
+        <url-pattern>/UpdateMovie</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
