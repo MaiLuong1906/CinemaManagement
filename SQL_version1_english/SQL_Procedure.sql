@@ -54,7 +54,9 @@ END
 BEGIN
             THROW 50004, N'Phòng đã có suất chiếu ở khung giờ này', 1;
 END
-
+-- ngan race condition
+ALTER TABLE showtimes
+ADD CONSTRAINT UQ_Showtime UNIQUE (hall_id, show_date, slot_id);
         /* =========================
            5. INSERT SHOWTIME
            ========================= */
