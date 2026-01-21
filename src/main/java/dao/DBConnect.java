@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class DBConnect {
     static String user = "sa";
-    static String pass = "Mailuong@2025";
+    static String pass = "30042005";
     static String url = "jdbc:sqlserver://localhost:1433;databaseName=CinemaManagement;encrypt=true;trustServerCertificate=true";
     static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
