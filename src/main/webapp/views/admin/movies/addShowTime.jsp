@@ -1,5 +1,6 @@
 <%-- Document : addShowTime Created on : Jan 17, 2026, 8:38:04 PM Author : nguye
---%> <%@page import="java.time.LocalTime"%>
+--%> <%@page import="model.TimeSlot"%>
+<%@page import="java.time.LocalTime"%>
 <%@page import="model.CinemaHall"%>
 <%@page import="model.Movie"%>
 <%@page import="java.util.List"%>
@@ -61,8 +62,8 @@
                 }
             }
         %>
-    </select>
-</div>
+        </select>
+    </div>
     <!--cac thuoc tinh con lai--> 
     <!--phong chieu-->
     <div class="form-group">
@@ -82,17 +83,16 @@
         %>
     </select>
     </div>
-    <!--gio chieu-->
     <div class="form-group">
     <label for="movieSelect">Chọn giờ chiếu:</label>
     <select id="movieSelect" name="gioChieu" class="form-control">
         <%
-            List<LocalTime> listChieu = (List<LocalTime>) request.getAttribute("listChieu");
+            List<TimeSlot> listChieu = (List<TimeSlot>) request.getAttribute("listChieu");
             if (listChieu != null) {
-                for (LocalTime gioChieu : listChieu) {
+                for (TimeSlot gioChieu : listChieu) {
         %>
-        <option value="<%= gioChieu %>">
-            <%= gioChieu %> 
+        <option value="<%= gioChieu.getSlotId() %>">
+            <%= gioChieu.getSlotId() %> - <%= gioChieu.getSlotName()%> - <%= gioChieu.getStartHour()%> 
         </option>
         <%
                 }
@@ -103,16 +103,11 @@
     <div class="form-group">
         Chọn ngày chiếu: <input type="date" name="showDate">
     </div>
-    <div class="form-group">
-        Giá gốc: <input type="number" name="basePrice" placeholder="Nhap gia">
-    </div>
-    <input type="submit" name="Them">
+    <button type="submit" name="Thêm">
 </form>
-</div>
-            
+</div>            
     <a href="${pageContext.request.contextPath}/home" class="btn btn-success">
         Quay lại trang chủ
     </a>
-        
 </body>
 </html>
