@@ -50,13 +50,20 @@ VALUES (11, 'User1', 'User1@gmail.com', 1, '1995-03-10'),
        (15, 'User5', 'User5@gmail.com', 1, '1995-03-10');
 
 --Thêm phim
+-- ===== MOVIE GENRES =====
 INSERT INTO movie_genres (genre_name)
 VALUES
-    (N'Hành động'),
-    (N'Kinh dị'),
-    (N'Hoạt hình'),
-    (N'Tình cảm'),
-    (N'Khoa học viễn tưởng');
+    (N'Action'),        -- 1
+    (N'Horror'),        -- 2
+    (N'Animation'),    -- 3
+    (N'Adventure'),    -- 4
+    (N'Sci-Fi'),        -- 5
+    (N'Comedy'),        -- 6
+    (N'Fantasy'),      -- 7
+    (N'Crime'),         -- 8
+    (N'Thriller'),     -- 9
+    (N'Drama');         -- 10
+
 
 
 --Set loại ghế
@@ -99,26 +106,106 @@ VALUES
 
 
 --Thêm phim
-INSERT INTO movies (title, duration, description, release_date, age_rating, poster_url)
+INSERT INTO movies (title, duration, release_date, age_rating)
 VALUES
-    (N'Avengers: Endgame', 181, N'Biệt đội siêu anh hùng đối đầu Thanos', '2019-04-26', 'T13', 'avengers.jpg'),
-    (N'The Nun', 96, N'Ác quỷ Valak ám ảnh tu viện', '2018-09-07', 'T18', 'thenun.jpg'),
-    (N'Doraemon Movie', 110, N'Cuộc phiêu lưu của Doraemon', '2024-06-01', 'P', 'doraemon.jpg');
+    (N'Avatar 3', 190, '2026-01-01', 'T13'),
+    (N'Dune Part Two', 165, '2025-12-20', 'T13'),
+    (N'Kung Fu Panda 4', 95, '2025-12-15', 'P'),
+    (N'John Wick 5', 145, '2025-11-10', 'T18'),
+    (N'Spider-Man: New Saga', 150, '2025-12-05', 'T13'),
+    (N'Fast & Furious 11', 155, '2025-11-25', 'T16'),
+    (N'Frozen 3', 110, '2025-12-01', 'P'),
+    (N'Transformers: Reborn', 160, '2025-10-30', 'T13'),
+    (N'Insidious 6', 120, '2025-10-15', 'T18'),
+    (N'The Batman: Dawn', 175, '2025-12-18', 'T16');
 
+-- ===== MOVIE - GENRE RELATION =====
 INSERT INTO movie_genre_rel (movie_id, genre_id)
 VALUES
-    (1, 1), -- Avengers - Action
-    (1, 5), -- Avengers - Sci-Fi
-    (2, 2), -- The Nun - Horror
-    (3, 3); -- Doraemon - Animation
+-- Avatar 3
+(1, 4), -- Adventure
+(1, 5), -- Sci-Fi
+(1, 7), -- Fantasy
 
---Lich chieu
-INSERT INTO showtimes (movie_id, hall_id, start_time, base_price)
+-- Dune Part Two
+(2, 4), -- Adventure
+(2, 5), -- Sci-Fi
+(2, 10), -- Drama
+
+-- Kung Fu Panda 4
+(3, 3), -- Animation
+(3, 6), -- Comedy
+(3, 4), -- Adventure
+
+-- John Wick 5
+(4, 1), -- Action
+(4, 8), -- Crime
+(4, 9), -- Thriller
+
+-- Spider-Man: New Saga
+(5, 1), -- Action
+(5, 4), -- Adventure
+(5, 5), -- Sci-Fi
+
+-- Fast & Furious 11
+(6, 1), -- Action
+(6, 8), -- Crime
+(6, 9), -- Thriller
+
+-- Frozen 3
+(7, 3), -- Animation
+(7, 7), -- Fantasy
+(7, 6), -- Comedy
+
+-- Transformers: Reborn
+(8, 1), -- Action
+(8, 5), -- Sci-Fi
+(8, 4), -- Adventure
+
+-- Insidious 6
+(9, 2), -- Horror
+(9, 9), -- Thriller
+
+-- The Batman: Dawn
+(10, 1), -- Action
+(10, 8), -- Crime
+(10, 10); -- Drama
+
+-- ===== TIME SLOTS =====
+INSERT INTO time_slots (slot_name, start_time, end_time, slot_price)
 VALUES
-    (1, 1, DATEADD(HOUR, 2, GETDATE()), 90000),
-    (1, 1, DATEADD(HOUR, 5, GETDATE()), 100000),
-    (2, 2, DATEADD(DAY, 1, GETDATE()), 85000),
-    (3, 3, DATEADD(DAY, 1, DATEADD(HOUR, 3, GETDATE())), 70000);
+    (N'Morning',    '08:00', '10:30',  80000),
+    (N'Noon',       '11:00', '13:30',  90000),
+    (N'Afternoon',  '14:00', '16:30', 100000),
+    (N'Evening',    '17:30', '20:00', 120000),
+    (N'Late Night', '20:30', '23:00',  95000);
+
+DECLARE @today DATE = CAST(GETDATE() AS DATE);
+
+-- ===== SHOWTIMES =====
+INSERT INTO showtimes (movie_id, hall_id, show_date, slot_id)
+VALUES
+-- Today
+(1, 1, @today, 1),
+(2, 1, @today, 2),
+(3, 2, @today, 3),
+(4, 2, @today, 4),
+(5, 3, @today, 5),
+
+-- Tomorrow
+(6, 1, DATEADD(DAY, 1, @today), 1),
+(7, 1, DATEADD(DAY, 1, @today), 3),
+(8, 2, DATEADD(DAY, 1, @today), 4),
+(9, 3, DATEADD(DAY, 1, @today), 5),
+(10,3, DATEADD(DAY, 1, @today), 2),
+
+-- Day after tomorrow
+(1, 2, DATEADD(DAY, 2, @today), 4),
+(2, 3, DATEADD(DAY, 2, @today), 5),
+(3, 1, DATEADD(DAY, 2, @today), 1),
+(4, 2, DATEADD(DAY, 2, @today), 2),
+(5, 3, DATEADD(DAY, 2, @today), 3);
+
 
 
 --Product
@@ -135,16 +222,14 @@ VALUES
     (11, 1, DATEADD(MINUTE, 5, GETDATE()), N'Paid', 160000),
     (12, 2, DATEADD(MINUTE, 5, GETDATE()), N'Pending', 120000),
     (13, 3, DATEADD(MINUTE, 5, GETDATE()), N'Paid', 135000);
-
-
 --ghế đã đặt
 INSERT INTO ticket_details
-(invoice_id, seat_id, hall_id, showtime_id, actual_price)
+(invoice_id, seat_id, showtime_id, actual_price)
 VALUES
-    (1, 1, 1, 1, 90000),
-    (1, 3, 1, 1, 110000),
-    (2, 2, 1, 2, 100000),
-    (3, 6, 2, 3, 85000);
+    (1, 1,  1, 90000),
+    (1, 3, 1, 110000),
+    (2, 2,  2, 100000),
+    (3, 6,  3, 85000);
 
 
 INSERT INTO products_details (invoice_id, item_id, quantity)

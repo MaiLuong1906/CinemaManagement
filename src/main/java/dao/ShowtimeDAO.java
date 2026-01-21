@@ -1,6 +1,5 @@
 package dao;
 
-
 import model.Showtime;
 
 import java.sql.*;
@@ -32,7 +31,7 @@ public class ShowtimeDAO {
         String sql = """
             SELECT * FROM showtimes
             WHERE movie_id = ?
-            ORDER BY start_time
+            ORDER BY show_date, slot_id
         """;
 
         List<Showtime> list = new ArrayList<>();
@@ -52,8 +51,8 @@ public class ShowtimeDAO {
     public List<Showtime> findByDate(Connection conn, LocalDate date) throws SQLException {
         String sql = """
             SELECT * FROM showtimes
-            WHERE CAST(start_time AS DATE) = ?
-            ORDER BY start_time
+            WHERE show_date = ?
+            ORDER BY slot_id
         """;
 
         List<Showtime> list = new ArrayList<>();
@@ -73,8 +72,8 @@ public class ShowtimeDAO {
     public List<Showtime> findUpcoming(Connection conn) throws SQLException {
         String sql = """
             SELECT * FROM showtimes
-            WHERE start_time >= GETDATE()
-            ORDER BY start_time
+            WHERE show_date >= CAST(GETDATE() AS DATE)
+            ORDER BY show_date, slot_id
         """;
 
         List<Showtime> list = new ArrayList<>();
@@ -88,20 +87,38 @@ public class ShowtimeDAO {
     }
 
     /* =========================
+       INSERT
+       ========================= */
+    public void insert(Connection conn, Showtime st) throws SQLException {
+        String sql = """
+            INSERT INTO showtimes (movie_id, hall_id, show_date, slot_id)
+            VALUES (?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, st.getMovieId());
+            ps.setInt(2, st.getHallId());
+            ps.setDate(3, Date.valueOf(st.getShowDate()));
+            ps.setInt(4, st.getSlotId());
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
        UPDATE (ADMIN)
        ========================= */
     public void update(Connection conn, Showtime st) throws SQLException {
         String sql = """
             UPDATE showtimes
-            SET movie_id = ?, hall_id = ?, start_time = ?, base_price = ?
+            SET movie_id = ?, hall_id = ?, show_date = ?, slot_id = ?
             WHERE showtime_id = ?
         """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, st.getMovieId());
             ps.setInt(2, st.getHallId());
-            ps.setTimestamp(3, Timestamp.valueOf(st.getStartTime()));
-            ps.setBigDecimal(4, st.getBasePrice());
+            ps.setDate(3, Date.valueOf(st.getShowDate()));
+            ps.setInt(4, st.getSlotId());
             ps.setInt(5, st.getShowtimeId());
             ps.executeUpdate();
         }
@@ -126,20 +143,8 @@ public class ShowtimeDAO {
         st.setShowtimeId(rs.getInt("showtime_id"));
         st.setMovieId(rs.getInt("movie_id"));
         st.setHallId(rs.getInt("hall_id"));
-        st.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
-        st.setBasePrice(rs.getBigDecimal("base_price"));
+        st.setShowDate(rs.getDate("show_date").toLocalDate());
+        st.setSlotId(rs.getInt("slot_id"));
         return st;
     }
-    // insert showtime nguoi dung nhap thoi gian se co procedure check trung time
-    public void insert(Connection conn, Showtime st) throws SQLException {
-        String sql = "{CALL sp_InsertShowtime(?, ?, ?, ?)}";
-        try (CallableStatement cs = conn.prepareCall(sql)) {
-            cs.setInt(1, st.getMovieId());
-            cs.setInt(2, st.getHallId());
-            cs.setTimestamp(3, Timestamp.valueOf(st.getStartTime()));
-            cs.setBigDecimal(4, st.getBasePrice());
-            cs.execute(); // procedure check trung neu khong trung moi insert
-        }
-    }
 }
-

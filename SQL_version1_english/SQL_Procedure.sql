@@ -1,72 +1,83 @@
-
--- check trung time (Dat dung tam de build)
+-- Check trùng suất chiếu theo NGÀY + PHÒNG + SLOT
 CREATE OR ALTER PROCEDURE sp_InsertShowtime
     @movie_id   INT,
     @hall_id    INT,
-    @start_time DATETIME,
-    @base_price DECIMAL(10,2)
-AS
+    @show_date  DATE,
+    @slot_id    INT
+    AS
 BEGIN
     SET NOCOUNT ON;
 
-    BEGIN TRY
-        BEGIN TRAN;
-
-        DECLARE @new_duration INT;
-        DECLARE @new_end_time DATETIME;
+BEGIN TRY
+BEGIN TRAN;
 
         /* =========================
-           1. LẤY DURATION PHIM MỚI
+           1. CHECK PHIM TỒN TẠI
            ========================= */
-        SELECT @new_duration = duration
-        FROM movies
-        WHERE movie_id = @movie_id;
-
-        IF @new_duration IS NULL
-        BEGIN
-            THROW 50002, N'Phim không tồn tại hoặc chưa có duration', 1;
-        END
-
-        SET @new_end_time = DATEADD(MINUTE, @new_duration, @start_time);
+        IF NOT EXISTS (
+            SELECT 1 FROM movies WHERE movie_id = @movie_id
+        )
+BEGIN
+            THROW 50001, N'Phim không tồn tại', 1;
+END
 
         /* =========================
-           2. CHECK TRÙNG SUẤT CHIẾU
+           2. CHECK PHÒNG TỒN TẠI
+           ========================= */
+        IF NOT EXISTS (
+            SELECT 1 FROM cinema_halls WHERE hall_id = @hall_id
+        )
+BEGIN
+            THROW 50002, N'Phòng chiếu không tồn tại', 1;
+END
+
+        /* =========================
+           3. CHECK SLOT TỒN TẠI
+           ========================= */
+        IF NOT EXISTS (
+            SELECT 1 FROM time_slots WHERE slot_id = @slot_id
+        )
+BEGIN
+            THROW 50003, N'Khung giờ chiếu không tồn tại', 1;
+END
+
+        /* =========================
+           4. CHECK TRÙNG SUẤT CHIẾU
            ========================= */
         IF EXISTS (
             SELECT 1
-            FROM showtimes s
-            JOIN movies m ON s.movie_id = m.movie_id
-            WHERE s.hall_id = @hall_id
-              AND (
-                    @start_time < DATEADD(MINUTE, m.duration, s.start_time)
-                AND @new_end_time > s.start_time
-              )
+            FROM showtimes
+            WHERE hall_id   = @hall_id
+              AND show_date = @show_date
+              AND slot_id   = @slot_id
         )
-        BEGIN
-            THROW 50001, N'Phòng chiếu đã có suất chiếu trong khung giờ này', 1;
-        END
-
+BEGIN
+            THROW 50004, N'Phòng đã có suất chiếu ở khung giờ này', 1;
+END
+-- ngan race condition
+ALTER TABLE showtimes
+ADD CONSTRAINT UQ_Showtime UNIQUE (hall_id, show_date, slot_id);
         /* =========================
-           3. INSERT SUẤT CHIẾU
+           5. INSERT SHOWTIME
            ========================= */
-        INSERT INTO showtimes (
-            movie_id,
-            hall_id,
-            start_time,
-            base_price
-        )
-        VALUES (
-            @movie_id,
-            @hall_id,
-            @start_time,
-            @base_price
-        );
+INSERT INTO showtimes (
+    movie_id,
+    hall_id,
+    show_date,
+    slot_id
+)
+VALUES (
+           @movie_id,
+           @hall_id,
+           @show_date,
+           @slot_id
+       );
 
-        COMMIT;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0
+COMMIT;
+END TRY
+BEGIN CATCH
+IF @@TRANCOUNT > 0
             ROLLBACK;
         THROW;
-    END CATCH
+END CATCH
 END;
