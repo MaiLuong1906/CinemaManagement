@@ -4,6 +4,8 @@
  */
 package controller;
 
+import dao.DBConnect;
+import dao.MovieDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +13,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Movie;
+import dao.MovieGenreDAO;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import dao.MovieGenreRelDAO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -44,24 +56,38 @@ public class UpdateMovieServlet extends HttpServlet {
             out.println("</html>");
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // chuyen tiep len updateFilm.jsp
-        request.getRequestDispatcher("/views/admin/movies/updateFilm.jsp")
-               .forward(request, response);
-    }
 
+        MovieDAO movieDAO = new MovieDAO();
+        MovieGenreDAO genreDAO = new MovieGenreDAO();
+
+        request.setAttribute("movieList", movieDAO.getAllMovies());
+        request.setAttribute("movieGenreList", genreDAO.getAllGenres());
+
+        String movieIdRaw = request.getParameter("movieId");
+        String mode = request.getParameter("mode");
+        if (mode == null) {
+            mode = "view";
+        }
+
+        if (movieIdRaw != null && !movieIdRaw.isEmpty()) {
+            int movieId = Integer.parseInt(movieIdRaw);
+            Movie movie = null;
+            try {
+                movie = movieDAO.findById(DBConnect.getConnection(), movieId);
+            } catch (SQLException ex) {
+                Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            int genreId = movieDAO.getGenreIdByMovieId(movieId);
+            request.setAttribute("selectedMovie", movie);
+            request.setAttribute("selectedGenreId", genreId);
+        }
+        request.setAttribute("mode", mode);
+        request.getRequestDispatcher("views/admin/movies/updateFilm.jsp")
+                .forward(request, response);
+    }
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -73,14 +99,85 @@ public class UpdateMovieServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        int movieId = Integer.parseInt(request.getParameter("movieId"));
+
+// Lấy movie cũ từ DB
+        MovieDAO movieDAO = new MovieDAO();
+        MovieGenreRelDAO relDAO = new MovieGenreRelDAO();
+        Movie oldMovie = null;
+        try {
+            oldMovie = movieDAO.findById(DBConnect.getConnection(), movieId);
+        } catch (SQLException ex) {
+            Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+// title
+        String title = request.getParameter("title");
+        if (title == null || title.isEmpty()) {
+            title = oldMovie.getTitle();
+        }
+// duration
+        String durationRaw = request.getParameter("duration");
+        int duration = durationRaw == null || durationRaw.isEmpty()
+                ? oldMovie.getDuration()
+                : Integer.parseInt(durationRaw);
+
+ // release date
+        String dateRaw = request.getParameter("release_date");
+        LocalDate releaseDate = dateRaw == null || dateRaw.isEmpty()
+                ? oldMovie.getReleaseDate()
+                : LocalDate.parse(dateRaw);
+        // age rating
+        String age = request.getParameter("age_rating");
+        if (age == null || age.isEmpty()) {
+            age = oldMovie.getAgeRating();
+        }
+        // description
+        String desc = request.getParameter("description");
+        if (desc == null || desc.isEmpty()) {
+            desc = oldMovie.getDescription();
+        }
+        // genre
+        String genreRaw = request.getParameter("movieGenreId");
+        int genreId = genreRaw == null || genreRaw.isEmpty()
+                ? movieDAO.getGenreIdByMovieId(movieId)
+                : Integer.parseInt(genreRaw);
+        // poster
+        Part posterPart = request.getPart("poster");
+        // Giữ poster cũ mặc định
+        String posterUrl = oldMovie.getPosterUrl();
+        if (posterPart != null && posterPart.getSize() > 0) {
+            String uploadDir = "E:/imgForCinema";
+
+            String fileName = System.currentTimeMillis() + "_"
+                    + Paths.get(posterPart.getSubmittedFileName())
+                            .getFileName().toString();
+
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            posterPart.write(uploadDir + File.separator + fileName);
+            posterUrl = fileName; // chỉ cập nhật khi có file mới
+        }
+
+        Movie updated = new Movie(
+                movieId, title, duration, desc, releaseDate, age, posterUrl
+        );
+
+        try {
+            movieDAO.update(DBConnect.getConnection(), updated);
+        } catch (SQLException ex) {
+            Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            relDAO.updateGenre(movieId, genreId);
+        } catch (SQLException ex) {
+            Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

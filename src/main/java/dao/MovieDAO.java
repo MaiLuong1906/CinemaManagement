@@ -173,4 +173,28 @@ public class MovieDAO {
     throw new SQLException("Insert movie failed, no ID returned.");
     }
 
+    public int getGenreIdByMovieId(int movieId) {
+    String sql = """
+        SELECT movie_genre_id
+        FROM MovieGenreRel
+        WHERE movie_id = ?
+    """;
+
+    try (Connection conn = DBConnect.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, movieId);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt("movie_genre_id");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return -1; // không tìm thấy
+}
+
+
 }

@@ -24,4 +24,19 @@ public class MovieGenreRelDAO {
             ps.executeUpdate();
         }
     }
+    public void updateGenre(int movieId, int genreId) throws SQLException {
+        String sql = """
+            UPDATE MovieGenreRel
+            SET movie_genre_id = ?
+            WHERE movie_id = ?
+        """;
+
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, genreId);
+            ps.setInt(2, movieId);
+            ps.executeUpdate();
+        }
+    }
 }
