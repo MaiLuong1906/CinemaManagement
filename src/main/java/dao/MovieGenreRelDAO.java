@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import java.sql.Connection;
@@ -10,6 +6,7 @@ import java.sql.SQLException;
 
 public class MovieGenreRelDAO {
 
+    // Insert 1 quan hệ phim - thể loại
     public void insert(Connection conn, int movieId, int genreId)
             throws SQLException {
 
@@ -24,19 +21,40 @@ public class MovieGenreRelDAO {
             ps.executeUpdate();
         }
     }
+
+    // Update thể loại cho phim (DELETE cũ + INSERT mới)
     public void updateGenre(int movieId, int genreId) throws SQLException {
-        String sql = """
-            UPDATE MovieGenreRel
-            SET movie_genre_id = ?
+
+        String deleteSQL = """
+            DELETE FROM movie_genre_rel
             WHERE movie_id = ?
         """;
 
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String insertSQL = """
+            INSERT INTO movie_genre_rel (movie_id, genre_id)
+            VALUES (?, ?)
+        """;
 
-            ps.setInt(1, genreId);
-            ps.setInt(2, movieId);
-            ps.executeUpdate();
+        try (Connection conn = DBConnect.getConnection()) {
+            conn.setAutoCommit(false);
+
+            // Xóa quan hệ cũ
+            try (PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
+                ps.setInt(1, movieId);
+                ps.executeUpdate();
+            }
+
+            // Thêm quan hệ mới
+            try (PreparedStatement ps = conn.prepareStatement(insertSQL)) {
+                ps.setInt(1, movieId);
+                ps.setInt(2, genreId);
+                ps.executeUpdate();
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 }

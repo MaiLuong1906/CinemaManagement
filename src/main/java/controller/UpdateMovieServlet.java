@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.DBConnect;
@@ -10,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,26 +22,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author nguye
  */
 @WebServlet("/UpdateMovieServlet")
+@MultipartConfig // Thêm annotation này để xử lý multipart/form-data
 public class UpdateMovieServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -56,6 +43,7 @@ public class UpdateMovieServlet extends HttpServlet {
             out.println("</html>");
         }
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -88,21 +76,14 @@ public class UpdateMovieServlet extends HttpServlet {
         request.getRequestDispatcher("views/admin/movies/updateFilm.jsp")
                 .forward(request, response);
     }
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         int movieId = Integer.parseInt(request.getParameter("movieId"));
 
-// Lấy movie cũ từ DB
+        // Lấy movie cũ từ DB
         MovieDAO movieDAO = new MovieDAO();
         MovieGenreRelDAO relDAO = new MovieGenreRelDAO();
         Movie oldMovie = null;
@@ -111,41 +92,53 @@ public class UpdateMovieServlet extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-// title
-        String title = request.getParameter("title");
-        if (title == null || title.isEmpty()) {
-            title = oldMovie.getTitle();
-        }
-// duration
-        String durationRaw = request.getParameter("duration");
-        int duration = durationRaw == null || durationRaw.isEmpty()
-                ? oldMovie.getDuration()
-                : Integer.parseInt(durationRaw);
 
- // release date
+        // Title - nếu không có hoặc rỗng thì giữ nguyên
+        String title = request.getParameter("title");
+        if (title == null || title.trim().isEmpty()) {
+            title = oldMovie.getTitle();
+        } else {
+            title = title.trim();
+        }
+
+        // Duration - nếu không có hoặc rỗng thì giữ nguyên
+        String durationRaw = request.getParameter("duration");
+        int duration = durationRaw == null || durationRaw.trim().isEmpty()
+                ? oldMovie.getDuration()
+                : Integer.parseInt(durationRaw.trim());
+
+        // Release date - nếu không có hoặc rỗng thì giữ nguyên
         String dateRaw = request.getParameter("release_date");
-        LocalDate releaseDate = dateRaw == null || dateRaw.isEmpty()
+        LocalDate releaseDate = dateRaw == null || dateRaw.trim().isEmpty()
                 ? oldMovie.getReleaseDate()
-                : LocalDate.parse(dateRaw);
-        // age rating
+                : LocalDate.parse(dateRaw.trim());
+
+        // Age rating - nếu không có hoặc rỗng thì giữ nguyên
         String age = request.getParameter("age_rating");
-        if (age == null || age.isEmpty()) {
+        if (age == null || age.trim().isEmpty()) {
             age = oldMovie.getAgeRating();
+        } else {
+            age = age.trim();
         }
-        // description
+
+        // Description - nếu không có hoặc rỗng thì giữ nguyên
         String desc = request.getParameter("description");
-        if (desc == null || desc.isEmpty()) {
+        if (desc == null || desc.trim().isEmpty()) {
             desc = oldMovie.getDescription();
+        } else {
+            desc = desc.trim();
         }
-        // genre
+
+        // Genre - nếu không có hoặc rỗng thì giữ nguyên
         String genreRaw = request.getParameter("movieGenreId");
-        int genreId = genreRaw == null || genreRaw.isEmpty()
+        int genreId = genreRaw == null || genreRaw.trim().isEmpty()
                 ? movieDAO.getGenreIdByMovieId(movieId)
-                : Integer.parseInt(genreRaw);
-        // poster
+                : Integer.parseInt(genreRaw.trim());
+
+        // Poster - chỉ cập nhật khi có file mới được upload
         Part posterPart = request.getPart("poster");
-        // Giữ poster cũ mặc định
-        String posterUrl = oldMovie.getPosterUrl();
+        String posterUrl = oldMovie.getPosterUrl(); // Giữ poster cũ mặc định
+
         if (posterPart != null && posterPart.getSize() > 0) {
             String uploadDir = "E:/imgForCinema";
 
@@ -158,29 +151,35 @@ public class UpdateMovieServlet extends HttpServlet {
                 dir.mkdirs();
             }
             posterPart.write(uploadDir + File.separator + fileName);
-            posterUrl = fileName; // chỉ cập nhật khi có file mới
+            posterUrl = fileName; // Chỉ cập nhật khi có file mới
         }
 
+        // Tạo object Movie với dữ liệu đã được xử lý
         Movie updated = new Movie(
                 movieId, title, duration, desc, releaseDate, age, posterUrl
         );
 
+        // Thực hiện update
         try {
             movieDAO.update(DBConnect.getConnection(), updated);
-        } catch (SQLException ex) {
-            Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             relDAO.updateGenre(movieId, genreId);
-        } catch (SQLException ex) {
-            Logger.getLogger(UpdateMovieServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
+            // Redirect về trang view sau khi update thành công
+            response.sendRedirect("UpdateMovieServlet?movieId=" + movieId + "&mode=view&success=true");
+
+        } catch (SQLException ex) {
+            System.out.println("===== UPDATE MOVIE ERROR =====");
+            System.out.println("Message : " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("ErrorCode: " + ex.getErrorCode());
+            request.setAttribute("errorMessage",
+                    "SQL Error: " + ex.getMessage());
+            doGet(request, response);
+        }
     }
 
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet for updating movie information";
+    }
 }
