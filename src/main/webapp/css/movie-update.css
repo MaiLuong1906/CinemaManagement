@@ -1,0 +1,194 @@
+/*
+    Created on : Jan 22, 2026
+    Author     : nguye
+*/
+
+/* ========== GLOBAL ========== */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f6fa;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #2f3640;
+    margin-bottom: 20px;
+}
+
+/* ========== FORM CHUNG ========== */
+.form-box {
+    background: #fff;
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ========== SEARCH BAR (SELECT + XEM) ========== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-bar label {
+    font-weight: bold;
+}
+
+.search-bar select {
+    flex: 1;
+}
+
+/* ========== LAYOUT 60 / 40 ========== */
+.movie-layout {
+    display: flex;
+    gap: 20px;
+}
+
+.movie-info {
+    width: 60%;
+}
+
+.movie-poster {
+    width: 40%;
+    text-align: center;
+}
+
+/* ========== INPUT ========== */
+table {
+    width: 100%;
+    border-spacing: 0 12px;
+}
+
+td:first-child {
+    width: 30%;
+    font-weight: bold;
+    vertical-align: top;
+    padding-top: 8px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* ========== NOTE ========== */
+.note {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* ========== POSTER ========== */
+.movie-poster img {
+    max-width: 100%;
+    max-height: 450px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* ========== FILE INPUT ========== */
+input[type="file"] {
+    margin-top: 10px;
+    background-color: #ff9800; /* vàng cam */
+    padding: 6px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ========== BUTTONS ========== */
+.btn-group {
+    margin-top: 20px;
+}
+
+button {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* nút Xem */
+.btn-edit {
+    background-color: #3498db;
+    color: #fff;
+}
+
+/* nút Update */
+.btn-submit {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+/* nút Hủy */
+.btn-cancel {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+/* nút Back Home – MÀU VÀNG */
+.btn-back {
+    background-color: #ffc107;
+    color: #000;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .movie-layout {
+        flex-direction: column;
+    }
+
+    .movie-info,
+    .movie-poster {
+        width: 100%;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+/* ========== MESSAGE ========== */
+.msg {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.msg-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.msg-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
