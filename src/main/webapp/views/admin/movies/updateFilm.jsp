@@ -27,14 +27,13 @@
         %>
         <% if ("true".equals(success)) { %>
         <div class="msg msg-success">
-            Cập nhật phim thành công
+            Cập nhật phim thành công!
         </div>
         <% } else if (error != null) {%>
         <div class="msg msg-error">
             <%= error%>
         </div>
         <% } %>
-
         <!-- Back Home -->
         <a href="HomeServlet">
             <button type="button" class="btn-back"> Back to Home</button>
@@ -55,14 +54,10 @@
             </select>
             <button type="submit" class="btn-edit">Xem</button>
         </form>
-
         <% if (selectedMovie != null) {%>
-
         <form action="UpdateMovieServlet" method="post" enctype="multipart/form-data" class="form-box">
             <input type="hidden" name="movieId" value="<%=selectedMovie.getMovieId()%>">
-
             <div class="movie-layout">
-
                 <!-- 60% THÔNG TIN -->
                 <div class="movie-info">
                     <table>
@@ -74,7 +69,6 @@
                                        <%= mode.equals("view") ? "readonly" : ""%>>
                             </td>
                         </tr>
-
                         <tr>
                             <td>Thời lượng (phút):</td>
                             <td>
@@ -83,7 +77,6 @@
                                        <%= mode.equals("view") ? "readonly" : ""%>>
                             </td>
                         </tr>
-
                         <tr>
                             <td>Ngày phát hành:</td>
                             <td>
@@ -92,7 +85,6 @@
                                        <%= mode.equals("view") ? "readonly" : ""%>>
                             </td>
                         </tr>
-
                         <tr>
                             <td>Độ tuổi:</td>
                             <td>
@@ -118,7 +110,6 @@
 
                             </td>
                         </tr>
-
                         <tr>
                             <td>Mô tả:</td>
                             <td>
@@ -128,7 +119,6 @@
                                             : ""%></textarea>
                             </td>
                         </tr>
-
                         <tr>
                             <td>Thể loại:</td>
                             <td>
@@ -140,7 +130,6 @@
                                     </option>
                                     <% } %>
                                 </select>
-
                                 <% if (mode.equals("view")) {%>
                                 <input type="hidden" name="movieGenreId" value="<%= selectedGenreId%>">
                                 <% } %>
@@ -149,11 +138,9 @@
                         <br><small><span style="font-weight: bolder;">Lưu ý:</span> Để trống nếu không muốn sửa!</small>
                     </table>
                 </div>
-
                 <!-- 40% POSTER -->
                 <div class="movie-poster">
                     <h3>Poster</h3>
-
                     <% if (selectedMovie.getPosterUrl() != null && !selectedMovie.getPosterUrl().isEmpty()) {%>
                     <img src="image?name=<%= selectedMovie.getPosterUrl()%>" alt="Poster">
                     <% } else { %>
@@ -166,9 +153,7 @@
                     <br>
                     <% } %>
                 </div>
-
             </div>
-
             <!-- BUTTON -->
             <div class="btn-group">
                 <% if (mode.equals("view")) {%>
@@ -182,9 +167,7 @@
                 </a>
                 <% } %>
             </div>
-
         </form>
         <% }%>
-
     </body>
 </html>
