@@ -173,7 +173,11 @@
                     <div class="movie-grid">
                         <c:forEach var="movie" items="${movies}">
                             <div class="movie-card" onclick="location.href = 'movie-detail?id=${movie.movieId}'">
+<<<<<<< HEAD
                                 <img src="${pageContext.request.contextPath}/images/teaser-poster/${movie.posterUrl}" 
+=======
+                                <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
+>>>>>>> origin
                                      alt="${movie.title}" 
                                      class="movie-poster"
                                      onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">

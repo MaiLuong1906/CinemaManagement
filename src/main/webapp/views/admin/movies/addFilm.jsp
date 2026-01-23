@@ -12,7 +12,7 @@
     </head>
     <body>
         <div class="back-home">
-            <a href="${pageContext.request.contextPath}/home"
+            <a href="${pageContext.request.contextPath}/views/user/home.jsp"
                class="btn btn-success">
                 Trang chủ
             </a>
