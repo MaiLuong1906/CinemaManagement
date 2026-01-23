@@ -31,13 +31,9 @@ public class HomeServlet extends HttpServlet {
         MovieDAO movie = new MovieDAO();
         List<Movie> latestMovies = movie.getAllMovies();    // phim mới
         List<Movie> topRatedMovies = movie.getAllMovies();  // phim rating cao
-        List<Movie> actionMovies = movie.getMoviesByGenre("Hành động");
-        List<Movie> dramaMovies = movie.getMoviesByGenre("Kinh dị");
         
         request.setAttribute("latestMovies", latestMovies);
         request.setAttribute("topRatedMovies", topRatedMovies);
-        request.setAttribute("actionMovies", actionMovies);
-        request.setAttribute("dramaMovies", dramaMovies);
         
         request.getRequestDispatcher("/views/user/home.jsp").forward(request, response);
     }

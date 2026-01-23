@@ -7,9 +7,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Movie;
-
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/movies")
@@ -21,33 +20,58 @@ public class MovieListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Lấy tham số từ URL (nếu có)
-//        String genre = request.getParameter("genre");
-//        String keyword = request.getParameter("search");
-//        
-        List<Movie> movies = movieDAO.getAllMovies();
-//        
-//        // Xử lý theo tham số
-//        if (keyword != null && !keyword.trim().isEmpty()) {
-//            // Tìm kiếm phim
-//            movies = movieDAO.getAllMovies();
-//            request.setAttribute("pageTitle", "Kết quả tìm kiếm: " + keyword);
-//        } else if (genre != null && !genre.trim().isEmpty()) {
-//            // Lọc theo thể loại
-//            movies = movieDAO.getAllMovies();
-//            request.setAttribute("pageTitle", "Phim " + genre);
-//        } else {
-//            // Hiển thị tất cả phim
-//            movies = movieDAO.getAllMovies();
-//            request.setAttribute("pageTitle", "Tất cả phim");
-//        }
+        // Lấy tham số từ URL
+        String[] selectedGenres = request.getParameterValues("genres");
+        String keyword = request.getParameter("search");
         
-        // Gửi danh sách phim sang JSP
-        request.setAttribute("pageTitle", "Tất cả phim");
+        List<Movie> movies;
+        
+        // Xử lý filter
+        if (selectedGenres != null && selectedGenres.length > 0) {
+            // Lọc theo nhiều thể loại
+            movies = movieDAO.getMoviesByMultipleGenres(selectedGenres);
+        } else {
+            // Lấy tất cả phim
+            movies = movieDAO.getAllMovies();
+        }
+        
+        // Áp dụng search nếu có keyword
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            movies = movieDAO.searchMovies(movies, keyword.trim());
+        }
+        
+        // Xác định page title
+        String pageTitle = buildPageTitle(selectedGenres, keyword);
+        
+        // Gửi data sang JSP
+        request.setAttribute("pageTitle", pageTitle);
         request.setAttribute("movies", movies);
         request.setAttribute("totalMovies", movies.size());
+        request.setAttribute("selectedGenres", selectedGenres);
         
         // Forward sang JSP
         request.getRequestDispatcher("/views/user/movies.jsp").forward(request, response);
+    }
+    
+    /**
+     * Tạo page title dựa trên filters
+     */
+    private String buildPageTitle(String[] genres, String keyword) {
+        List<String> titleParts = new ArrayList<>();
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            titleParts.add("Tìm kiếm: \"" + keyword + "\"");
+        }
+        
+        if (genres != null && genres.length > 0) {
+            String genreText = String.join(", ", genres);
+            titleParts.add("Thể loại: " + genreText);
+        }
+        
+        if (titleParts.isEmpty()) {
+            return "Tất cả phim";
+        }
+        
+        return String.join(" - ", titleParts);
     }
 }

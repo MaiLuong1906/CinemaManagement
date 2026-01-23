@@ -106,7 +106,7 @@
     <button type="submit" class="submit-btn">Thêm suất chiếu</button>
 </form>
 </div>            
-    <a href="${pageContext.request.contextPath}/views/user/home.jsp" class="btn btn-success">
+    <a href="${pageContext.request.contextPath}/home" class="btn btn-success">
         Quay lại trang chủ
     </a>
 </body>
