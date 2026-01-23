@@ -57,7 +57,7 @@ public class ImageServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    private static final String IMAGE_DIR = "E:/imgForCinema";
+    private static final String IMAGE_DIR = "C:/imgForCinema";
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

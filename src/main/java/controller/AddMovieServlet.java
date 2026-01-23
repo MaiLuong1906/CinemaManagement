@@ -106,8 +106,8 @@ AddMovieServlet extends HttpServlet {
     MovieDAO movieDao = new MovieDAO();
     // bien flag
     boolean success = false;
-    String baseImageDir = "E:/imgForCinema";
-    String posterUrl = "E:/imgForCinema/default.jpg"; // cho mot anh mac dinh o day
+    String baseImageDir = "C:/imgForCinema";
+    String posterUrl = "C:/imgForCinema/default.jpg"; // cho mot anh mac dinh o day
 
     try {
     Part posterPart = request.getPart("poster");

@@ -39,7 +39,7 @@
             <div class="slider-container" id="sliderContainer">
                 <c:if test="${not empty topRatedMovies}">
                     <c:forEach var="movie" items="${topRatedMovies}">
-                        <div class="slide" style="background-image: url('${pageContext.request.contextPath}/images/quad-poster/${movie.posterUrl}');"
+                        <div class="slide" style="background-image: url('${pageContext.request.contextPath}/image?name=${movie.posterUrl}');"
                              onclick="location.href = '${pageContext.request.contextPath}/movie-detail?id=${movie.movieId}'">
                             <div class="slide-content">
                                 <h1 class="display-3 fw-bold mb-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
@@ -105,7 +105,7 @@
                     <div class="d-flex gap-3 overflow-x-auto pb-3" style="scroll-behavior: smooth;">
                         <c:forEach var="movie" items="${latestMovies}">
                             <div class="movie-card" onclick="location.href = '${pageContext.request.contextPath}/movie-detail?id=${movie.movieId}'">
-                                <img src="${pageContext.request.contextPath}/images/teaser-poster/${movie.posterUrl}" 
+                                <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
                                      alt="${movie.title}"
                                      class="movie-poster"
                                      onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
@@ -150,7 +150,7 @@
                             <div class="d-flex gap-3 overflow-x-auto pb-3" style="scroll-behavior: smooth;">
                                 <c:forEach var="movie" items="${topRatedMovies}">
                                     <div class="movie-card" onclick="location.href = '${pageContext.request.contextPath}/movie-detail?id=${movie.movieId}'">
-                                        <img src="${pageContext.request.contextPath}/images/teaser-poster/${movie.posterUrl}" 
+                                        <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
                                              alt="${movie.title}"
                                              class="movie-poster"
                                              onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
@@ -197,7 +197,7 @@
                             <div class="d-flex gap-3 overflow-x-auto pb-3" style="scroll-behavior: smooth;">
                                 <c:forEach var="movie" items="${actionMovies}">
                                     <div class="movie-card" onclick="location.href = '${pageContext.request.contextPath}/movie-detail?id=${movie.movieId}'">
-                                        <img src="${pageContext.request.contextPath}/images/teaser-poster/${movie.posterUrl}" 
+                                        <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
                                              alt="${movie.title}"
                                              class="movie-poster"
                                              onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
@@ -244,7 +244,7 @@
                             <div class="d-flex gap-3 overflow-x-auto pb-3" style="scroll-behavior: smooth;">
                                 <c:forEach var="movie" items="${dramaMovies}">
                                     <div class="movie-card" onclick="location.href = '${pageContext.request.contextPath}/movie-detail?id=${movie.movieId}'">
-                                        <img src="${pageContext.request.contextPath}/images/teaser-poster/${movie.posterUrl}" 
+                                        <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
                                              alt="${movie.title}"
                                              class="movie-poster"
                                              onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">

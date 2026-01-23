@@ -328,12 +328,11 @@
         <c:if test="${not empty movie}">
             <div class="movie-detail">
                 <div class="poster-container">
-                    <img src="${pageContext.request.contextPath}/images/${movie.posterUrl}" 
-                         alt="${movie.title}" 
-                         class="poster"
-                         onerror="this.src='https://via.placeholder.com/320x480/1a1a1a/e50914?text=No+Image'">
-                </div>
-                
+                <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
+                     alt="${movie.title}" 
+                     class="poster"
+                     onerror="this.src='https://via.placeholder.com/320x480/1a1a1a/e50914?text=No+Image'">
+            </div> 
                 <div class="info">
                     <h1>${movie.title}</h1>
                     
