@@ -140,7 +140,7 @@ public class UpdateMovieServlet extends HttpServlet {
         String posterUrl = oldMovie.getPosterUrl(); // Giữ poster cũ mặc định
 
         if (posterPart != null && posterPart.getSize() > 0) {
-            String uploadDir = "E:/imgForCinema";
+            String uploadDir = "C:/imgForCinema";
 
             String fileName = System.currentTimeMillis() + "_"
                     + Paths.get(posterPart.getSubmittedFileName())
