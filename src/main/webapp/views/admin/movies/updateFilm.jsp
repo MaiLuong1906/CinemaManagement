@@ -35,7 +35,7 @@
         </div>
         <% } %>
         <!-- Back Home -->
-        <a href="${pageContext.request.contextPath}/views/user/home.jsp">
+        <a href="${pageContext.request.contextPath}/home">
             <button type="button" class="btn-back"> Back to Home</button>
         </a>
         <h2>Cập nhật phim</h2>

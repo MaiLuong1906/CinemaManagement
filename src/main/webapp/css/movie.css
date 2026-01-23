@@ -1,0 +1,220 @@
+body {
+    padding-top: 80px !important;
+    transition: padding-left 0.3s ease;
+}
+
+/* Search Wrapper */
+.search-wrapper {
+    transition: all 0.3s ease;
+}
+
+.search-input {
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    background: rgba(255,255,255,0.08) !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-search:hover {
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Filter Section */
+.filter-section {
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+/* Genre Chips */
+.genre-chip {
+    position: relative;
+}
+
+.genre-chip input[type="checkbox"] {
+    display: none;
+}
+
+.genre-chip label {
+    transition: all 0.3s ease;
+    user-select: none;
+    min-width: 120px;
+    text-align: center;
+    font-size: 15px !important;
+}
+
+.genre-chip label:hover {
+    background: rgba(102, 126, 234, 0.2) !important;
+    border-color: #667eea !important;
+    transform: translateY(-3px);
+}
+
+.genre-chip input[type="checkbox"]:checked + label {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-color: transparent !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Movie Cards - Sử dụng lại từ home.css */
+.movie-card {
+    min-width: 220px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.movie-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    z-index: 10;
+}
+
+.movie-poster {
+    width: 100%;
+    height: 330px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.movie-card:hover .movie-poster {
+    filter: brightness(1.1);
+}
+
+.movie-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+    padding: 20px 15px;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.movie-card:hover .movie-overlay {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Custom Scrollbar */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Grid Animation */
+.row > .col {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.row > .col:nth-child(1) {
+    animation-delay: 0.05s;
+}
+.row > .col:nth-child(2) {
+    animation-delay: 0.1s;
+}
+.row > .col:nth-child(3) {
+    animation-delay: 0.15s;
+}
+.row > .col:nth-child(4) {
+    animation-delay: 0.2s;
+}
+.row > .col:nth-child(5) {
+    animation-delay: 0.25s;
+}
+.row > .col:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding-top: 80px !important;
+    }
+
+    body.admin-layout {
+        padding-top: 80px !important;
+        padding-left: 0 !important;
+    }
+
+    .movie-card {
+        min-width: 150px;
+    }
+
+    .movie-poster {
+        height: 225px;
+    }
+
+    .search-input {
+        font-size: 14px;
+        padding-left: 45px !important;
+    }
+
+    .btn-search {
+        font-size: 14px;
+        padding: 8px 20px !important;
+    }
+
+    .filter-section {
+        padding: 20px !important;
+    }
+
+    .genre-chip label {
+        font-size: 14px !important;
+        padding: 8px 16px !important;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-card {
+        min-width: 120px;
+    }
+
+    .movie-poster {
+        height: 180px;
+    }
+
+    .display-4 {
+        font-size: 2rem !important;
+    }
+}

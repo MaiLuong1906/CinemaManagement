@@ -1,188 +1,181 @@
-<%-- Document : movies Created on : Jan 11, 2026, 4:45:29 PM Author : LENOVO --%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
-    <%-- Trang danh sách phim --%>
-
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-              crossorigin="anonymous"><!-- comment -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${pageTitle} - Cinema</title>
 
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #141414;
-                color: #fff;
-                padding: 20px;
-            }
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-            h1 {
-                margin-bottom: 30px;
-                font-size: 2.5em;
-            }
+        <!-- Custom CSS -->
 
-            .search-bar {
-                margin-bottom: 30px;
-            }
-
-            .search-bar input {
-                padding: 10px 15px;
-                width: 300px;
-                border: none;
-                border-radius: 5px;
-            }
-
-            .search-bar button {
-                padding: 10px 20px;
-                background-color: #e50914;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            .genre-filter {
-                margin-bottom: 20px;
-            }
-
-            .genre-filter a {
-                display: inline-block;
-                padding: 8px 15px;
-                margin-right: 10px;
-                background-color: #333;
-                color: #fff;
-                text-decoration: none;
-                border-radius: 5px;
-            }
-
-            .genre-filter a:hover {
-                background-color: #e50914;
-            }
-
-            .movie-count {
-                margin-bottom: 20px;
-                color: #999;
-            }
-
-            .movie-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 20px;
-            }
-
-            .movie-card {
-                background-color: #222;
-                border-radius: 8px;
-                overflow: hidden;
-                transition: transform 0.3s;
-                cursor: pointer;
-            }
-
-            .movie-card:hover {
-                transform: scale(1.05);
-            }
-
-            .movie-poster {
-                width: 100%;
-                height: 300px;
-                object-fit: cover;
-            }
-
-            .movie-info {
-                padding: 15px;
-            }
-
-            .movie-title {
-                font-size: 1.1em;
-                font-weight: bold;
-                margin-bottom: 8px;
-            }
-
-            .movie-genre {
-                color: #999;
-                font-size: 0.9em;
-                margin-bottom: 5px;
-            }
-
-            .movie-rating {
-                color: #ffd700;
-                font-weight: bold;
-            }
-
-            .movie-duration {
-                color: #999;
-                font-size: 0.85em;
-            }
-
-            .no-movies {
-                text-align: center;
-                padding: 50px;
-                color: #999;
-            }
-        </style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/movie.css"/>
+        <c:if test="${sessionScope.user != null && sessionScope.user.roleId == 'Admin'}">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/nav-admin.css">
+        </c:if>
     </head>
 
-    <body>
-        <div class="container">
-            <h1>${pageTitle}</h1>
+    <body class="bg-dark text-white <c:if test='${sessionScope.user != null && sessionScope.user.roleId == "Admin"}'>admin-layout</c:if>" 
+          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0a0a0a !important;">
 
-            <!-- Thanh tìm kiếm -->
-            <div class="search-bar">
-                <form action="MovieListServlet" method="get">
-                    <input type="text" name="search" placeholder="Tìm kiếm phim..." 
-                           value="${param.search}">
-                    <button type="submit">Tìm kiếm</button>
+            <!-- Header -->
+        <jsp:include page="../../layout/header.jsp"></jsp:include>
+
+            <!-- Admin Sidebar (Only for Admin) -->
+        <c:if test="${sessionScope.user != null && sessionScope.user.roleId == 'Admin'}">
+            <jsp:include page="../../layout/nav-admin.jsp"></jsp:include>
+        </c:if>
+
+        <!-- Main Content -->
+        <div class="container-fluid px-4 py-5" style="max-width: 1400px;">
+
+            <!-- Page Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    🎬 ${pageTitle}
+                </h1>
+                <p class="text-secondary fs-5">Khám phá thế giới điện ảnh tuyệt vời</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 col-md-10">
+                    <form action="movies" method="get">
+                        <div class="search-wrapper position-relative">
+                            <i class="fas fa-search position-absolute text-secondary" style="left: 20px; top: 50%; transform: translateY(-50%); font-size: 18px;"></i>
+                            <input type="text" 
+                                   name="search" 
+                                   class="form-control form-control-lg search-input" 
+                                   placeholder="Tìm kiếm phim yêu thích của bạn..." 
+                                   value="${param.search}"
+                                   style="padding-left: 55px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); color: #fff; border-radius: 50px;">
+                            <button class="btn btn-search position-absolute" type="submit" style="right: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 50px; padding: 10px 30px; color: #fff; font-weight: 600;">
+                                Tìm kiếm
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Genre Filter Form - Cập nhật để giữ lại search keyword -->
+            <div class="mb-5 p-4 rounded-3 border" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1) !important;">
+                <form action="movies" method="get" id="genreForm">
+                    <!-- Hidden input để giữ lại search keyword khi filter genre -->
+                    <c:if test="${not empty param.search}">
+                        <input type="hidden" name="search" value="${param.search}">
+                    </c:if>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-4">
+                        <div class="d-flex align-items-center gap-4 flex-grow-1 flex-wrap">
+                            <label class="fw-bold text-white mb-0 fs-4">
+                                <i class="fas fa-filter me-2" style="color: #667eea;"></i>Thể loại:
+                            </label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Action" id="genreAction" onchange="this.form.submit()">
+                                    <label for="genreAction" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        💥 Action
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Animation" id="genreAnimation" onchange="this.form.submit()">
+                                    <label for="genreAnimation" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        Animation
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Fantacy" id="genreFantacy" onchange="this.form.submit()">
+                                    <label for="genreFantacy" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        Fantacy
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Drama" id="genreDrama" onchange="this.form.submit()">
+                                    <label for="genreDrama" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        🎭 Drama
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Sci-Fi" id="genreSciFi" onchange="this.form.submit()">
+                                    <label for="genreSciFi" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        🚀 Sci-Fi
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Thriller" id="genreThriller" onchange="this.form.submit()">
+                                    <label for="genreThriller" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        😱 Thriller
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Adventure" id="genreAdventure" onchange="this.form.submit()">
+                                    <label for="genreAdventure" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        🗺️ Adventure
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Comedy" id="genreComedy" onchange="this.form.submit()">
+                                    <label for="genreComedy" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        😂 Comedy
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Horror" id="genreHorror" onchange="this.form.submit()">
+                                    <label for="genreHorror" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        👻 Horror
+                                    </label>
+                                </div>
+                                <div class="genre-chip">
+                                    <input type="checkbox" name="genres" value="Romance" id="genreRomance" onchange="this.form.submit()">
+                                    <label for="genreRomance" class="badge rounded-pill px-4 py-3 m-0 fs-6 fw-semibold border border-2 text-white" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2) !important; min-width: 120px;">
+                                        ❤️ Romance
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="${pageContext.request.contextPath}/movies" 
+                           class="btn btn-outline-light rounded-pill px-4 py-3 fs-6 fw-semibold border-2">
+                            <i class="fas fa-redo-alt me-2"></i>Xóa bộ lọc
+                        </a>
+                    </div>
                 </form>
             </div>
 
-            <!-- Bộ lọc thể loại -->
-            <div class="genre-filter">
-                <a href="${pageContext.request.contextPath}/movies">Tất cả</a>
-                <a href="${pageContext.request.contextPath}/movies?genre=Action">Action</a>
-                <a href="${pageContext.request.contextPath}/movies?genre=Drama">Drama</a>
-                <a href="${pageContext.request.contextPath}/movies?genre=Sci-Fi">Sci-Fi</a>
-                <a href="${pageContext.request.contextPath}/movies?genre=Thriller">Thriller</a>
-                <a href="${pageContext.request.contextPath}/movies?genre=Adventure">Adventure</a>
+            <!-- Results Info -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold fs-4 m-0">
+                    <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px; border-radius: 50px;">
+                        Tìm thấy ${totalMovies} phim
+                    </span>
+                </h2>
             </div>
 
-            <!-- Số lượng phim -->
-            <p class="movie-count">Tìm thấy ${totalMovies} phim</p>
-
-            <!-- Danh sách phim -->
+            <!-- Movie Grid -->
             <c:choose>
                 <c:when test="${not empty movies}">
-                    <div class="movie-grid">
+                    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-4">
                         <c:forEach var="movie" items="${movies}">
-                            <div class="movie-card" onclick="location.href = 'movie-detail?id=${movie.movieId}'">
-                                <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}" 
-                                     alt="${movie.title}" 
-                                     class="movie-poster"
-                                     onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-                                <div class="movie-info">
-                                    <div class="movie-title">${movie.title}</div>
-                                    <%-- <div class="movie-genre">${movie.genre}</div> --%>
-                                    <%-- <div class="movie-rating">⭐ ${movie.rating}/10</div> --%>
-                                    <div class="movie-duration">
-                                        ${movie.releaseDate.year} • ${movie.duration} phút
+                            <div class="col">
+                                <div class="movie-card" onclick="location.href = 'movie-detail?id=${movie.movieId}'">
+                                    <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}"
+                                         alt="${movie.title}" 
+                                         class="movie-poster"
+                                         onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
+                                    <div class="movie-overlay">
+                                        <div class="fw-bold fs-6 mb-2">${movie.title}</div>
+                                        <div class="d-flex gap-2 text-secondary small">
+                                            <span style="color: #ffd700;">
+                                                <i class="fas fa-star"></i> 8.0
+                                            </span>
+                                            <span>${movie.duration} phút</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -190,13 +183,27 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <div class="no-movies">
-                        <h2>Không tìm thấy phim nào</h2>
-                        <p>Vui lòng thử tìm kiếm với từ khóa khác</p>
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-film" style="font-size: 80px; opacity: 0.3; color: #667eea;"></i>
+                        </div>
+                        <h2 class="text-white mb-3 fw-bold">Không tìm thấy phim nào</h2>
+                        <p class="text-secondary mb-4">Vui lòng thử tìm kiếm với từ khóa khác hoặc chọn thể loại khác</p>
+                        <a href="${pageContext.request.contextPath}/movies" 
+                           class="btn btn-lg rounded-3 px-4 text-white fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-arrow-left me-2"></i>Xem tất cả phim
+                        </a>
                     </div>
                 </c:otherwise>
             </c:choose>
         </div>
-    </body>
 
+        <!-- Footer -->
+        <jsp:include page="../../layout/footer.jsp"></jsp:include>
+
+            <!-- Bootstrap JS -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+            <script src="${pageContext.request.contextPath}/js/movies.js"></script>
+    </body>
 </html>

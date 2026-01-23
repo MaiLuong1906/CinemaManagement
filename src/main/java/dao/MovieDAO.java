@@ -157,28 +157,75 @@ public class MovieDAO {
         return list;
     }
 
-    // lay phim theo the loai
-    public List<Movie> getMoviesByGenre(String genre) {
+    /**
+     * Lấy phim theo nhiều thể loại (OR logic) Phim sẽ hiển thị nếu thuộc ít
+     * nhất 1 trong các genre được chọn
+     */
+    public List<Movie> getMoviesByMultipleGenres(String[] genres) {
         List<Movie> list = new ArrayList<>();
-        String sql = "select * \n"
-                + "from movie_genre_rel mgl\n"
-                + "join movies m on mgl.movie_id = m.movie_id\n"
-                + "join movie_genres mg on mg.genre_id = mgl.genre_id\n"
-                + "where mg.genre_name = ?";
-        
-        try (Connection con = DBConnect.getConnection()){
-            PreparedStatement ps = con.prepareStatement(sql); 
-            ps.setString(1, genre);
+
+        if (genres == null || genres.length == 0) {
+            return list;
+        }
+
+        // Tạo SQL động với IN clause
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT DISTINCT m.* ")
+                .append("FROM movie_genre_rel mgl ")
+                .append("JOIN movies m ON mgl.movie_id = m.movie_id ")
+                .append("JOIN movie_genres mg ON mg.genre_id = mgl.genre_id ")
+                .append("WHERE mg.genre_name IN (");
+
+        // Thêm placeholders cho từng genre
+        for (int i = 0; i < genres.length; i++) {
+            sql.append("?");
+            if (i < genres.length - 1) {
+                sql.append(", ");
+            }
+        }
+        sql.append(") ORDER BY m.release_date DESC");
+
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            // Set tất cả genre parameters
+            for (int i = 0; i < genres.length; i++) {
+                ps.setString(i + 1, genres[i]);
+            }
+
             ResultSet rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 list.add(mapRow(rs));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
-    
+
+    /**
+     * Tìm kiếm phim trong danh sách theo keyword Search trong title và
+     * description
+     */
+    public List<Movie> searchMovies(List<Movie> movies, String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return movies;
+        }
+
+        List<Movie> result = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase();
+
+        for (Movie movie : movies) {
+            String title = movie.getTitle() != null ? movie.getTitle().toLowerCase() : "";
+            String description = movie.getDescription() != null ? movie.getDescription().toLowerCase() : "";
+
+            if (title.contains(lowerKeyword) || description.contains(lowerKeyword)) {
+                result.add(movie);
+            }
+        }
+
+        return result;
+    }
 
     // insert va tra ve id cua phim vua them
     public int insertAndReturnId(Connection conn, Movie movie) throws SQLException {
@@ -211,27 +258,25 @@ public class MovieDAO {
     }
 
     public int getGenreIdByMovieId(int movieId) {
-    String sql = """
+        String sql = """
         SELECT movie_genre_id
         FROM MovieGenreRel
         WHERE movie_id = ?
     """;
 
-    try (Connection conn = DBConnect.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        ps.setInt(1, movieId);
-        ResultSet rs = ps.executeQuery();
+            ps.setInt(1, movieId);
+            ResultSet rs = ps.executeQuery();
 
-        if (rs.next()) {
-            return rs.getInt("movie_genre_id");
+            if (rs.next()) {
+                return rs.getInt("movie_genre_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        return -1; // không tìm thấy
     }
-
-    return -1; // không tìm thấy
-}
-
 
 }
