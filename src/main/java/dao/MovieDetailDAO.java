@@ -10,7 +10,7 @@ import java.util.List;
 public class MovieDetailDAO extends DBConnect {
 
     private static final String GET_ALL =
-        "SELECT * FROM vw_movie_showtime_details";
+        "SELECT * FROM vw_movie_showtime_detail";
 
     public List<MovieDetailDTO> getAllMovieDetails() {
         List<MovieDetailDTO> list = new ArrayList<>();
@@ -19,7 +19,7 @@ public class MovieDetailDAO extends DBConnect {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 MovieDetailDTO dto = new MovieDetailDTO(
-                    rs.getInt("movie_id"),
+                    rs.getInt("showtime_id"),
                     rs.getString("movie_title"),
                     rs.getString("slot_name"),
                     // SQL TIME -> LocalTime

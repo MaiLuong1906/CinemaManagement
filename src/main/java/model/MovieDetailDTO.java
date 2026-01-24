@@ -3,7 +3,8 @@ package model;
 import java.time.LocalTime;
 
 public class MovieDetailDTO {
-private int movieId;
+
+    private int showtimeId;          // ✅ đổi từ movieId
     private String movieTitle;
     private String slotName;
     private LocalTime startTime;
@@ -14,10 +15,9 @@ private int movieId;
     public MovieDetailDTO() {
     }
 
-    public MovieDetailDTO(int movieId, String movieTitle, String slotName,
-                             LocalTime startTime, LocalTime endTime,
-                             String hallName, String genres) {
-        this.movieId = movieId;
+    public MovieDetailDTO(int showtimeId,String movieTitle,String slotName,LocalTime startTime,
+                          LocalTime endTime,String hallName, String genres) {
+        this.showtimeId = showtimeId;
         this.movieTitle = movieTitle;
         this.slotName = slotName;
         this.startTime = startTime;
@@ -26,8 +26,8 @@ private int movieId;
         this.genres = genres;
     }
 
-    public int getMovieId() {
-        return movieId;
+    public int getShowtimeId() {
+        return showtimeId;
     }
 
     public String getMovieTitle() {

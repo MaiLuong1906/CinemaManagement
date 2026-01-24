@@ -57,7 +57,7 @@
                                onmouseover="this.style.paddingLeft = '4.5rem'; this.style.color = '#e60914';"
                                onmouseout="this.style.paddingLeft = '4rem'; this.style.color = '';">
                                 <i class="fas fa-list" style="width: 20px;"></i>
-                                <span>List Movies</span>
+                                <span>Scheduled Movies</span>
                             </a>
                         </li>
                         <!--them phim-->
