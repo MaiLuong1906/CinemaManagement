@@ -51,7 +51,7 @@
                 <div class="collapse bg-dark bg-opacity-25" id="moviesSubmenu">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="${pageContext.request.contextPath}/views/admin/movies/list.jsp" 
+                            <a href="${pageContext.request.contextPath}/ListMovieForAdmin" 
                                class="nav-link text-white-50 d-flex align-items-center gap-3 py-2"
                                style="padding-left: 4rem !important; font-size: 0.95rem; transition: all 0.3s ease;"
                                onmouseover="this.style.paddingLeft = '4.5rem'; this.style.color = '#e60914';"
