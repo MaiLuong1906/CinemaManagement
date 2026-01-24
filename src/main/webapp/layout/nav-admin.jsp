@@ -93,6 +93,17 @@
                                 <span>Update Movie</span>
                             </a>
                         </li>
+                        <!--Xem khung gio trong-->
+                        <li class="nav-item">
+                            <a href="${pageContext.request.contextPath}/UpdateMovieServlet" 
+                               class="nav-link text-white-50 d-flex align-items-center gap-3 py-2"
+                               style="padding-left: 4rem !important; font-size: 0.95rem; transition: all 0.3s ease;"
+                               onmouseover="this.style.paddingLeft = '4.5rem'; this.style.color = '#e60914';"
+                               onmouseout="this.style.paddingLeft = '4rem'; this.style.color = '';">
+                                <i class="fas fa-calendar-alt" style="width: 20px;"></i>
+                                <span>Showtime Schedule</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
