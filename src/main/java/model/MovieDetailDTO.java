@@ -1,29 +1,39 @@
 package model;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class MovieDetailDTO {
 
-    private int showtimeId;          // ✅ đổi từ movieId
+    private int showtimeId;
     private String movieTitle;
     private String slotName;
+    private LocalDate showDate;      // ✅ THÊM
     private LocalTime startTime;
     private LocalTime endTime;
     private String hallName;
     private String genres;
 
-    public MovieDetailDTO() {
-    }
-
-    public MovieDetailDTO(int showtimeId,String movieTitle,String slotName,LocalTime startTime,
-                          LocalTime endTime,String hallName, String genres) {
+    public MovieDetailDTO(int showtimeId,
+                          String movieTitle,
+                          String slotName,
+                          LocalDate showDate,
+                          LocalTime startTime,
+                          LocalTime endTime,
+                          String hallName,
+                          String genres) {
         this.showtimeId = showtimeId;
         this.movieTitle = movieTitle;
         this.slotName = slotName;
+        this.showDate = showDate;
         this.startTime = startTime;
         this.endTime = endTime;
         this.hallName = hallName;
         this.genres = genres;
+    }
+
+    public LocalDate getShowDate() {
+        return showDate;
     }
 
     public int getShowtimeId() {
@@ -53,4 +63,7 @@ public class MovieDetailDTO {
     public String getGenres() {
         return genres;
     }
+
+    
+    
 }

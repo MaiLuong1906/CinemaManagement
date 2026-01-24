@@ -51,15 +51,23 @@
                         <td>${m.hallName}</td>
                         <td>
                             <div class="fw-semibold small">${m.slotName}</div>
+                            <div class="small">
+                                 ${m.showDate}
+                            </div>
                             <div class="small text-muted">
-                                ${m.startTime} - ${m.endTime}
+                                 ${m.startTime} - ${m.endTime}
                             </div>
                         </td>
                         <td>
-                            <a href="edit?movieId=${m.showtimeId}"
-                               class="btn btn-sm btn-warning">
-                                Sửa
-                            </a>
+                            <form action="${pageContext.request.contextPath}/UpdateShowtimeServlet?showtimeId=${detail.showtimeId}"
+                                method="get"
+                                style="display:inline">
+                              <input type="hidden" name="showtimeId" value="${m.showtimeId}">
+                              <button type="submit"
+                                      class="btn btn-sm btn-warning">
+                                  Sửa
+                              </button>
+                          </form>
                             <form action="${pageContext.request.contextPath}/DeleteShowtimeServlet"
                                 method="post"
                                 style="display:inline">

@@ -24,4 +24,13 @@ public class MovieUtils {
             throw new IllegalArgumentException(paramName + " must be a number");
         }
     }
+    // lay ra kieu du lieu String 
+    public static String getStringParameter(HttpServletRequest request, String paramName)
+        throws IllegalArgumentException {
+    String value = request.getParameter(paramName);
+    if (value == null || value.isBlank()) {
+        throw new IllegalArgumentException(paramName + " is required");
+    }
+    return value.trim();
+    }
 }
