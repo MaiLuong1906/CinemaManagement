@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/view_admin_movie_list.css">
 </head>
 <body class="bg-light">
+    <jsp:include page="/views/admin/component/flash-message.jsp"/>
 <div class="container mt-4">
     <!-- Back home -->
     <div class="mb-3">
@@ -19,7 +20,7 @@
            class="btn btn-success">
             Trang chủ
         </a>
-    </div>
+    </div>       
     <div class="card shadow-sm">
         <div class="card-body">
             <h4 class="mb-3 fw-bold">Movie Showtimes</h4>
@@ -27,7 +28,7 @@
                    style="table-layout: fixed; width: 100%;">
                 <thead class="table-dark">
                 <tr>
-                    <th>ID Phim</th>
+                    <th>ID Suất chiếu</th>
                     <th>Tên phim</th>
                     <th>Thể loại</th>
                     <th>Phòng</th>
@@ -38,7 +39,7 @@
                 <tbody>
                 <c:forEach var="m" items="${movieDetails}">
                     <tr>
-                        <td>${m.movieId}</td>
+                        <td>${m.showtimeId}</td>
                         <td class="fw-semibold text-truncate">
                             ${m.movieTitle}
                         </td>
@@ -50,20 +51,33 @@
                         <td>${m.hallName}</td>
                         <td>
                             <div class="fw-semibold small">${m.slotName}</div>
+                            <div class="small">
+                                 ${m.showDate}
+                            </div>
                             <div class="small text-muted">
-                                ${m.startTime} - ${m.endTime}
+                                 ${m.startTime} - ${m.endTime}
                             </div>
                         </td>
                         <td>
-                            <a href="edit?movieId=${m.movieId}"
-                               class="btn btn-sm btn-warning">
-                                Sửa
-                            </a>
-                            <a href="delete?movieId=${m.movieId}"
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Xóa phim này?')">
-                                Xóa
-                            </a>
+                            <form action="${pageContext.request.contextPath}/UpdateShowtimeServlet?showtimeId=${detail.showtimeId}"
+                                method="get"
+                                style="display:inline">
+                              <input type="hidden" name="showtimeId" value="${m.showtimeId}">
+                              <button type="submit"
+                                      class="btn btn-sm btn-warning">
+                                  Sửa
+                              </button>
+                          </form>
+                            <form action="${pageContext.request.contextPath}/DeleteShowtimeServlet"
+                                method="post"
+                                style="display:inline">
+                              <input type="hidden" name="showtimeId" value="${m.showtimeId}">
+                              <button type="submit"
+                                      class="btn btn-sm btn-danger"
+                                      onclick="return confirm('Xóa suất chiếu này?')">
+                                  Xóa
+                              </button>
+                          </form>
                         </td>
                     </tr>
                 </c:forEach>

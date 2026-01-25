@@ -3,6 +3,7 @@ package dao;
 import model.TimeSlot;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,4 +107,36 @@ public class TimeSlotDAO {
         slot.setPrice(rs.getBigDecimal("slot_price"));
         return slot;
     }
+    // lay slot available
+    public List<TimeSlot> getAvailableSlots(Connection conn, int hallId, LocalDate showDate, 
+            int excludeShowtimeId) throws SQLException {
+        String sql = """
+            SELECT ts.slot_id, ts.slot_name, ts.start_time, ts.end_time, ts.slot_price
+            FROM time_slots ts
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM showtimes s
+                WHERE s.hall_id = ?
+                  AND s.show_date = ?
+                  AND s.slot_id = ts.slot_id
+                  AND s.showtime_id != ?
+            )
+            ORDER BY ts.start_time
+        """;
+
+        List<TimeSlot> list = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, hallId);
+            ps.setDate(2, Date.valueOf(showDate));
+            ps.setInt(3, excludeShowtimeId);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        }
+        return list;
+    }
+
 }

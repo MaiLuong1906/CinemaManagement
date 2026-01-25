@@ -45,6 +45,18 @@
         <servlet-name>ListMovieForAdmin</servlet-name>
         <servlet-class>controller.ListMovieForAdminServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteMovieServlet</servlet-name>
+        <servlet-class>controller.DeleteMovieServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteShowtimeServlet</servlet-name>
+        <servlet-class>controller.DeleteShowtimeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateShowtimeServlet</servlet-name>
+        <servlet-class>controller.UpdateShowtimeServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -84,6 +96,18 @@
     <servlet-mapping>
         <servlet-name>ListMovieForAdmin</servlet-name>
         <url-pattern>/ListMovieForAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteMovieServlet</servlet-name>
+        <url-pattern>/DeleteMovieServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteShowtimeServlet</servlet-name>
+        <url-pattern>/DeleteShowtimeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateShowtimeServlet</servlet-name>
+        <url-pattern>/UpdateShowtimeServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
