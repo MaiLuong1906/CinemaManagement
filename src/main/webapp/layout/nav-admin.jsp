@@ -56,8 +56,8 @@
                                style="padding-left: 4rem !important; font-size: 0.95rem; transition: all 0.3s ease;"
                                onmouseover="this.style.paddingLeft = '4.5rem'; this.style.color = '#e60914';"
                                onmouseout="this.style.paddingLeft = '4rem'; this.style.color = '';">
-                                <i class="fas fa-list" style="width: 20px;"></i>
-                                <span>List Movies</span>
+                                <i class="fas fa-calendar-alt" style="width: 20px;"></i>
+                                <span>Showtime Schedule</span>
                             </a>
                         </li>
                         <!--them phim-->
