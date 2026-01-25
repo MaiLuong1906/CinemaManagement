@@ -1,0 +1,118 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Jan 24, 2026, 3:25:26 PM
+    Author     : nguye
+*/
+/* =========================================
+   LỚP NGOÀI CÙNG – NỀN TÍM ĐEN (DARK PURPLE)
+   ========================================= */
+body.bg-light {
+    background: radial-gradient(
+        circle at top left,
+        #2d1f47 0%,
+        #1a132d 45%,
+        #0f0b1a 100%
+    ) !important;
+    min-height: 100vh;
+}
+
+/* =========================================
+   CONTAINER – TẠO CẢM GIÁCH NỔI
+   ========================================= */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* =========================================
+   CARD – GIỮ SÁNG, NỔI TRÊN NỀN TỐI
+   ========================================= */
+.card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    border: none;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.25),
+        0 5px 15px rgba(102, 126, 234, 0.15);
+}
+
+/* Card body spacing */
+.card-body {
+    padding: 28px 30px;
+}
+
+/* =========================================
+   TITLE
+   ========================================= */
+.card h4 {
+    color: #1f2937;
+    letter-spacing: 0.4px;
+}
+
+/* =========================================
+   TABLE – SÁNG, RÕ, CÓ VIỀN
+   ========================================= */
+.table {
+    background-color: #ffffff;
+}
+
+/* Header */
+.table thead th {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #ffffff;
+    font-weight: 600;
+    border: 1px solid #dee2e6;
+}
+
+/* Body cells */
+.table tbody td {
+    border: 1px solid #e5e7eb;
+    color: #111827;
+    vertical-align: middle;
+}
+
+/* Hover */
+.table-hover tbody tr:hover {
+    background-color: #f3f4f6;
+}
+
+/* Empty row */
+.table td.text-muted {
+    color: #6b7280 !important;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+.btn-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border: none;
+}
+
+.btn-success:hover {
+    filter: brightness(1.05);
+}
+
+/* Action buttons spacing */
+.btn-sm {
+    margin: 2px;
+}
+
+/* =========================================
+   BADGE
+   ========================================= */
+.badge.bg-secondary {
+    background-color: #e5e7eb !important;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* =========================================
+   TEXT TRUNCATE – ĐẸP HƠN
+   ========================================= */
+.text-truncate {
+    max-width: 220px;
+}
