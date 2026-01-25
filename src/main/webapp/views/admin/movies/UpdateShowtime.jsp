@@ -13,6 +13,7 @@
     <meta charset="UTF-8">
     <title>Cập nhật suất chiếu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/update-showtime-list.css">
 </head>
 <body class="bg-light">
 
@@ -82,7 +83,7 @@
             <button type="submit" class="btn btn-warning">
                 Cập nhật
             </button>
-            <a href="${pageContext.request.contextPath}/AdminShowtimeListServlet"
+            <a href="${pageContext.request.contextPath}/ListMovieForAdmin"
                class="btn btn-secondary">
                 Hủy
             </a>

@@ -14,6 +14,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import util.MovieUtils;
 import model.Showtime;
 import java.util.List;
@@ -63,6 +66,28 @@ public class UpdateShowtimeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        
+        // them vao database
+        try{
+            int showtimeId = MovieUtils.getIntParameter(request, "showtimeId");
+            int movieId = MovieUtils.getIntParameter(request, "movieId");
+            int hallId = MovieUtils.getIntParameter(request, "hallId");
+            LocalDate showDate = MovieUtils.getLocalDateParameter(request, "showDate");
+            int slotId = MovieUtils.getIntParameter(request, "slotId");
+            Showtime showtime = new Showtime(showtimeId, movieId, hallId, showDate, slotId);
+            ShowtimeDAO showtimeDAO = new ShowtimeDAO();
+            showtimeDAO.update(DBConnect.getConnection(), showtime);
+            // gui phan hoi ve 
+            session.setAttribute("flash_success", "Cập nhật suất chiếu thành công!");
+        }catch (IllegalArgumentException e) {
+        // tra loi valid
+        session.setAttribute("flash_error", e.getMessage());
+    } catch (SQLException e) {
+        // loi db
+        session.setAttribute("flash_error", "Lỗi hệ thống khi cập nhật suất chiếu!");
+    }
+        response.sendRedirect(request.getContextPath() + "/ListMovieForAdmin");
         
     }
 

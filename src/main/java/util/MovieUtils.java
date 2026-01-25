@@ -5,6 +5,8 @@
 package util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 /**
  *
@@ -32,5 +34,23 @@ public class MovieUtils {
         throw new IllegalArgumentException(paramName + " is required");
     }
     return value.trim();
+    }
+    // lay ra localdate
+    public static LocalDate getLocalDateParameter(HttpServletRequest request, String paramName)
+            throws IllegalArgumentException {
+        String value = request.getParameter(paramName);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Thuộc tính không được để trống !");
+        }
+        try {
+            LocalDate date = LocalDate.parse(value); // yyyy-MM-dd
+            // Ngay chieu trong qua khu la khong hop le
+            if (date.isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException(" Ngày chiếu phải là hôm nay hoặc tương lai !");
+            }
+            return date;
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Ngày chiếu không đúng định dạng !");
+        }
     }
 }
