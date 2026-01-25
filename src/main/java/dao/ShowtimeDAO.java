@@ -127,16 +127,13 @@ public class ShowtimeDAO {
     /* =========================
        DELETE (ADMIN)
        ========================= */
-    public boolean delete(Connection conn, int showtimeId) throws SQLException {
-    String sql = "DELETE FROM showtimes WHERE showtime_id = ?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, showtimeId);
-
-        int rowsAffected = ps.executeUpdate();
-        return rowsAffected > 0;
+    public void delete(Connection conn, int showtimeId) throws SQLException {
+        String sql = "DELETE FROM showtimes WHERE showtime_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, showtimeId);
+            ps.executeUpdate();
+        }
     }
-}
-
 
     /* =========================
        MAP RESULTSET
