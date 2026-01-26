@@ -117,18 +117,6 @@
         </ul>
     </nav>
 
-<<<<<<< HEAD
-    <li><a href="${pageContext.request.contextPath}/admin/halls" class="nav-link px-3 text-white">Rooms</a></li>
-
-    <li><a href="${pageContext.request.contextPath}/views/admin/users/list.jsp" class="nav-link px-3 text-white">Users</a></li>
-
-    <li><a href="${pageContext.request.contextPath}/views/admin/dashboard.jsp" class="nav-link px-3 text-white">Dashboard</a></li>
-</ul>
-
-<div class="text-end">
-    <span class="text-warning me-3">Admin</span>
-    <a href="${pageContext.request.contextPath}/AccountServlet?action=logout" class="btn btn-outline-danger">Logout</a>
-=======
     <!-- Sidebar Footer -->
     <div class="p-4 border-top border-secondary border-opacity-25">
         <!-- Admin Info -->
@@ -153,7 +141,6 @@
             </div>
         </div>
     </div>
->>>>>>> origin
 </div>
 
 <!-- Sidebar Toggle Button (Desktop & Mobile) -->

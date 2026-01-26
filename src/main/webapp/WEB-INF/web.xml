@@ -35,6 +35,7 @@
     </servlet>
     <servlet>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <servlet-name>AddCinemaHallServlet</servlet-name>
         <servlet-class>controller.AddCinemaHallServlet</servlet-class>
     </servlet>
@@ -54,6 +55,8 @@
         <servlet-name>ToggleHallStatusServlet</servlet-name>
         <servlet-class>controller.ToggleHallStatusServlet</servlet-class>
 =======
+=======
+>>>>>>> origin
         <servlet-name>MovieDetailServlet</servlet-name>
         <servlet-class>controller.MovieDetailServlet</servlet-class>
     </servlet>
@@ -88,6 +91,9 @@
     <servlet>
         <servlet-name>CartServlet</servlet-name>
         <servlet-class>controller.CartServlet</servlet-class>
+<<<<<<< HEAD
+>>>>>>> origin
+=======
 >>>>>>> origin
     </servlet>
     <servlet-mapping>
@@ -120,6 +126,7 @@
     </servlet-mapping>
     <servlet-mapping>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <servlet-name>AddCinemaHallServlet</servlet-name>
         <url-pattern>/AddCinemaHallServlet</url-pattern>
     </servlet-mapping>
@@ -139,6 +146,8 @@
         <servlet-name>ToggleHallStatusServlet</servlet-name>
         <url-pattern>/ToggleHallStatusServlet</url-pattern>
 =======
+=======
+>>>>>>> origin
         <servlet-name>MovieDetailServlet</servlet-name>
         <url-pattern>/MovieDetailServlet</url-pattern>
     </servlet-mapping>
@@ -173,6 +182,9 @@
     <servlet-mapping>
         <servlet-name>CartServlet</servlet-name>
         <url-pattern>/CartServlet</url-pattern>
+<<<<<<< HEAD
+>>>>>>> origin
+=======
 >>>>>>> origin
     </servlet-mapping>
     <session-config>
