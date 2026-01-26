@@ -23,9 +23,8 @@ public class DBConnect {
             Class.forName(driver);
             return DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException e) {
-    // Sửa dòng này để thấy nguyên nhân thật sự (sai pass, hay chưa bật TCP/IP)
-    e.printStackTrace(); 
-    return null;
+            System.out.println("loi connect : " + e.getMessage());
+            return null;
         }
 
     }
@@ -39,6 +38,4 @@ public class DBConnect {
             System.out.println(e);
         }
     }
-    
-    
 }

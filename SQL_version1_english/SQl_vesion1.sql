@@ -124,7 +124,6 @@ CREATE TABLE time_slots (
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     slot_price DECIMAL(10,2) NOT NULL,
-
     CONSTRAINT CK_TimeSlot_Time CHECK (start_time < end_time),
     CONSTRAINT CK_TimeSlot_Price CHECK (slot_price > 0)
 );
@@ -229,3 +228,5 @@ CREATE INDEX idx_search_showtime
 CREATE INDEX idx_movie_title ON movies(title);
 
 GO
+
+-- cc

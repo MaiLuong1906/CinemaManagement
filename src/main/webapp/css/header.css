@@ -1,0 +1,107 @@
+/* --- Navbar Base Styles --- */
+.navbar-custom {
+    background: linear-gradient(180deg, rgba(20, 20, 30, 0.98) 0%, rgba(15, 15, 25, 0.95) 100%);
+    border-bottom: 1px solid rgba(230, 9, 20, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+    height: 80px; 
+}
+
+/* Brand Styles */
+.navbar-brand-custom {
+    color: #e60914 !important;
+    font-weight: 700;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    z-index: 1050; /* Đảm bảo logo luôn nổi lên trên */
+}
+
+.navbar-brand-custom:hover {
+    transform: scale(1.05);
+}
+
+/* --- Nav Links Styles --- */
+.nav-link-custom {
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+}
+
+.nav-link-custom:hover,
+.nav-link-custom.active {
+    background: rgba(230, 9, 20, 0.15);
+    color: #e60914 !important;
+    transform: translateY(-2px);
+    opacity: 1;
+}
+
+/* User Badge Styles */
+.user-badge {
+    background: rgba(230, 9, 20, 0.1);
+    border: 1px solid rgba(230, 9, 20, 0.3);
+}
+
+.admin-badge {
+    background: rgba(230, 9, 20, 0.15);
+    border: 1px solid rgba(230, 9, 20, 0.4);
+}
+
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #e60914, #ff4757);
+    box-shadow: 0 2px 8px rgba(230, 9, 20, 0.4);
+}
+
+/* --- TRỌNG TÂM: CĂN GIỮA MENU (DESKTOP ONLY) --- */
+@media (min-width: 992px) {
+    .nav-center-absolute {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0 !important;
+        z-index: 1000;
+        white-space: nowrap; /* Ngăn xuống dòng */
+    }
+
+    /* Đảm bảo phần user dạt sang phải */
+    .navbar-collapse {
+        justify-content: flex-end;
+    }
+}
+
+/* --- Mobile Responsive --- */
+@media (max-width: 991px) {
+    .navbar-custom {
+        height: auto; /* Thả lỏng chiều cao trên mobile */
+    }
+
+    .navbar-collapse {
+        background: rgba(15, 15, 25, 0.98);
+        padding: 20px;
+        border-radius: 0 0 15px 15px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        margin-top: 10px;
+    }
+
+    .nav-center-absolute {
+        position: static; /* Reset position trên mobile */
+        transform: none;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 20px !important;
+    }
+
+    .navbar-nav .nav-link {
+        justify-content: center;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Căn giữa phần user trên mobile */
+    .navbar-collapse .d-flex {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

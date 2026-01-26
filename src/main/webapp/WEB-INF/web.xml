@@ -34,6 +34,7 @@
         <servlet-class>controller.addShowTimeServlet</servlet-class>
     </servlet>
     <servlet>
+<<<<<<< HEAD
         <servlet-name>AddCinemaHallServlet</servlet-name>
         <servlet-class>controller.AddCinemaHallServlet</servlet-class>
     </servlet>
@@ -52,6 +53,42 @@
     <servlet>
         <servlet-name>ToggleHallStatusServlet</servlet-name>
         <servlet-class>controller.ToggleHallStatusServlet</servlet-class>
+=======
+        <servlet-name>MovieDetailServlet</servlet-name>
+        <servlet-class>controller.MovieDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateMovie</servlet-name>
+        <servlet-class>controller.UpdateMovieServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ListMovieForAdmin</servlet-name>
+        <servlet-class>controller.ListMovieForAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteMovieServlet</servlet-name>
+        <servlet-class>controller.DeleteMovieServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteShowtimeServlet</servlet-name>
+        <servlet-class>controller.DeleteShowtimeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateShowtimeServlet</servlet-name>
+        <servlet-class>controller.UpdateShowtimeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminProductServlet</servlet-name>
+        <servlet-class>controller.AdminProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserProductServlet</servlet-name>
+        <servlet-class>controller.UserProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>controller.CartServlet</servlet-class>
+>>>>>>> origin
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -82,6 +119,7 @@
         <url-pattern>/addShowTimeServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+<<<<<<< HEAD
         <servlet-name>AddCinemaHallServlet</servlet-name>
         <url-pattern>/AddCinemaHallServlet</url-pattern>
     </servlet-mapping>
@@ -100,6 +138,42 @@
     <servlet-mapping>
         <servlet-name>ToggleHallStatusServlet</servlet-name>
         <url-pattern>/ToggleHallStatusServlet</url-pattern>
+=======
+        <servlet-name>MovieDetailServlet</servlet-name>
+        <url-pattern>/MovieDetailServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateMovie</servlet-name>
+        <url-pattern>/UpdateMovie</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListMovieForAdmin</servlet-name>
+        <url-pattern>/ListMovieForAdmin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteMovieServlet</servlet-name>
+        <url-pattern>/DeleteMovieServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteShowtimeServlet</servlet-name>
+        <url-pattern>/DeleteShowtimeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateShowtimeServlet</servlet-name>
+        <url-pattern>/UpdateShowtimeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminProductServlet</servlet-name>
+        <url-pattern>/AdminProductServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserProductServlet</servlet-name>
+        <url-pattern>/UserProductServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/CartServlet</url-pattern>
+>>>>>>> origin
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -107,6 +181,6 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>views/user/home.jsp</welcome-file>
+        <welcome-file>home</welcome-file>
     </welcome-file-list>
 </web-app>

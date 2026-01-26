@@ -1,0 +1,221 @@
+/* ==========================================
+   MINIMAL CUSTOM STYLES
+   Chỉ style những gì Bootstrap không có
+   ========================================== */
+
+/* Body padding for fixed header */
+body {
+    padding-top: 80px !important;
+    transition: padding-left 0.3s ease;
+}
+
+/* IMPORTANT: Admin layout padding is now controlled by JavaScript in nav-admin.jsp */
+/* Do NOT set padding-left here to avoid conflicts */
+
+/* Hero Slider */
+.hero-slider {
+    margin-top: 0;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-container {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 100%;
+}
+
+.slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+}
+
+.slide-content {
+    position: absolute;
+    top: 50%;
+    left: 80px;
+    transform: translateY(-50%);
+    max-width: 600px;
+    z-index: 10;
+    animation: fadeInUp 0.8s;
+}
+
+/* Slider Controls */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    z-index: 20;
+}
+
+.slider-arrow:hover {
+    background: rgba(102, 126, 234, 0.8);
+}
+
+.slider-arrow.prev { left: 20px; }
+.slider-arrow.next { right: 20px; }
+
+.slider-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+.slider-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.slider-dot.active {
+    width: 40px;
+    border-radius: 6px;
+    background: #667eea;
+}
+
+/* Movie Cards */
+.movie-card {
+    min-width: 220px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 330px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.movie-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    padding: 20px 15px;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.movie-card:hover .movie-overlay {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Custom Buttons */
+.btn-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-gradient-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-glass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Info Badge */
+.info-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* Scrollbar cho movie slider */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding-top: 80px !important;
+    }
+    
+    body.admin-layout {
+        padding-top: 80px !important;
+        padding-left: 0 !important;
+    }
+    
+    .hero-slider {
+        height: 400px;
+        margin-top: 0;
+    }
+
+    .slide-content {
+        left: 30px;
+        max-width: 90%;
+    }
+
+    .movie-card {
+        min-width: 150px;
+    }
+
+    .movie-poster {
+        height: 225px;
+    }
+}

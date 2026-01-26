@@ -5,7 +5,6 @@
 package controller;
 
 import dao.UserDAO;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,13 +26,11 @@ public class AccountServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if("login".equals(action)){
+        if ("login".equals(action)) {
             login(request, response);
-        }
-        else if("logout".equals(action)){
+        } else if ("logout".equals(action)) {
             logout(request, response);
-        }
-        else{
+        } else {
             register(request, response);
         }
     }
@@ -42,13 +39,11 @@ public class AccountServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if(action.equals("login")){
+        if (action.equals("login")) {
             login(request, response);
-        }
-        else if(action.equals("register")){
+        } else if (action.equals("register")) {
             register(request, response);
-        }
-        else{
+        } else {
             logout(request, response);
         }
     }
@@ -58,28 +53,36 @@ public class AccountServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         UserDTO user = UserDAO.login(phoneNumber, password);
-        String url = "";
+
         if (user != null) {
+            // --- TRƯỜNG HỢP THÀNH CÔNG ---
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            url = "/views/user/home.jsp";
-        } else {
-            request.setAttribute("Error", "Phone Number or password are in correct !");
-            url = "/views/auth/login.jsp";
-        }
 
-        RequestDispatcher rd = getServletContext().getRequestDispatcher(url);
-        rd.forward(request, response);
+            // SỬ DỤNG REDIRECT: Trình duyệt sẽ tải trang mới, URL sẽ đổi
+            // request.getContextPath() để lấy tên project (ví dụ: /cinema)
+            response.sendRedirect(request.getContextPath() + "/home");
+        } else {
+            // --- TRƯỜNG HỢP THẤT BẠI ---
+            request.setAttribute("Error", "Phone Number or password are incorrect !");
+
+            // SỬ DỤNG FORWARD: Để giữ lại thông báo lỗi (request attribute)
+            request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+        }
     }
 
     private void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
 
+        // 1. Hủy session hiện tại (Xóa hết thông tin user đã đăng nhập)
         session.invalidate();
-        request.getRequestDispatcher("views/user/home.jsp").forward(request, response);
+
+        // 2. SỬ DỤNG REDIRECT: Chuyển hướng về trang chủ (hoặc trang login)
+        // URL trên trình duyệt sẽ thay đổi về .../home.jsp thay vì .../AccountServlet
+        response.sendRedirect(request.getContextPath() + "/home");
     }
-    
-    private void register(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+
+    private void register(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
         String cpassword = request.getParameter("cpassword");
@@ -155,12 +158,10 @@ public class AccountServlet extends HttpServlet {
         );
 
         if (success) {
-            response.sendRedirect("views/auth/login.jsp"); 
+            response.sendRedirect("views/auth/login.jsp");
         } else {
             request.setAttribute("Error", "Register failed. Please try again.");
             request.getRequestDispatcher("/views/auth/register.jsp").forward(request, response);
         }
     }
 }
-
-

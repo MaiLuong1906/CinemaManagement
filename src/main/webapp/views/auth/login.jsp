@@ -28,7 +28,7 @@
 
                     <form action="${pageContext.request.contextPath}/AccountServlet" method="post" class="text-center">
                         <input type="hidden" name="action" value="login">
-                        <img class="mb-4" src="${pageContext.request.contextPath}/images/logo.png" alt="" width="200" height="200">
+                        <img class="mb-4" src="${pageContext.request.contextPath}/images/logo/logo.png" alt="" width="200" height="200">
 
                         <% if (request.getAttribute("Error") != null && !request.getAttribute("Error").toString().isEmpty()) {%>
                         <div class="alert alert-danger" role="alert">

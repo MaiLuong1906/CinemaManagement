@@ -1,5 +1,7 @@
 <%-- Document : addFilm Created on : Jan 16, 2026, 12:53:32 PM Author : nguye
---%> <%@page contentType="text/html" pageEncoding="UTF-8"%>
+--%> <%@page import="model.MovieGenre"%>
+<%@page import="java.util.List"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,42 +11,39 @@
 
     </head>
     <body>
-        <!--xuat thong bao them js an sau 2s-->
-        <%
-            String message = (String) request.getAttribute("message");
-            Boolean success = (Boolean) request.getAttribute("success");
-            if (message != null && success != null) {
-        %>
-        <% if (message != null) {%>
-        <div id="notifyBox"
-             style="
-             position: fixed;
-             top: 20px;
-             right: 20px;
-             padding: 10px 16px;
-             border-radius: 6px;
-             color: white;
-             font-size: 14px;
-             background-color: <%= success ? "#2ecc71" : "#e74c3c"%>;
-             z-index: 9999;
-             ">
-            <h2 style="margin:0; color:white;"><%= message%></h2>
+        <div class="back-home">
+            <a href="${pageContext.request.contextPath}/views/user/home.jsp"
+               class="btn btn-success">
+                Trang chủ
+            </a>
         </div>
-        <% } %>
-        <script>
-            setTimeout(() => {
-                const box = document.getElementById("notifyBox");
-                if (box)
-                    box.style.display = "none";
-            }, 2000);
-        </script>
+
+        <!--tra ket qua-->
         <%
+        HttpSession sessionObj = request.getSession(false); // li do false la neu da co session thi lay khong thi tra null, khong tao moi
+        if (sessionObj != null) {
+            String message = (String) sessionObj.getAttribute("message");
+            Boolean success = (Boolean) sessionObj.getAttribute("success");
+            String messageDb = (String) sessionObj.getAttribute("dbError");
+            if (message != null) {
+        %>  
+        <div class="message-box
+            <%= success != null && success ? "success" : "error" %>">
+           <%= message %>
+           <%= messageDb != null ? "  " + messageDb : "" %>
+       </div>
+
+        <%
+            // FLASH MESSAGE → xoa sau khi hien thi hoac f5
+            sessionObj.removeAttribute("message");
+            sessionObj.removeAttribute("success");
+            sessionObj.removeAttribute("dbError");
+                }
             }
         %>
-
         <!--cac hang muc-->
         <div class="container">
-            <h2 class="text-center">Them phim moi</h2>
+            <h2 class="text-center">Thêm phim mới</h2>
             <hr />
 
             <!-- Form add movie -->
@@ -56,7 +55,7 @@
                 <!-- khi co file thi phai co enctype="multipart/form-data"de quy dinh cach du lieu duoc dong goi va gui di -->
                 <!-- Ten phim -->
                 <div class="form-group">
-                    <label>Ten phim</label>
+                    <label>Tên phim</label>
                     <input type="text" name="title" class="form-control" required />
                 </div>
 
@@ -71,16 +70,33 @@
                         required
                         />
                 </div>
-
+                <!--the loai-->
+                <div class="form-group">
+                    <label>Chọn thể loại</label>
+                    <select " name="movieGenreId" class="form-control">
+                        <%
+                            List<MovieGenre> movieGenreList = (List<MovieGenre>) request.getAttribute("movieGenreList");
+                            if (movieGenreList != null) {
+                                for (MovieGenre movieGenre : movieGenreList) {
+                        %>
+                        <option value="<%= movieGenre.getGenreId() %>">
+                            <%= movieGenre.getGenreId() %> - <%= movieGenre.getGenreName() %>
+                        </option>
+                        <%
+                                }
+                            }
+                        %>
+                    </select>
+                </div>
                 <!-- Thoi luong -->
                 <div class="form-group">
-                    <label>Thoi luong (min)</label>
+                    <label>Thời lượng (min)</label>
                     <input type="number" name="duration" class="form-control" required />
                 </div>
 
                 <!-- Ngay khoi chieu -->
                 <div class="form-group">
-                    <label>Ngay khoi chieu</label>
+                    <label>Ngày khởi chiếu</label>
                     <input
                         type="date"
                         name="release_date"
@@ -91,9 +107,9 @@
 
                 <!-- Do tuoi -->
                 <div class="form-group">
-                    <label>Gioi han tuoi</label>
+                    <label>Giới hạn tuổi</label>
                     <select name="age_rating" class="form-control">
-                        <option value="P">P - Moi lua tuoi</option>
+                        <option value="P">P - Mọi lứa tuổi</option>
                         <option value="T13">T13</option>
                         <option value="T16">T16</option>
                         <option value="T18">T18</option>
@@ -102,27 +118,23 @@
 
                 <!-- Mo ta -->
                 <div class="form-group">
-                    <label>Mo ta phim</label>
+                    <label>Mô tả phim</label>
                     <textarea name="description" class="form-control" rows="4"></textarea>
                 </div>
 
                 <!-- Button -->
                 <div class="form-group text-center">
-                    <button type="submit" class="btn btn-success">Them phim</button>
+                    <button type="submit" class="btn btn-success">Thêm phim</button>
 
                     <a
                         href="<%=request.getContextPath()%>/home"
                         class="btn btn-secondary"
                         >
-                        Huy
+                        Hủy
                     </a>
                 </div>
             </form>
         </div>
-        <a href="${pageContext.request.contextPath}/home"
-           class="btn btn-success">
-            Quay ve trang chu
-        </a>
 
 
     </body>
