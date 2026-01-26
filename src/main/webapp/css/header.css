@@ -4,7 +4,7 @@
     border-bottom: 1px solid rgba(230, 9, 20, 0.3);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(15px);
-    height: 80px; /* Cố định chiều cao để dễ căn chỉnh */
+    height: 80px; 
 }
 
 /* Brand Styles */
@@ -33,40 +33,6 @@
     color: #e60914 !important;
     transform: translateY(-2px);
     opacity: 1;
-}
-
-/* --- Buttons & User Section --- */
-.btn-login-custom {
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s ease;
-}
-
-.btn-login-custom:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #fff;
-}
-
-.btn-signup-custom {
-    background: linear-gradient(135deg, #e60914, #ff4757);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(230, 9, 20, 0.3);
-}
-
-.btn-signup-custom:hover {
-    background: linear-gradient(135deg, #ff1f2f, #ff6b7a);
-    box-shadow: 0 6px 20px rgba(230, 9, 20, 0.5);
-    color: #fff;
-}
-
-.btn-logout-custom {
-    border: 2px solid rgba(255, 71, 87, 0.5);
-    color: #ff4757;
-    transition: all 0.3s ease;
-}
-
-.btn-logout-custom:hover {
-    background: rgba(255, 71, 87, 0.1);
-    border-color: #ff4757;
 }
 
 /* User Badge Styles */
