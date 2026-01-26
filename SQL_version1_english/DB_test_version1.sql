@@ -1,253 +1,231 @@
-﻿-- Admin
-DROP DATABASE CinemaManagement
--- Bật chế độ insert IDENTITY cho accounts
-SET IDENTITY_INSERT accounts ON;
+﻿/* =========================================================
+   DATABASE: CINEMA MANAGEMENT SYSTEM (Hệ thống Quản lý Rạp phim)
+   ========================================================= */
 
--- Password: Admin123456 = 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU='
-INSERT INTO accounts (account_id, phone_number, password_hash, role_id, created_at)
-VALUES (1, '0980', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
-       (2, '0981', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
-       (3, '0982', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
-       (4, '0983', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE()),
-       (5, '0984', 'sAjIU5Y3pTfRFR/N+l3vvMm9BKU=', 'Admin', GETDATE());
+CREATE DATABASE CinemaManagement;
+GO
+USE CinemaManagement;
+GO
 
--- Tắt chế độ insert IDENTITY cho accounts
-SET IDENTITY_INSERT accounts OFF;
+/* =========================
+   1. Accounts (Tài khoản - Đăng nhập & Bảo mật)
+   ========================= */
+CREATE TABLE accounts (
+                          account_id INT IDENTITY(1,1) PRIMARY KEY,
+                          phone_number VARCHAR(12) UNIQUE NOT NULL,
+                          password_hash VARCHAR(500) NOT NULL,
+                          role_id VARCHAR(20) DEFAULT 'User'
+                              CONSTRAINT CK_role_id CHECK (role_id IN ('Admin', 'User')),
+                          status BIT DEFAULT 1, -- 1: Active (Hoạt động), 0: Locked (Khóa)
+                          created_at DATETIME DEFAULT GETDATE()
+);
 
--- Insert user_profiles với user_id khớp với account_id
--- Vì user_id là FK reference đến account_id nên phải khớp
-INSERT INTO user_profiles(user_id, full_name, email, gender, date_of_birth)
-VALUES (1, 'Admin1', 'admin1@gmail.com', 1, '1995-03-10'),
-       (2, 'Admin2', 'admin2@gmail.com', 1, '1995-03-10'),
-       (3, 'Admin3', 'admin3@gmail.com', 1, '1995-03-10'),
-       (4, 'Admin4', 'admin4@gmail.com', 1, '1995-03-10'),
-       (5, 'Admin5', 'admin5@gmail.com', 1, '1995-03-10');
+/* =========================
+   2. User_Profiles (Thông tin người dùng)
+   ========================= */
+CREATE TABLE user_profiles (
+                               user_id INT PRIMARY KEY,
+                               full_name NVARCHAR(100) NOT NULL,
+                               email VARCHAR(100) UNIQUE NOT NULL,
+                               gender BIT NOT NULL, -- 1: Male, 0: Female
+                               address NVARCHAR(255),
+                               date_of_birth DATE NOT NULL,
+    -- FK kết nối 1-1 với accounts
+                               FOREIGN KEY (user_id) REFERENCES accounts(account_id) ON DELETE CASCADE
+);
+
+/* =========================
+   3. Movie_Genres (Thể loại phim)
+   ========================= */
+CREATE TABLE movie_genres (
+                              genre_id INT IDENTITY(1,1) PRIMARY KEY,
+                              genre_name NVARCHAR(50) NOT NULL
+);
+
+/* =========================
+   4. Movies (Phim)
+   ========================= */
+CREATE TABLE movies (
+                        movie_id INT IDENTITY(1,1) PRIMARY KEY,
+                        title NVARCHAR(200) NOT NULL,
+                        duration INT, -- Unit: minutes (phút)
+                        description NVARCHAR(MAX),
+                        release_date DATE,
+                        point_rating INT,----0-5 sao
+                        age_rating NVARCHAR(10) DEFAULT 'P', -- P, T13, T16, T18
+                        poster_url VARCHAR(500)
+);
+
+/* =========================
+   5. Movie_Genre_Rel (Phim thuộc thể loại - Bảng trung gian)
+   ========================= */
+CREATE TABLE movie_genre_rel (
+                                 movie_id INT,
+                                 genre_id INT,
+                                 PRIMARY KEY (movie_id, genre_id),
+                                 FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
+                                 FOREIGN KEY (genre_id) REFERENCES movie_genres(genre_id) ON DELETE CASCADE
+);
+
+/* =========================
+   6. Cinema_Halls (Phòng chiếu)
+   ========================= */
+CREATE TABLE cinema_halls (
+                              hall_id INT IDENTITY(1,1) PRIMARY KEY,
+                              hall_name NVARCHAR(50) NOT NULL,
+
+                              total_rows INT NOT NULL,     -- số hàng ghế
+                              total_cols INT NOT NULL,     -- số ghế mỗi hàng
+
+                              status BIT  DEFAULT 1,  -- 1: hoạt động, 0: tắt
+
+                              created_at DATETIME DEFAULT GETDATE()
+);
+
+/* =========================
+   7. Seat_Types (Loại ghế: Thường, VIP, Đôi)
+   ========================= */
+CREATE TABLE seat_types (
+                            seat_type_id INT IDENTITY(1,1) PRIMARY KEY,
+                            type_name NVARCHAR(50),
+                            extra_fee DECIMAL(10,2) DEFAULT 0 -- Phụ phí cho loại ghế đặc biệt
+);
+
+/* =========================
+   8. Seats (Danh sách ghế trong phòng)
+   ========================= */
+CREATE TABLE seats (
+                       seat_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự tăng
+                       hall_id INT NOT NULL,                  -- Liên kết với phòng chiếu
+                       seat_code NVARCHAR(10) NOT NULL,       -- Mã hiển thị (A1, A2...) tự sinh từ Web
+
+    -- Tọa độ ma trận --
+                       row_index INT NOT NULL,                -- Vị trí hàng (0, 1, 2...)
+                       column_index INT NOT NULL,             -- Vị trí cột (0, 1, 2...)
+
+                       seat_type_id INT NOT NULL,             -- Loại ghế (lấy từ bảng seat_types)
+                       is_active BIT DEFAULT 1,               -- 1: Ghế hoạt động, 0: Lối đi/Ghế hỏng
+
+    -- Khóa ngoại --
+                       CONSTRAINT FK_Seat_Hall FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
+                       CONSTRAINT FK_Seat_Type FOREIGN KEY (seat_type_id) REFERENCES seat_types(seat_type_id),
+
+    -- Ràng buộc quan trọng --
+                       CONSTRAINT UQ_Seat_Coord UNIQUE (hall_id, row_index, column_index), -- Một vị trí chỉ có 1 ghế
+                       CONSTRAINT UQ_Seat_Code UNIQUE (hall_id, seat_code)                -- Một mã ghế không trùng trong 1 phòng
+);
+
+/* =========================
+   9. Showtimes (Suất chiếu)
+   ========================= */
+CREATE TABLE time_slots (
+                            slot_id INT IDENTITY(1,1) PRIMARY KEY,
+                            slot_name NVARCHAR(50),
+                            start_time TIME NOT NULL,
+                            end_time TIME NOT NULL,
+                            slot_price DECIMAL(10,2) NOT NULL,
+
+                            CONSTRAINT CK_TimeSlot_Time CHECK (start_time < end_time),
+                            CONSTRAINT CK_TimeSlot_Price CHECK (slot_price > 0)
+);
 
 
--- User
+CREATE TABLE showtimes (
+                           showtime_id INT IDENTITY(1,1) PRIMARY KEY,
+                           movie_id INT NOT NULL,
+                           hall_id INT NOT NULL,
+                           show_date DATE NOT NULL,         -- Ngày chiếu
+                           slot_id INT NOT NULL,             -- Khung giờ chiếu
 
--- Bật chế độ insert IDENTITY cho accounts
-SET IDENTITY_INSERT accounts ON;
-
--- Password: User1234 = 'Teet7gKhJrIe0PtnyD3KjqAC+CU='
-INSERT INTO accounts (account_id, phone_number, password_hash, role_id, created_at)
-VALUES (11, '1111', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
-       (12, '2222', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
-       (13, '3333', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
-       (14, '4444', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE()),
-       (15, '5555', 'Teet7gKhJrIe0PtnyD3KjqAC+CU=', 'User', GETDATE());
-
--- Tắt chế độ insert IDENTITY cho accounts
-SET IDENTITY_INSERT accounts OFF;
-
--- Insert user_profiles với user_id khớp với account_id
--- Vì user_id là FK reference đến account_id nên phải khớp
-INSERT INTO user_profiles(user_id, full_name, email, gender, date_of_birth)
-VALUES (11, 'User1', 'User1@gmail.com', 1, '1995-03-10'),
-       (12, 'User2', 'User2@gmail.com', 1, '1995-03-10'),
-       (13, 'User3', 'User3@gmail.com', 1, '1995-03-10'),
-       (14, 'User4', 'User4@gmail.com', 1, '1995-03-10'),
-       (15, 'User5', 'User5@gmail.com', 1, '1995-03-10');
-
---Thêm phim
--- ===== MOVIE GENRES =====
-INSERT INTO movie_genres (genre_name)
-VALUES
-    (N'Action'),        -- 1
-    (N'Horror'),        -- 2
-    (N'Animation'),    -- 3
-    (N'Adventure'),    -- 4
-    (N'Sci-Fi'),        -- 5
-    (N'Comedy'),        -- 6
-    (N'Fantasy'),      -- 7
-    (N'Crime'),         -- 8
-    (N'Thriller'),     -- 9
-    (N'Drama');         -- 10
+                           CONSTRAINT UQ_Showtime UNIQUE (hall_id, show_date, slot_id),
 
 
-
---Set loại ghế
-INSERT INTO seat_types (type_name, extra_fee)
-VALUES
-    (N'Thường', 0),
-    (N'VIP', 20000),
-    (N'Ghế đôi', 50000);
-
---Phòng chiếu
-INSERT INTO cinema_halls (hall_name)
-VALUES
-    (N'Phòng 1'),
-    (N'Phòng 2'),
-    (N'Phòng IMAX');
-
---Set ghế
--- Phòng 1
-INSERT INTO seats (hall_id, seat_code, seat_type_id)
-VALUES
-    (1, 'A1', 1),
-    (1, 'A2', 1),
-    (1, 'A3', 2),
-    (1, 'B1', 2),
-    (1, 'B2', 3);
-
--- Phòng 2
-INSERT INTO seats (hall_id, seat_code, seat_type_id)
-VALUES
-    (2, 'A1', 1),
-    (2, 'A2', 1),
-    (2, 'B1', 2);
-
--- Phòng IMAX
-INSERT INTO seats (hall_id, seat_code, seat_type_id)
-VALUES
-    (3, 'A1', 2),
-    (3, 'A2', 2),
-    (3, 'A3', 3);
-
-
---Thêm phim
-INSERT INTO movies (title, duration, release_date, age_rating)
-VALUES
-    (N'Avatar 3', 190, '2026-01-01', 'T13'),
-    (N'Dune Part Two', 165, '2025-12-20', 'T13'),
-    (N'Kung Fu Panda 4', 95, '2025-12-15', 'P'),
-    (N'John Wick 5', 145, '2025-11-10', 'T18'),
-    (N'Spider-Man: New Saga', 150, '2025-12-05', 'T13'),
-    (N'Fast & Furious 11', 155, '2025-11-25', 'T16'),
-    (N'Frozen 3', 110, '2025-12-01', 'P'),
-    (N'Transformers: Reborn', 160, '2025-10-30', 'T13'),
-    (N'Insidious 6', 120, '2025-10-15', 'T18'),
-    (N'The Batman: Dawn', 175, '2025-12-18', 'T16');
-
--- ===== MOVIE - GENRE RELATION =====
-INSERT INTO movie_genre_rel (movie_id, genre_id)
-VALUES
--- Avatar 3
-(1, 4), -- Adventure
-(1, 5), -- Sci-Fi
-(1, 7), -- Fantasy
-
--- Dune Part Two
-(2, 4), -- Adventure
-(2, 5), -- Sci-Fi
-(2, 10), -- Drama
-
--- Kung Fu Panda 4
-(3, 3), -- Animation
-(3, 6), -- Comedy
-(3, 4), -- Adventure
-
--- John Wick 5
-(4, 1), -- Action
-(4, 8), -- Crime
-(4, 9), -- Thriller
-
--- Spider-Man: New Saga
-(5, 1), -- Action
-(5, 4), -- Adventure
-(5, 5), -- Sci-Fi
-
--- Fast & Furious 11
-(6, 1), -- Action
-(6, 8), -- Crime
-(6, 9), -- Thriller
-
--- Frozen 3
-(7, 3), -- Animation
-(7, 7), -- Fantasy
-(7, 6), -- Comedy
-
--- Transformers: Reborn
-(8, 1), -- Action
-(8, 5), -- Sci-Fi
-(8, 4), -- Adventure
-
--- Insidious 6
-(9, 2), -- Horror
-(9, 9), -- Thriller
-
--- The Batman: Dawn
-(10, 1), -- Action
-(10, 8), -- Crime
-(10, 10); -- Drama
-
--- ===== TIME SLOTS =====
-INSERT INTO time_slots (slot_name, start_time, end_time, slot_price)
-VALUES
-    (N'Morning',    '08:00', '10:30',  80000),
-    (N'Noon',       '11:00', '13:30',  90000),
-    (N'Afternoon',  '14:00', '16:30', 100000),
-    (N'Evening',    '17:30', '20:00', 120000),
-    (N'Late Night', '20:30', '23:00',  95000);
-
-DECLARE @today DATE = CAST(GETDATE() AS DATE);
-
--- ===== SHOWTIMES =====
-INSERT INTO showtimes (movie_id, hall_id, show_date, slot_id)
-VALUES
--- Today
-(1, 1, @today, 1),
-(2, 1, @today, 2),
-(3, 2, @today, 3),
-(4, 2, @today, 4),
-(5, 3, @today, 5),
-
--- Tomorrow
-(6, 1, DATEADD(DAY, 1, @today), 1),
-(7, 1, DATEADD(DAY, 1, @today), 3),
-(8, 2, DATEADD(DAY, 1, @today), 4),
-(9, 3, DATEADD(DAY, 1, @today), 5),
-(10,3, DATEADD(DAY, 1, @today), 2),
-
--- Day after tomorrow
-(1, 2, DATEADD(DAY, 2, @today), 4),
-(2, 3, DATEADD(DAY, 2, @today), 5),
-(3, 1, DATEADD(DAY, 2, @today), 1),
-(4, 2, DATEADD(DAY, 2, @today), 2),
-(5, 3, DATEADD(DAY, 2, @today), 3);
+                           FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+                           FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
+                           FOREIGN KEY (slot_id) REFERENCES time_slots(slot_id)
+);
 
 
 
---Product
-INSERT INTO products (item_name, price, img_user_url, stock_quantity)
-VALUES
-    (N'Bắp rang bơ', 45000, 'popcorn.jpg', 100),
-    (N'Coca Cola', 30000, 'coca.jpg', 200),
-    (N'Combo Bắp + Coca', 70000, 'combo.jpg', 50);
 
 
---Hóa Đơn
-INSERT INTO invoices (user_id, showtime_id, expiry_time, status, total_amount)
-VALUES
-    (11, 1, DATEADD(MINUTE, 5, GETDATE()), N'Paid', 160000),
-    (12, 2, DATEADD(MINUTE, 5, GETDATE()), N'Pending', 120000),
-    (13, 3, DATEADD(MINUTE, 5, GETDATE()), N'Paid', 135000);
---ghế đã đặt
-INSERT INTO ticket_details
-(invoice_id, seat_id, showtime_id, actual_price)
-VALUES
-    (1, 1,  1, 90000),
-    (1, 3, 1, 110000),
-    (2, 2,  2, 100000),
-    (3, 6,  3, 85000);
+/* =========================
+   10. Invoices (Hóa đơn vé tổng quát)
+   ========================= */
+CREATE TABLE invoices (
+                          invoice_id INT IDENTITY(1,1) PRIMARY KEY,
+                          user_id INT,
+                          showtime_id INT,
+                          booking_time DATETIME DEFAULT GETDATE(),
+                          expiry_time DATETIME, -- Hết hạn sau 5 phút nếu không thanh toán
+                          status NVARCHAR(30) DEFAULT N'Pending', -- Pending (Chờ), Paid (Đã trả), Canceled (Hủy)
+                          total_amount DECIMAL(15,2),
+                          ticket_code AS ('TIC' + RIGHT('000000' + CAST(invoice_id AS VARCHAR(10)), 6)) PERSISTED,
+                          FOREIGN KEY (user_id) REFERENCES user_profiles(user_id),
+                          FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
+);
+
+/* =========================
+   11. Ticket_Details (Chi tiết ghế đã đặt)
+   ========================= */
+CREATE TABLE ticket_details (
+                                invoice_id INT NOT NULL,       -- liên kết hóa đơn
+                                seat_id INT NOT NULL,          -- ghế được đặt
+                                showtime_id INT NOT NULL,      -- suất chiếu ghế thuộc
+                                actual_price DECIMAL(10,2),   -- base_price + extra_fee
 
 
-INSERT INTO products_details (invoice_id, item_id, quantity)
-VALUES
-    (1, 1, 1),
-    (1, 2, 1),
-    (3, 3, 1);
+
+    -- UNIQUE constraint để chống trùng ghế cùng suất chiếu
+                                CONSTRAINT UQ_Showtime_Seat UNIQUE (showtime_id, seat_id),
+
+    -- FOREIGN KEY
+                                CONSTRAINT FK_Ticket_Invoice FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
+                                CONSTRAINT FK_Ticket_Seat FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
+                                CONSTRAINT FK_Ticket_Showtime FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
+);
 
 
--- Login test
-SELECT * FROM accounts WHERE phone_number = '1111';
+/* =========================
+   12. Foods_Drinks (Danh mục đồ ăn thức uống)
+   ========================= */
 
--- Vé user
-SELECT i.invoice_id, i.ticket_code, i.status, i.total_amount
-FROM invoices i
-WHERE i.user_id = 11;
+CREATE TABLE products (
+                          item_id INT IDENTITY(1,1) PRIMARY KEY,
+                          item_name NVARCHAR(100),
+                          price DECIMAL(10,2),
+                          img_user_url VARCHAR(500),
+                          stock_quantity INT DEFAULT 0
+);
 
--- Ghế đã đặt theo suất chiếu
-SELECT *
-FROM ticket_details
-WHERE showtime_id = 1;
+/* =========================
+   13. Food_Order_Details (Chi tiết đồ ăn kèm theo hóa đơn)
+   ========================= */
+CREATE TABLE products_details (
+                                  invoice_id INT,
+                                  item_id INT,
+                                  quantity INT,
+                                  PRIMARY KEY (invoice_id, item_id),
+                                  FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
+                                  FOREIGN KEY (item_id) REFERENCES products(item_id)
+);
+
+/* =========================
+   14. INDEXES (Chỉ mục tối ưu tìm kiếm)
+   ========================= */
+
+-- Tìm nhanh ghế đã đặt theo suất chiếu và trạng thái
+CREATE INDEX idx_showtime_status ON invoices(showtime_id, status);
+
+-- Soát vé nhanh bằng Ticket Code
+CREATE UNIQUE INDEX idx_ticket_code_unique ON invoices(ticket_code);
+
+-- Tìm lịch chiếu theo thời gian và phim
+CREATE INDEX idx_search_showtime
+    ON showtimes(show_date, slot_id, movie_id);
+
+
+-- Tìm tên phim nhanh hơn
+CREATE INDEX idx_movie_title ON movies(title);
+
+GO
