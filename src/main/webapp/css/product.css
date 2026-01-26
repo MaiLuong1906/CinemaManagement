@@ -1,0 +1,127 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Jan 26, 2026, 12:44:54 PM
+    Author     : itphu
+*/
+
+:root {
+    --primary-color: #e50914;
+    --secondary-color: #221f1f;
+    --text-light: #f5f5f5;
+}
+
+/* body */
+body {
+    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    color: var(--text-light);
+}
+
+/* header */
+.header-section {
+    background: linear-gradient(90deg, var(--primary-color), #b20710);
+    padding: 20px 0;
+    margin-bottom: 40px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* cart */
+.cart-btn {
+    border: 2px solid white;
+    color: white;
+    border-radius: 50px;
+    padding: 10px 25px;
+}
+
+.cart-badge {
+    position: absolute;
+    background: #ffc107;
+    color: black;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+/* card */
+.combo-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    transition: 0.4s;
+}
+
+.combo-card:hover {
+    transform: translateY(-10px);
+}
+
+/* image */
+.combo-img-wrapper {
+    height: 250px;
+    overflow: hidden;
+}
+
+.combo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* stock */
+.stock-available { background: #28a745; }
+.stock-low { background: #ffc107; color: black; }
+.stock-out { background: #dc3545; }
+
+/* body */
+.combo-body {
+    padding: 25px;
+}
+
+.combo-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.combo-price {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* quantity */
+.quantity-control {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.quantity-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.quantity-display {
+    font-size: 1.5rem;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* button */
+.btn-add-cart {
+    width: 100%;
+    background: var(--primary-color);
+    color: white;
+}
+
+/* empty */
+.empty-state {
+    text-align: center;
+    padding: 80px;
+}
