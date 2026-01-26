@@ -33,6 +33,26 @@
         <servlet-name>addShowTimeServlet</servlet-name>
         <servlet-class>controller.addShowTimeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddCinemaHallServlet</servlet-name>
+        <servlet-class>controller.AddCinemaHallServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ListCinemaHallsServlet</servlet-name>
+        <servlet-class>controller.ListCinemaHallsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageSeatsServlet</servlet-name>
+        <servlet-class>controller.ManageSeatsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateSeatServlet</servlet-name>
+        <servlet-class>controller.UpdateSeatServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ToggleHallStatusServlet</servlet-name>
+        <servlet-class>controller.ToggleHallStatusServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -60,6 +80,26 @@
     <servlet-mapping>
         <servlet-name>addShowTimeServlet</servlet-name>
         <url-pattern>/addShowTimeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddCinemaHallServlet</servlet-name>
+        <url-pattern>/AddCinemaHallServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListCinemaHallsServlet</servlet-name>
+        <url-pattern>/ListCinemaHallsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageSeatsServlet</servlet-name>
+        <url-pattern>/ManageSeatsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateSeatServlet</servlet-name>
+        <url-pattern>/UpdateSeatServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ToggleHallStatusServlet</servlet-name>
+        <url-pattern>/ToggleHallStatusServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

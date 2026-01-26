@@ -14,7 +14,7 @@ CREATE TABLE accounts (
     account_id INT IDENTITY(1,1) PRIMARY KEY,
     phone_number VARCHAR(12) UNIQUE NOT NULL,
     password_hash VARCHAR(500) NOT NULL,
-    role_id VARCHAR(20) DEFAULT 'User' 
+    role_id VARCHAR(20) DEFAULT 'User'
         CONSTRAINT CK_role_id CHECK (role_id IN ('Admin', 'User')),
     status BIT DEFAULT 1, -- 1: Active (Hoạt động), 0: Locked (Khóa)
     created_at DATETIME DEFAULT GETDATE()
@@ -24,7 +24,7 @@ CREATE TABLE accounts (
    2. User_Profiles (Thông tin người dùng)
    ========================= */
 CREATE TABLE user_profiles (
-    user_id INT PRIMARY KEY, 
+    user_id INT PRIMARY KEY,
     full_name NVARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     gender BIT NOT NULL, -- 1: Male, 0: Female
@@ -51,6 +51,7 @@ CREATE TABLE movies (
     duration INT, -- Unit: minutes (phút)
     description NVARCHAR(MAX),
     release_date DATE,
+    point_rating INT,----0-5 sao
     age_rating NVARCHAR(10) DEFAULT 'P', -- P, T13, T16, T18
     poster_url VARCHAR(500)
 );
@@ -71,7 +72,14 @@ CREATE TABLE movie_genre_rel (
    ========================= */
 CREATE TABLE cinema_halls (
     hall_id INT IDENTITY(1,1) PRIMARY KEY,
-    hall_name NVARCHAR(50)
+    hall_name NVARCHAR(50) NOT NULL,
+
+    total_rows INT NOT NULL,     -- số hàng ghế
+    total_cols INT NOT NULL,     -- số ghế mỗi hàng
+
+    status BIT NOT NULL DEFAULT 1,  -- 1: hoạt động, 0: tắt
+
+    created_at DATETIME DEFAULT GETDATE()
 );
 
 /* =========================
@@ -79,7 +87,7 @@ CREATE TABLE cinema_halls (
    ========================= */
 CREATE TABLE seat_types (
     seat_type_id INT IDENTITY(1,1) PRIMARY KEY,
-    type_name NVARCHAR(50), 
+    type_name NVARCHAR(50),
     extra_fee DECIMAL(10,2) DEFAULT 0 -- Phụ phí cho loại ghế đặc biệt
 );
 
@@ -87,13 +95,24 @@ CREATE TABLE seat_types (
    8. Seats (Danh sách ghế trong phòng)
    ========================= */
 CREATE TABLE seats (
-    seat_id INT IDENTITY(1,1) PRIMARY KEY,
-    hall_id INT,
-    seat_code NVARCHAR(10), -- Ex: A1, B10
-    seat_type_id INT,
-    FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
-    FOREIGN KEY (seat_type_id) REFERENCES seat_types(seat_type_id),
-    UNIQUE (hall_id, seat_code) -- Tránh trùng mã ghế trong cùng 1 phòng
+    seat_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự tăng
+    hall_id INT NOT NULL,                  -- Liên kết với phòng chiếu
+    seat_code NVARCHAR(10) NOT NULL,       -- Mã hiển thị (A1, A2...) tự sinh từ Web
+
+    -- Tọa độ ma trận --
+    row_index INT NOT NULL,                -- Vị trí hàng (0, 1, 2...)
+    column_index INT NOT NULL,             -- Vị trí cột (0, 1, 2...)
+
+    seat_type_id INT NOT NULL,             -- Loại ghế (lấy từ bảng seat_types)
+    is_active BIT DEFAULT 1,               -- 1: Ghế hoạt động, 0: Lối đi/Ghế hỏng
+
+    -- Khóa ngoại --
+                       CONSTRAINT FK_Seat_Hall FOREIGN KEY (hall_id) REFERENCES cinema_halls(hall_id),
+                       CONSTRAINT FK_Seat_Type FOREIGN KEY (seat_type_id) REFERENCES seat_types(seat_type_id),
+
+    -- Ràng buộc quan trọng --
+                       CONSTRAINT UQ_Seat_Coord UNIQUE (hall_id, row_index, column_index), -- Một vị trí chỉ có 1 ghế
+                       CONSTRAINT UQ_Seat_Code UNIQUE (hall_id, seat_code)                -- Một mã ghế không trùng trong 1 phòng
 );
 
 /* =========================

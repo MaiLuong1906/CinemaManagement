@@ -11,7 +11,7 @@
         </ul>
     </li>
 
-    <li><a href="${pageContext.request.contextPath}/views/admin/rooms/list.jsp" class="nav-link px-3 text-white">Rooms</a></li>
+    <li><a href="${pageContext.request.contextPath}/admin/halls" class="nav-link px-3 text-white">Rooms</a></li>
 
     <li><a href="${pageContext.request.contextPath}/views/admin/users/list.jsp" class="nav-link px-3 text-white">Users</a></li>
 
