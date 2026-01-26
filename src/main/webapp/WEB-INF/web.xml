@@ -57,6 +57,18 @@
         <servlet-name>UpdateShowtimeServlet</servlet-name>
         <servlet-class>controller.UpdateShowtimeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminProductServlet</servlet-name>
+        <servlet-class>controller.AdminProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserProductServlet</servlet-name>
+        <servlet-class>controller.UserProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>controller.CartServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -108,6 +120,18 @@
     <servlet-mapping>
         <servlet-name>UpdateShowtimeServlet</servlet-name>
         <url-pattern>/UpdateShowtimeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminProductServlet</servlet-name>
+        <url-pattern>/AdminProductServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserProductServlet</servlet-name>
+        <url-pattern>/UserProductServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/CartServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
