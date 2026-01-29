@@ -136,5 +136,72 @@ public class InvoiceDAO {
         inv.setTicketCode(rs.getString("ticket_code"));
         return inv;
     }
+    
+    
+    
+    // bo sung by Dat
+    // ham lay tong doanh thu
+    public double calculateRevenue(){
+        String GET_MONTHLY_REVENUE =
+        "SELECT ISNULL(SUM(total_amount), 0) AS monthly_revenue " +
+        "FROM invoices " +
+        "WHERE status = N'Paid' " +
+        "AND booking_time >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) " +
+        "AND booking_time < DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))";
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_MONTHLY_REVENUE);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                revenue = rs.getDouble("monthly_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+    // lay tong tien do an trong thang do ban duoc
+    public double getMonthlyProductRevenue() {
+         String GET_MONTHLY_PRODUCT_REVENUE =
+        "SELECT ISNULL(SUM(pd.quantity * p.price), 0) AS product_revenue " +
+        "FROM invoices i " +
+        "JOIN products_details pd ON i.invoice_id = pd.invoice_id " +
+        "JOIN products p ON pd.item_id = p.item_id " +
+        "WHERE i.status = N'Paid' " +
+        "AND i.booking_time >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) " +
+        "AND i.booking_time <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))";
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_MONTHLY_PRODUCT_REVENUE);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                revenue = rs.getDouble("product_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+    // lay tong tien ban ve trong do
+     public double getMonthlyTicketRevenue() { 
+        String GET_MONTHLY_TICKET_REVENUE =
+        "SELECT ISNULL(SUM(td.actual_price), 0) AS ticket_revenue " +
+        "FROM invoices i " +
+        "JOIN ticket_details td ON i.invoice_id = td.invoice_id " +
+        "WHERE i.status = N'Paid' " +
+        "AND i.booking_time >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) " +
+        "AND i.booking_time <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))";
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_MONTHLY_TICKET_REVENUE);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                revenue = rs.getDouble("ticket_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
 }
 

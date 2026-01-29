@@ -73,6 +73,10 @@
         <servlet-name>hall</servlet-name>
         <servlet-class>controller.AddCinemaHallServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminRevenueServlet</servlet-name>
+        <servlet-class>controller.AdminRevenueServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -140,6 +144,10 @@
     <servlet-mapping>
         <servlet-name>hall</servlet-name>
         <url-pattern>/hall</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminRevenueServlet</servlet-name>
+        <url-pattern>/AdminRevenueServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

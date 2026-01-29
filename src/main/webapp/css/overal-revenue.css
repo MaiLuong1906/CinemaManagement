@@ -1,0 +1,39 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Jan 29, 2026, 10:12:52 AM
+    Author     : nguye
+*/
+
+/* ===== DASHBOARD CARD ===== */
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* ===== KPI CARD ===== */
+.kpi-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ===== CANVAS ===== */
+canvas {
+    max-height: 400px;
+}
+
+h1 {
+    text-align: center;
+    margin: 24px 0;
+    font-weight: 700;
+}
