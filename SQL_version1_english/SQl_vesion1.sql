@@ -54,6 +54,7 @@ CREATE TABLE movies (
                         point_rating INT,----0-5 sao
                         age_rating NVARCHAR(10) DEFAULT 'P', -- P, T13, T16, T18
                         poster_url VARCHAR(500)
+
 );
 
 /* =========================

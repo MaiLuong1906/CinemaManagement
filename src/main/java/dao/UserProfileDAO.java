@@ -1,9 +1,13 @@
 package dao;
 
 
+import model.UserDTO;
 import model.UserProfile;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserProfileDAO {
 
@@ -105,6 +109,41 @@ public class UserProfileDAO {
             ps.executeUpdate();
         }
     }
+    public static List<UserDTO> getAllUsers() {
+        List<UserDTO> list = new ArrayList<>();
+
+        String sql = """
+        SELECT a.account_id, a.phone_number, a.role_id, a.status, a.created_at,
+               u.full_name, u.email, u.gender, u.address, u.date_of_birth
+        FROM accounts a
+        JOIN user_profiles u ON a.account_id = u.user_id
+    """;
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                UserDTO u = new UserDTO();
+                u.setAccountId(rs.getInt("account_id"));
+                u.setPhoneNumber(rs.getString("phone_number"));
+                u.setRoleId(rs.getString("role_id"));
+                u.setStatus(rs.getBoolean("status"));
+                u.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+                u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
+                u.setGender(rs.getBoolean("gender"));
+                u.setAddress(rs.getString("address"));
+                u.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
+
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     /* =========================
        MAP RESULTSET
