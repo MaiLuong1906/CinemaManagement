@@ -26,6 +26,10 @@
 </head>
 
 <body>
+<!-- Back Home -->
+        <a href="${pageContext.request.contextPath}/home" class="btn-back">
+            Back to Home
+        </a>
 
 <div class="container admin-container">
 

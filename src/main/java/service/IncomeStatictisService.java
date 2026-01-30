@@ -16,7 +16,7 @@ public class IncomeStatictisService {
     // tra ve ti le bieu do tron
     
     // tinh tong doanh thu theo thang
-    public double calculateTotalRevenue(){
+    public double calculateMonthlyRevenue(){
         return invoiceDAO.calculateRevenue();
     }
     // tinh tien tu ve ban ra
@@ -25,7 +25,11 @@ public class IncomeStatictisService {
     }
     // tinh tien tu san pham ban ra
     public double calculateProductRevenue(){
-        return invoiceDAO.getMonthlyTicketRevenue();
+        return invoiceDAO.getMonthlyProductRevenue();
+    }
+    // vi invoice co paid con ben detail thi khong nen % chuan phai la 
+    public double calculateTotalRevenue(){
+        return this.calculateTicketRevenue()+this.calculateProductRevenue();
     }
     // tinh phan tram moi cai
     public double calculatePercentTicket(){
@@ -35,8 +39,14 @@ public class IncomeStatictisService {
     public double calculatePercentProduct(){
         return this.calculateProductRevenue()/this.calculateTotalRevenue();
     }
-    
-    
+    // lay doanh thu trong ngay
+    public double getDaylyRevenue(){
+        return invoiceDAO.getDailyRevenue();
+    }
+    // lay doanh thu theo nam
+    public double getYearlyRevenue(){
+        return invoiceDAO.getYearlyRevenue();
+    }
     
     
 }

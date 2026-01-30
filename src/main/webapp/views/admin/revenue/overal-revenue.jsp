@@ -20,7 +20,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="bg-light">
+<body>
+        <!-- Back -->
+        <a href="${pageContext.request.contextPath}/views/admin/users/admin-statictis.jsp" class="btn-back">
+            Back
+        </a>
 
     <h1>Thống kê doanh thu</h1>
 <div class="container-fluid mt-4">
@@ -30,21 +34,22 @@
         <div class="col-md-6">
             <div class="card dashboard-card p-4">
                 <h5 class="fw-bold mb-3 text-center">
-                    Tỷ lệ doanh thu
+                    Tỷ lệ doanh thu theo tháng
                 </h5>
                 <canvas id="revenuePieChart"></canvas>
             </div>
         </div>
 
         <!-- ===== BÊN PHẢI: KPI ===== -->
+        <!--doi voi phan nay thi du lieu dang tinh ca cac ve tam tuc la status chua paid-->
         <div class="col-md-6">
             <div class="row g-4">
 
                 <div class="col-md-6">
                     <div class="kpi-card text-center">
-                        <h6 class="text-muted">Tổng doanh thu</h6>
+                        <h6 class="text-muted">Tổng doanh thu tháng</h6>
                         <h3 class="fw-bold text-primary">
-                            ${totalRevenue} ₫
+                            ${monthlyRevenue} ₫
                         </h3>
                     </div>
                 </div>
@@ -53,26 +58,34 @@
                     <div class="kpi-card text-center">
                         <h6 class="text-muted">Doanh thu hôm nay</h6>
                         <h3 class="fw-bold text-success">
-                            ${todayRevenue} ₫
+                            ${dailyRevenue} ₫
                         </h3>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="kpi-card text-center">
-                        <h6 class="text-muted">Doanh thu tháng này</h6>
+                        <h6 class="text-muted">Doanh thu từ vé tháng này</h6>
                         <h3 class="fw-bold text-warning">
-                            ${monthRevenue} ₫
+                            ${ticketRevenue} ₫
                         </h3>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="kpi-card text-center">
-                        <h6 class="text-muted">Doanh thu năm nay</h6>
+                        <h6 class="text-muted">Doanh thu từ product tháng này</h6>
                         <h3 class="fw-bold text-danger">
-                            ${yearRevenue} ₫
+                            ${productRevenue} ₫
                         </h3>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="kpi-card text-center kpi-year">
+                        <h6 class="text-muted">Tổng doanh thu năm</h6>
+                        <h2 class="fw-bold text-info">
+                            ${yearlyRevenue} ₫
+                        </h2>
                     </div>
                 </div>
 
@@ -91,11 +104,10 @@
         data: {
             labels: ['Nước', 'Vé'],
             datasets: [{
-//                data: [
-//                    ${drinkRatio},
-//                    ${ticketRatio}
-//                ] // co ham service moi mo cmt
-                data: [60, 40]   // FAKE CỨNG
+                data: [
+                    ${percentProduct},
+                    ${percentTicket}
+                ]
             }]
         },
         options: {

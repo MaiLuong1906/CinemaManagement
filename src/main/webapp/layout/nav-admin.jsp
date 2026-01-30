@@ -114,6 +114,14 @@
                     <span class="fw-semibold">Users</span>
                 </a>
             </li>
+            <!-- Statistic -->
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/views/admin/users/admin-statictis.jsp" 
+                   class="nav-link sidebar-link-custom text-white d-flex align-items-center gap-3 px-4 py-3 rounded-0">
+                    <i class="fas fa-chart-bar fs-5" style="width: 24px;"></i>
+                    <span class="fw-semibold">Statistic</span>
+                </a>
+            </li>
         </ul>
     </nav>
 

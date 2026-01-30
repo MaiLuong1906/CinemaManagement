@@ -203,5 +203,49 @@ public class InvoiceDAO {
         }
         return revenue;
     }
+     // lay tong doanh thu trong ngay
+    public double getDailyRevenue() {
+        String GET_DAILY_REVENUE =
+            "SELECT ISNULL(SUM(total_amount), 0) AS daily_revenue " +
+            "FROM invoices " +
+            "WHERE status = N'Paid' " +
+            "AND CAST(booking_time AS DATE) = CAST(GETDATE() AS DATE)";
+
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_DAILY_REVENUE);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                revenue = rs.getDouble("daily_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+    // lay tong doanh thu trong nam
+    public double getYearlyRevenue() {
+        String GET_YEARLY_REVENUE =
+            "SELECT ISNULL(SUM(total_amount), 0) AS yearly_revenue " +
+            "FROM invoices " +
+            "WHERE status = N'Paid' " +
+            "AND booking_time >= DATEFROMPARTS(YEAR(GETDATE()), 1, 1) " +
+            "AND booking_time <  DATEADD(YEAR, 1, DATEFROMPARTS(YEAR(GETDATE()), 1, 1))";
+
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_YEARLY_REVENUE);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                revenue = rs.getDouble("yearly_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
 }
 

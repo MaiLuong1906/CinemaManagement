@@ -7,33 +7,164 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this t
     Author     : nguye
 */
 
-/* ===== DASHBOARD CARD ===== */
-.dashboard-card {
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+/* ================= ROOT ================= */
+:root {
+    --gradient-primary: linear-gradient(135deg, #7f9cf5, #a78bfa);
+
+    --bg-dark: #0b0f19;
+
+    /* Glass sáng hơn */
+    --glass-bg: rgba(255, 255, 255, 0.14);
+    --glass-border: rgba(255, 255, 255, 0.28);
+
+    --text-muted: #cbd5e1;
 }
 
-/* ===== KPI CARD ===== */
-.kpi-card {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: 0.3s;
+/* ================= GLOBAL ================= */
+body {
+    background: radial-gradient(
+        circle at top,
+        #111827,
+        #020617 70%
+    ) !important;
+
+    color: #ffffff;
+    padding: 40px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-.kpi-card:hover {
-    transform: translateY(-5px);
-}
-
-/* ===== CANVAS ===== */
-canvas {
-    max-height: 400px;
-}
-
+/* ================= TITLE ================= */
 h1 {
     text-align: center;
-    margin: 24px 0;
+    margin-bottom: 40px;
+    font-weight: 800;
+    font-size: 2.4rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ================= CARD GLASS ================= */
+.card.dashboard-card,
+.kpi-card {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-radius: 20px;
+    box-shadow:
+        0 12px 35px rgba(0,0,0,0.45),
+        inset 0 0 0 1px rgba(255,255,255,0.15);
+
+    transition: all 0.35s ease;
+}
+
+/* ================= HOVER EFFECT ================= */
+.card.dashboard-card:hover,
+.kpi-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 30px 70px rgba(127, 156, 245, 0.45),
+        inset 0 0 0 1px rgba(255,255,255,0.25);
+}
+
+/* ================= CARD TITLE ================= */
+.dashboard-card h5 {
     font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.6px;
+    margin-bottom: 20px;
+
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ================= KPI ================= */
+.kpi-card {
+    padding: 26px;
+    height: 100%;
+}
+
+/* ================= H6 SPECIAL COLOR ================= */
+h6 {
+    color: #7dd3fc !important; /* xanh cyan nhạt */
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+/* KPI subtitle (ưu tiên rõ hơn) */
+.kpi-card h6 {
+    color: #5eead4 !important; /* xanh ngọc */
+}
+
+
+.kpi-card h3 {
+    font-weight: 800;
+    font-size: 1.7rem;
+    text-shadow: 0 0 14px rgba(255,255,255,0.3);
+}
+
+/* ================= COLOR OVERRIDE ================= */
+.text-primary {
+    color: #7f9cf5 !important;
+}
+
+.text-success {
+    color: #4ade80 !important;
+}
+
+.text-warning {
+    color: #facc15 !important;
+}
+
+.text-danger {
+    color: #f87171 !important;
+}
+
+/* ================= CHART ================= */
+canvas {
+    max-height: 360px;
+    margin-top: 10px;
+}
+
+/* ================= CONTAINER ================= */
+.container-fluid {
+    max-width: 1400px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+    }
+
+    .kpi-card h3 {
+        font-size: 1.4rem;
+    }
+}
+.btn-back {
+    position: fixed;        /* Cố định trên màn hình */
+    top: 20px;              /* Cách trên */
+    left: 20px;             /* Cách trái */
+
+    background-color: #28a745; /* Xanh lá */
+    color: white;
+    padding: 10px 18px;
+
+    border-radius: 6px;
+    text-decoration: none;  /* Bỏ gạch chân */
+    font-weight: 600;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #218838; /* Đậm hơn khi hover */
 }

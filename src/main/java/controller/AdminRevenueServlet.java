@@ -5,12 +5,13 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.IncomeStatictisService;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  *
@@ -21,7 +22,26 @@ public class AdminRevenueServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        IncomeStatictisService revenueService = 
+        IncomeStatictisService revenueService = new  IncomeStatictisService();
+        // format tien
+        NumberFormat vndFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+        // phan tram
+        double percentProduct = revenueService.calculatePercentProduct();
+        double percentTicket = revenueService.calculatePercentTicket();
+        request.setAttribute("percentProduct", percentProduct);
+        request.setAttribute("percentTicket", percentTicket);
+        //lay ra doanh thu
+        double monthlyRevenue = revenueService.calculateTotalRevenue();
+        double dailyRevenue = revenueService.getDaylyRevenue();
+        double yearlyRevenue = revenueService.getYearlyRevenue();
+        request.setAttribute("monthlyRevenue", vndFormat.format(monthlyRevenue));
+        request.setAttribute("dailyRevenue", vndFormat.format(dailyRevenue));
+        request.setAttribute("yearlyRevenue", vndFormat.format(yearlyRevenue));
+        // rieng
+        double ticketRevenue = revenueService.calculateTicketRevenue();
+        double productRevenue = revenueService.calculateProductRevenue();
+        request.setAttribute("ticketRevenue", vndFormat.format(ticketRevenue));
+        request.setAttribute("productRevenue", vndFormat.format(productRevenue));
         request.getRequestDispatcher("views/admin/revenue/overal-revenue.jsp").forward(request, response);
     }
     //
