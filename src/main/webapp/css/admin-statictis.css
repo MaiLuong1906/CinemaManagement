@@ -102,3 +102,6 @@ body {
 .btn-back:hover {
     background-color: #218838; /* Đậm hơn khi hover */
 }
+a {
+    text-decoration: none;
+}

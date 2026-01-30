@@ -42,7 +42,7 @@ public class AdminRevenueServlet extends HttpServlet {
         double productRevenue = revenueService.calculateProductRevenue();
         request.setAttribute("ticketRevenue", vndFormat.format(ticketRevenue));
         request.setAttribute("productRevenue", vndFormat.format(productRevenue));
-        request.getRequestDispatcher("views/admin/revenue/overal-revenue.jsp").forward(request, response);
+        request.getRequestDispatcher("views/admin/statistic/overal-revenue.jsp").forward(request, response);
     }
     //
     

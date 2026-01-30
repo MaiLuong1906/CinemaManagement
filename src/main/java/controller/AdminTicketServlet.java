@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
-import service.IncomeStatictisService;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -11,36 +10,37 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import service.TicketManagementService;
 
 /**
  *
  * @author nguye
  */
-public class AdminStatisticServlet extends HttpServlet {
-    IncomeStatictisService incomeStatictisService = new IncomeStatictisService();
-    TicketManagementService ticketManagementService  = new TicketManagementService();
-
+public class AdminTicketServlet extends HttpServlet {
+    TicketManagementService ticketManagementService = new TicketManagementService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
-        // format tien
-        NumberFormat vndFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
-        double totalIncome = incomeStatictisService.calculateTotalRevenue();
-        request.setAttribute("totalIncome", vndFormat.format(totalIncome));
+        // set up thuoc tinh
         try {
-            // set up thuoc tinh
             int monthlyTicketsSold = ticketManagementService.getMothlyTicketsSold() ; // so ve da ban
             request.setAttribute("monthlyTicketsSold", monthlyTicketsSold);
         } catch (SQLException ex) {
             request.setAttribute("error_for_getAtribute", "null");
         }
-        // dieu huong
-        request.getRequestDispatcher("/views/admin/users/admin-statictis.jsp").forward(request, response);
+        try {
+            int dailyTicketsSold = ticketManagementService.getDailyTicketsSold();
+            request.setAttribute("dailyTicketsSold", dailyTicketsSold);
+        } catch (SQLException ex) {
+            request.setAttribute("error_for_getAtribute", "null");
+        }
         
+        
+        
+        // chuyen tiep
+        request.getRequestDispatcher("views/admin/statistic/ticket-management.jsp").forward(request, response);
     }
+
 }

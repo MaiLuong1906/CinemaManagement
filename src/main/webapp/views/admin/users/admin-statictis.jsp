@@ -44,24 +44,28 @@
     <!-- ===== SUMMARY CARDS ===== -->
     <div class="row g-4 mb-5">
 
-        <a href="${pageContext.request.contextPath}/AdminRevenueServlet">
+        
              <div class="col-md-3">
+                 <a href="${pageContext.request.contextPath}/AdminRevenueServlet">
                  <div class="glass rounded-4 p-4 hover-lift text-center"
                       style="cursor: pointer;">
                      <i class="fas fa-coins fa-2x mb-3 icon-primary"></i>
                      <h6 class="text-secondary">Tổng doanh thu</h6>
                      <h3 class="fw-bold text-gradient">${totalIncome} ₫</h3>
                  </div>
+                </a>
              </div>
-         </a>
+
 
 
         <div class="col-md-3">
+            <a href="${pageContext.request.contextPath}/AdminTicketServlet">
             <div class="glass rounded-4 p-4 hover-lift text-center">
                 <i class="fas fa-ticket fa-2x mb-3 icon-primary"></i>
                 <h6 class="text-secondary">Vé đã bán</h6>
-                <h3 class="fw-bold">${totalTickets}</h3>
+                <h3 class="fw-bold text-gradient">${monthlyTicketsSold}</h3>
             </div>
+            </a>
         </div>
 
         <div class="col-md-3">

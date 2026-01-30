@@ -81,6 +81,10 @@
         <servlet-name>AdminStatisticServlet</servlet-name>
         <servlet-class>controller.AdminStatisticServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminTicketServlet</servlet-name>
+        <servlet-class>controller.AdminTicketServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -156,6 +160,10 @@
     <servlet-mapping>
         <servlet-name>AdminStatisticServlet</servlet-name>
         <url-pattern>/AdminStatisticServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminTicketServlet</servlet-name>
+        <url-pattern>/AdminTicketServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

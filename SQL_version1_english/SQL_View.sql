@@ -62,3 +62,16 @@ GROUP BY
     h.hall_id,
     h.hall_name;
 GO
+-- view ve da ban, phuc vu cho statistic
+CREATE VIEW vw_sold_tickets
+AS
+SELECT
+    td.invoice_id,
+    td.seat_id,
+    td.showtime_id,
+    td.actual_price,
+    i.booking_time
+FROM ticket_details td
+JOIN invoices i ON td.invoice_id = i.invoice_id
+WHERE i.status = 'Paid';
+GO
