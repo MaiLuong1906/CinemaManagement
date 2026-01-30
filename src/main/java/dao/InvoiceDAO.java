@@ -101,6 +101,27 @@ public class InvoiceDAO {
         }
     }
 
+    public List<Invoice> getPendingInvoices() {
+        List<Invoice> list = new ArrayList<>();
+        String sql =
+                "SELECT invoice_id, user_id, showtime_id, booking_time, status, total_amount " +
+                        "FROM invoices " +
+                        "WHERE LTRIM(RTRIM(status)) = N'Pending'";
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
     /* =========================
        AUTO CANCEL EXPIRED
        ========================= */

@@ -54,6 +54,7 @@ CREATE TABLE movies (
                         point_rating INT,----0-5 sao
                         age_rating NVARCHAR(10) DEFAULT 'P', -- P, T13, T16, T18
                         poster_url VARCHAR(500)
+
 );
 
 /* =========================
@@ -163,6 +164,10 @@ CREATE TABLE invoices (
                           ticket_code AS ('TIC' + RIGHT('000000' + CAST(invoice_id AS VARCHAR(10)), 6)) PERSISTED,
                           FOREIGN KEY (user_id) REFERENCES user_profiles(user_id),
                           FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
+
+                        CONSTRAINT CK_Invoice_Status
+                              CHECK (status IN (N'Pending', N'Paid', N'Canceled'))
+
 );
 
 /* =========================
