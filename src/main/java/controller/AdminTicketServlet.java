@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import service.TicketManagementService;
 
 /**
@@ -33,6 +31,12 @@ public class AdminTicketServlet extends HttpServlet {
         try {
             int dailyTicketsSold = ticketManagementService.getDailyTicketsSold();
             request.setAttribute("dailyTicketsSold", dailyTicketsSold);
+        } catch (SQLException ex) {
+            request.setAttribute("error_for_getAtribute", "null");
+        }
+        try {
+            int yearlyTicketsSold = ticketManagementService.getYearlyTicketsSold();
+            request.setAttribute("yearlyTicketsSold", yearlyTicketsSold);
         } catch (SQLException ex) {
             request.setAttribute("error_for_getAtribute", "null");
         }
