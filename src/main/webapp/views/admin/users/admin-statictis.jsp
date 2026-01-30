@@ -50,7 +50,7 @@
                       style="cursor: pointer;">
                      <i class="fas fa-coins fa-2x mb-3 icon-primary"></i>
                      <h6 class="text-secondary">Tổng doanh thu</h6>
-                     <h3 class="fw-bold text-gradient">${totalRevenue} ₫</h3>
+                     <h3 class="fw-bold text-gradient">${totalIncome} ₫</h3>
                  </div>
              </div>
          </a>

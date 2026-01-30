@@ -22,7 +22,7 @@
 
 <body>
         <!-- Back -->
-        <a href="${pageContext.request.contextPath}/views/admin/users/admin-statictis.jsp" class="btn-back">
+        <a href="${pageContext.request.contextPath}/AdminStatisticServlet" class="btn-back">
             Back
         </a>
 
