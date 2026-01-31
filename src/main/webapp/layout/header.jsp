@@ -39,6 +39,12 @@
                         <i class="fas fa-film me-2"></i> Movies
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/product"
+                       class="nav-link nav-link-custom text-white px-4 py-2 rounded-3 fw-semibold fs-5">
+                        <i class="fas fa-film me-2"></i> Products
+                    </a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">

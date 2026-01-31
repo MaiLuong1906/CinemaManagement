@@ -4,6 +4,8 @@
     Author     : itphu
 --%>
 
+
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -29,7 +31,8 @@
                 <h2><i class="fas fa-shopping-cart me-2"></i>Giỏ Hàng</h2>
             </div>
             <div class="col-md-6 text-end">
-                <a href="${pageContext.request.contextPath}/user/product" class="btn btn-back">
+                <!-- FIX 1 -->
+                <a href="${pageContext.request.contextPath}/product" class="btn btn-back">
                     <i class="fas fa-arrow-left me-2"></i>Tiếp Tục Mua
                 </a>
             </div>
@@ -74,7 +77,8 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <form action="${pageContext.request.contextPath}/user/cart" method="post"
+                                        <!-- FIX 2 -->
+                                        <form action="${pageContext.request.contextPath}/cart" method="post"
                                               id="form-${item.key.itemId}">
                                             <input type="hidden" name="action" value="update">
                                             <input type="hidden" name="itemId" value="${item.key.itemId}">
@@ -105,7 +109,8 @@
                                             <fmt:formatNumber value="${item.key.price * item.value}" groupingUsed="true"/>₫
                                         </div>
 
-                                        <a href="cart?action=remove&itemId=${item.key.itemId}"
+                                        <!-- FIX 3 -->
+                                        <a href="${pageContext.request.contextPath}/cart?action=remove&itemId=${item.key.itemId}"
                                            class="btn btn-remove btn-sm"
                                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
                                             <i class="fas fa-trash me-1"></i>Xóa
@@ -132,7 +137,9 @@
                             <i class="fas fa-credit-card me-2"></i>Thanh Toán
                         </button>
 
-                        <a href="cart?action=clear" class="btn btn-clear"
+                        <!-- FIX 4 -->
+                        <a href="${pageContext.request.contextPath}/cart?action=clear"
+                           class="btn btn-clear"
                            onclick="return confirm('Xóa toàn bộ giỏ hàng?')">
                             <i class="fas fa-trash me-2"></i>Xóa Toàn Bộ
                         </a>
@@ -145,7 +152,9 @@
             <div class="cart-container empty-cart">
                 <i class="fas fa-shopping-cart"></i>
                 <h3>Giỏ Hàng Trống</h3>
-                <a href="product" class="btn-continue">Khám Phá Combo</a>
+                <a href="${pageContext.request.contextPath}/product" class="btn-continue">
+                    Khám Phá Combo
+                </a>
             </div>
         </c:otherwise>
     </c:choose>

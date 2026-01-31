@@ -28,6 +28,8 @@ public class ProductDAO {
 
     private static final String UPDATE_STOCK_SQL =
             "UPDATE products SET stock_quantity = stock_quantity + ? WHERE item_id = ?";
+    private static final String DELETE_PRODUCT_DETAILS_SQL =
+        "DELETE FROM products_details WHERE item_id = ?";
 
     // =========================
     // 1. Thêm sản phẩm (Admin)
@@ -61,14 +63,38 @@ public class ProductDAO {
     // =========================
     // 3. Xóa sản phẩm
     // =========================
-    public void delete(int itemId) throws SQLException {
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(DELETE_SQL)) {
+   public void delete(int itemId) throws SQLException {
 
-            ps.setInt(1, itemId);
-            ps.executeUpdate();
-        }
+    Connection conn = null;
+    PreparedStatement psDetail = null;
+    PreparedStatement psProduct = null;
+
+    try {
+        conn = DBConnect.getConnection();
+        conn.setAutoCommit(false); // BẮT ĐẦU TRANSACTION
+
+        // 1. Xóa bảng con trước
+        psDetail = conn.prepareStatement(DELETE_PRODUCT_DETAILS_SQL);
+        psDetail.setInt(1, itemId);
+        psDetail.executeUpdate();
+
+        // 2. Xóa bảng products
+        psProduct = conn.prepareStatement(DELETE_SQL);
+        psProduct.setInt(1, itemId);
+        psProduct.executeUpdate();
+
+        conn.commit(); // OK → LƯU
+
+    } catch (SQLException e) {
+        if (conn != null) conn.rollback(); // LỖI → QUAY LẠI
+        throw e;
+    } finally {
+        if (psDetail != null) psDetail.close();
+        if (psProduct != null) psProduct.close();
+        if (conn != null) conn.close();
     }
+}
+
 
     // =========================
     // 4. Tìm theo ID
