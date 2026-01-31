@@ -12,7 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
+import model.Movie_Ticket_ViewDTO;
 import service.TicketManagementService;
 
 /**
@@ -38,6 +40,25 @@ public class AdminStatisticServlet extends HttpServlet {
             request.setAttribute("monthlyTicketsSold", monthlyTicketsSold);
         } catch (SQLException ex) {
             request.setAttribute("error_for_getAtribute", "null");
+        }
+        // top phim
+        TicketManagementService service = new TicketManagementService();
+        
+
+        try {
+            // top phim
+            List<Movie_Ticket_ViewDTO> topMovies =
+                    service.getAllOfPageNumber(1);
+            // bad phim
+            int totalPages = service.returnNumberPage();
+            List<Movie_Ticket_ViewDTO> badMovies =
+                    service.getAllOfPageNumber(totalPages);
+
+            request.setAttribute("topMovies", topMovies);
+            request.setAttribute("badMovies", badMovies);
+
+        } catch (RuntimeException ex) {
+            request.setAttribute("errorMessage", ex.getMessage());
         }
         // dieu huong
         request.getRequestDispatcher("/views/admin/users/admin-statictis.jsp").forward(request, response);

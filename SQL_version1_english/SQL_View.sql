@@ -1,29 +1,3 @@
-CREATE OR ALTER VIEW vw_movie_showtime_basic
-AS
-SELECT
-    m.movie_id            AS movieId,
-    m.title               AS movieTitle,
-    m.poster_url          AS posterUrl,
-    m.age_rating          AS ageRating,
-    m.description         AS description,
-
-    g.genre_name          AS genreName,
-
-    h.hall_name           AS hallName,
-
-    s.show_date           AS showDate,
-    ts.start_time         AS slotStartTime,
-    ts.end_time           AS slotEndTime,
-    ts.slot_price         AS slotPrice,
-
-    m.duration            AS duration
-FROM showtimes s
-         JOIN movies m            ON s.movie_id = m.movie_id
-         JOIN cinema_halls h      ON s.hall_id  = h.hall_id
-         JOIN time_slots ts       ON s.slot_id  = ts.slot_id
-         JOIN movie_genre_rel r   ON m.movie_id = r.movie_id
-         JOIN movie_genres g      ON r.genre_id = g.genre_id;
-GO --(Hien tai chua dung den cai view nay)
 -- view cho chuc nang list phim cho admin
 CREATE VIEW vw_movie_showtime_detail
 AS
@@ -74,4 +48,80 @@ SELECT
 FROM ticket_details td
 JOIN invoices i ON td.invoice_id = i.invoice_id
 WHERE i.status = 'Paid';
+GO
+
+-- view phim va so ve ban duoc : phan vung theo cum 10 records va sap xep tu cao den thap (cai nay chua loc theo thang)
+CREATE VIEW vw_movie_ticket_paging_5
+AS
+WITH movie_stats AS (
+    SELECT
+        m.movie_id,
+        m.title AS movie_title,
+        COUNT(td.seat_id) AS tickets_sold,
+        SUM(td.actual_price) AS movie_revenue
+    FROM movies m
+    JOIN showtimes s
+        ON m.movie_id = s.movie_id
+    JOIN ticket_details td
+        ON s.showtime_id = td.showtime_id
+    JOIN invoices i
+        ON td.invoice_id = i.invoice_id
+    WHERE i.status = N'Paid'
+    GROUP BY
+        m.movie_id,
+        m.title
+),
+ranked_movies AS (
+    SELECT
+        movie_id,
+        movie_title,
+        tickets_sold,
+        movie_revenue,
+        ROW_NUMBER() OVER (
+            ORDER BY tickets_sold DESC, movie_revenue DESC
+        ) AS row_num
+    FROM movie_stats
+)
+SELECT
+    movie_id,
+    movie_title,
+    tickets_sold,
+    movie_revenue,
+    row_num,
+
+    -- mỗi page 5 phim
+    ((row_num - 1) / 5) + 1 AS page_number
+FROM ranked_movies;
+GO
+-- ve theo khung gio trong thang hien tai
+CREATE VIEW vw_ticket_sold_by_slot_current_month
+AS
+SELECT
+    ts.slot_id,
+    ts.slot_name,
+    ts.start_time,
+    ts.end_time,
+
+    COUNT(td.seat_id) AS tickets_sold,
+
+    SUM(td.actual_price) AS slot_revenue
+
+FROM invoices i
+JOIN ticket_details td
+    ON i.invoice_id = td.invoice_id
+JOIN showtimes s
+    ON i.showtime_id = s.showtime_id
+JOIN time_slots ts
+    ON s.slot_id = ts.slot_id
+
+WHERE
+    i.status = N'Paid'
+    AND MONTH(i.booking_time) = MONTH(GETDATE())
+    AND YEAR(i.booking_time) = YEAR(GETDATE())
+
+GROUP BY
+    ts.slot_id,
+    ts.slot_name,
+    ts.start_time,
+    ts.end_time;
 GO

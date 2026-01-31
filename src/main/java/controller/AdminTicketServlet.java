@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import model.*;
 import service.TicketManagementService;
+import java.util.List;
 
 /**
  *
@@ -40,9 +42,37 @@ public class AdminTicketServlet extends HttpServlet {
         } catch (SQLException ex) {
             request.setAttribute("error_for_getAtribute", "null");
         }
-        
-        
-        
+        // cac thuoc tinh ve ve theo thuoc tinh
+        TicketManagementService service = new TicketManagementService();
+
+        int page = 1; // mặc định page 1
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            page = Integer.parseInt(pageParam);
+        }
+        try {
+            List<Movie_Ticket_ViewDTO> movies =
+                    service.getAllOfPageNumber(page);
+            int totalPages = service.returnNumberPage();
+            request.setAttribute("movies", movies);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+        } catch (RuntimeException ex) {
+            request.setAttribute("errorMessage", ex.getMessage());
+        }
+        int slotPage = 1;
+        String slotPageParam = request.getParameter("slotPage");
+        if (slotPageParam != null) {
+            slotPage = Integer.parseInt(slotPageParam);
+        }
+        // 
+        try{
+            List<TicketSoldBySlot_ViewDTO> ticketSoldBySlot =
+                    service.getTicketSoldBySlotCurrentMonth();
+            request.setAttribute("ticketSoldBySlot", ticketSoldBySlot);
+        }catch(Exception ex){
+            request.setAttribute("errorMessage", ex.getMessage());
+        }
         // chuyen tiep
         request.getRequestDispatcher("views/admin/statistic/ticket-management.jsp").forward(request, response);
     }

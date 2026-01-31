@@ -105,3 +105,9 @@ body {
 a {
     text-decoration: none;
 }
+.text-red {
+    color: #ff4d4f;
+}
+.text-green {
+    color: #4CAF50;
+}

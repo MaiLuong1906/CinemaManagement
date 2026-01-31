@@ -5,6 +5,7 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
@@ -75,18 +76,21 @@
                             </tr>
                         </thead>
                         <tbody id="movieTableBody">
-                            <c:forEach items="${ticketsByMovie}" var="m">
+                            <c:forEach items="${movies}" var="m">
                                 <tr>
-                                    <td>${m.movieTitle}</td>
-                                    <td>${m.totalTickets}</td>
+                                    <td>${m.title}</td>
+                                    <td>${m.ticketsSold}</td>
                                 </tr>
                             </c:forEach>
                         </tbody>
+
                     </table>
                     <!--phan vung-->
                     <div class="d-flex justify-content-center align-items-center gap-3 mt-3">
                         <button class="btn btn-outline-light btn-sm" onclick="prevPage('movie')">◀</button>
-                        <span id="moviePageInfo">1</span>
+                        <span id="moviePageInfo">
+                            ${currentPage} / ${totalPages}
+                        </span>
                         <button class="btn btn-outline-light btn-sm" onclick="nextPage('movie')">▶</button>
                     </div>
 
@@ -96,88 +100,51 @@
             <!-- ================= VÉ THEO PHÒNG CHIẾU ================= -->
             <div class="card bg-secondary mb-4">
                 <div class="card-header">
-                    <h5> Vé theo phòng</h5>
+                    <h5> Vé theo khung giờ</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-dark table-striped">
                         <thead>
                             <tr>
-                                <th>Phim</th>
-                                <th>Phòng</th>
+                                <th>Khung giờ</th>
                                 <th>Vé đã bán</th>
+                                <th>Doanh thu</th>
                             </tr>
                         </thead>
                         <tbody id="roomTableBody">
-                            <c:forEach items="${ticketsByShowtime}" var="s">
+                            <c:forEach items="${ticketSoldBySlot}" var="s">
                                 <tr>
-                                    <td>${s.movieTitle}</td>
-                                    <td>${s.showDate}</td>
-                                    <td>${s.slotName}</td>
+                                    <td>${s.startTime} - ${s.endTime}</td>
+                                    <td>${s.ticketsSold}</td>
+                                    <td class="fw-bold text-gradient">
+                                        <fmt:formatNumber value="${s.slotRevenue}" type="number" groupingUsed="true"/> ₫
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center align-items-center gap-3 mt-3">
-                        <button class="btn btn-outline-light btn-sm" onclick="prevPage('room')">◀</button>
-                        <span id="roomPageInfo">1</span>
-                        <button class="btn btn-outline-light btn-sm" onclick="nextPage('room')">▶</button>
-                    </div>
-
                 </div>
             </div>
 
         </div>
         <script>
-            const pageSize = 10;
-
-            const tables = {
-                movie: {
-                    bodyId: 'movieTableBody',
-                    page: 1
-                },
-                showtime: {
-                    bodyId: 'roomTableBody',
-                    page: 1
-                }
-            };
-
-            function renderTable(type) {
-                const table = tables[type];
-                const rows = document.querySelectorAll(`#${table.bodyId} tr`);
-                const start = (table.page - 1) * pageSize;
-                const end = start + pageSize;
-
-                rows.forEach((row, index) => {
-                    row.style.display = (index >= start && index < end) ? '' : 'none';
-                });
-
-                document.getElementById(type + 'PageInfo').innerText = table.page;
-            }
-
-            function nextPage(type) {
-                const table = tables[type];
-                const rows = document.querySelectorAll(`#${table.bodyId} tr`);
-                const maxPage = Math.ceil(rows.length / pageSize);
-
-                if (table.page < maxPage) {
-                    table.page++;
-                    renderTable(type);
+            function nextPage() {
+                let current = ${currentPage};
+                let total = ${totalPages};
+                if (current < total) {
+                    window.location.href = "?page=" + (current + 1);
                 }
             }
 
-            function prevPage(type) {
-                const table = tables[type];
-                if (table.page > 1) {
-                    table.page--;
-                    renderTable(type);
+            function prevPage() {
+                let current = ${currentPage};
+                if (current > 1) {
+                    window.location.href = "?page=" + (current - 1);
                 }
             }
-
-            window.onload = () => {
-                renderTable('movie');
-                renderTable('room');
-            };
             </script>
+
+
     </body>
 </html>
 

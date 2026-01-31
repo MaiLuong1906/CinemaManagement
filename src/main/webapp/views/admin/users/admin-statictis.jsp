@@ -88,7 +88,7 @@
 
     <!-- ===== TOP MOVIES ===== -->
     <div class="glass rounded-4 p-4 mb-5">
-        <h4 class="fw-bold mb-4">🔥 Phim bán chạy nhất</h4>
+        <h4 class="fw-bold mb-4">Phim bán chạy nhất</h4>
 
         <table class="table table-dark table-hover align-middle">
             <thead>
@@ -102,9 +102,34 @@
             <c:forEach items="${topMovies}" var="m">
                 <tr>
                     <td>${m.title}</td>
-                    <td>${m.totalTickets}</td>
-                    <td class="fw-bold text-gradient">
-                        ${m.totalRevenue} ₫
+                    <td>${m.ticketsSold}</td>
+                    <td class="fw-bold text-green">
+                        ${m.revenue} ₫
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="glass rounded-4 p-4 mb-5">
+        <h4 class="fw-bold mb-4">Phim doanh thu thấp</h4>
+
+        <table class="table table-dark table-hover align-middle">
+            <thead>
+            <tr class="text-secondary">
+                <th>Phim</th>
+                <th>Vé bán</th>
+                <th>Doanh thu</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${badMovies}" var="m">
+                <tr>
+                    <td>${m.title}</td>
+                    <td>${m.ticketsSold}</td>
+                    <td class="fw-bold text-red">
+                        ${m.revenue} ₫
                     </td>
                 </tr>
             </c:forEach>
@@ -114,7 +139,7 @@
 
 </div>
 
-<!-- ===== AI MINI DASHBOARD (1/8 MÀN HÌNH) ===== -->
+<!-- ===== AI MINI DASHBOARD (1/8 MÀN HÌNH) ===== 
 <div class="ai-panel glass rounded-4 p-3">
 
     <div class="ai-header text-gradient">
@@ -136,8 +161,8 @@
                   class="form-control"
                   placeholder="Hỏi AI về doanh thu..."></textarea>
     </div>
-
-</div>
+phan ai se mo khi nao phat trien phan ai
+</div>--> 
 
 </body>
 </html>
