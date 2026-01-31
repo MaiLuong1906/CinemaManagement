@@ -41,6 +41,9 @@ public class AdminStatisticServlet extends HttpServlet {
         } catch (SQLException ex) {
             request.setAttribute("error_for_getAtribute", "null");
         }
+         // format tien
+        double totalIncomeToday = incomeStatictisService.getDaylyRevenue();
+        request.setAttribute("totalIncomeToday", vndFormat.format(totalIncomeToday));
         // top phim
         TicketManagementService service = new TicketManagementService();
         

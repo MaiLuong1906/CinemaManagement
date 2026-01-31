@@ -80,7 +80,7 @@
             <div class="glass rounded-4 p-4 hover-lift text-center">
                 <i class="fas fa-calendar-day fa-2x mb-3 icon-primary"></i>
                 <h6 class="text-secondary">Doanh thu hôm nay</h6>
-                <h3 class="fw-bold text-gradient">${revenueToday} ₫</h3>
+                <h3 class="fw-bold text-gradient">${totalIncomeToday} ₫</h3>
             </div>
         </div>
 
