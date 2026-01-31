@@ -57,7 +57,7 @@
                     <input type="hidden" name="id" value="${u.accountId}"/>
 
                     <select name="role" onchange="this.form.submit()">
-                        <option value="Customer" ${u.roleId == 'Customer' ? 'selected' : ''}>Customer</option>
+                        <option value="User" ${u.roleId == 'User' ? 'selected' : ''}>Customer</option>
                         <option value="Staff" ${u.roleId == 'Staff' ? 'selected' : ''}>Staff</option>
                         <option value="Admin" ${u.roleId == 'Admin' ? 'selected' : ''}>Admin</option>
                     </select>
