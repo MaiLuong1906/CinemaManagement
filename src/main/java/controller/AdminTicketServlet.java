@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import model.*;
-import service.TicketManagementService;
+import service.*;
 import java.util.List;
 
 /**
@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class AdminTicketServlet extends HttpServlet {
     TicketManagementService ticketManagementService = new TicketManagementService();
+    SeatFillRate_ViewService setFillRateService = new SeatFillRate_ViewService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,8 +44,6 @@ public class AdminTicketServlet extends HttpServlet {
             request.setAttribute("error_for_getAtribute", "null");
         }
         // cac thuoc tinh ve ve theo thuoc tinh
-        TicketManagementService service = new TicketManagementService();
-
         int page = 1; // mặc định page 1
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
@@ -52,8 +51,8 @@ public class AdminTicketServlet extends HttpServlet {
         }
         try {
             List<Movie_Ticket_ViewDTO> movies =
-                    service.getAllOfPageNumber(page);
-            int totalPages = service.returnNumberPage();
+                    ticketManagementService.getAllOfPageNumber(page);
+            int totalPages = ticketManagementService.returnNumberPage();
             request.setAttribute("movies", movies);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
@@ -68,11 +67,19 @@ public class AdminTicketServlet extends HttpServlet {
         // 
         try{
             List<TicketSoldBySlot_ViewDTO> ticketSoldBySlot =
-                    service.getTicketSoldBySlotCurrentMonth();
+                    ticketManagementService.getTicketSoldBySlotCurrentMonth();
             request.setAttribute("ticketSoldBySlot", ticketSoldBySlot);
         }catch(Exception ex){
             request.setAttribute("errorMessage", ex.getMessage());
         }
+        //
+        try{
+            double seatFillRate = setFillRateService.getSeatFillRateCurrentMonth();
+            request.setAttribute("seatFillRate", seatFillRate);
+        }catch(Exception ex){
+            request.setAttribute("errorMessage", ex.getMessage());
+        }
+        
         // chuyen tiep
         request.getRequestDispatcher("views/admin/statistic/ticket-management.jsp").forward(request, response);
     }

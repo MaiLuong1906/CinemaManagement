@@ -196,3 +196,7 @@ h1 {
     color: #ffffff;
     font-weight: 600;
 }
+.table td{
+    text-align: center;
+    vertical-align: middle;
+}

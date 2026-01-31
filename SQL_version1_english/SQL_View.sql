@@ -50,7 +50,7 @@ JOIN invoices i ON td.invoice_id = i.invoice_id
 WHERE i.status = 'Paid';
 GO
 
--- view phim va so ve ban duoc : phan vung theo cum 10 records va sap xep tu cao den thap (cai nay chua loc theo thang)
+-- view phim va so ve ban duoc : phan vung theo cum 10 records va sap xep tu cao den thap (lay theo thang hien tai)
 CREATE VIEW vw_movie_ticket_paging_5
 AS
 WITH movie_stats AS (
@@ -66,7 +66,10 @@ WITH movie_stats AS (
         ON s.showtime_id = td.showtime_id
     JOIN invoices i
         ON td.invoice_id = i.invoice_id
-    WHERE i.status = N'Paid'
+    WHERE
+        i.status = N'Paid'
+        AND MONTH(i.booking_time) = MONTH(GETDATE())
+        AND YEAR(i.booking_time) = YEAR(GETDATE())
     GROUP BY
         m.movie_id,
         m.title
@@ -124,4 +127,59 @@ GROUP BY
     ts.slot_name,
     ts.start_time,
     ts.end_time;
+GO
+-- độ phủ ghế tổng quát, từ đây có thể mở rộng để lọc theo phim, theo phòng, theo suất chiếu
+CREATE OR ALTER VIEW vw_seat_coverage_detail
+AS
+SELECT
+    -- Thời gian
+    s.show_date,
+    YEAR(s.show_date)  AS year,
+    MONTH(s.show_date) AS month,
+    DAY(s.show_date)   AS day,
+
+    -- Phim
+    m.movie_id,
+    m.title AS movie_title,
+
+    -- Phòng
+    h.hall_id,
+    h.hall_name,
+    h.total_rows * h.total_cols AS total_seats,
+
+    -- Khung giờ
+    ts.slot_id,
+    ts.slot_name,
+    ts.start_time,
+    ts.end_time,
+
+    -- Số ghế đã bán
+    COUNT(td.seat_id) AS seats_sold,
+
+    -- Độ phủ ghế %
+    CAST(
+        COUNT(td.seat_id) * 100.0 /
+        NULLIF(h.total_rows * h.total_cols, 0)
+        AS DECIMAL(5,2)
+    ) AS seat_coverage_percent
+
+FROM showtimes s
+JOIN movies m
+    ON s.movie_id = m.movie_id
+JOIN cinema_halls h
+    ON s.hall_id = h.hall_id
+JOIN time_slots ts
+    ON s.slot_id = ts.slot_id
+
+LEFT JOIN ticket_details td
+    ON s.showtime_id = td.showtime_id
+LEFT JOIN invoices i
+    ON td.invoice_id = i.invoice_id
+    AND i.status = N'Paid'
+
+GROUP BY
+    s.show_date,
+    m.movie_id, m.title,
+    h.hall_id, h.hall_name, h.total_rows, h.total_cols,
+    ts.slot_id, ts.slot_name, ts.start_time, ts.end_time;
 GO

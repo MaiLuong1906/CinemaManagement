@@ -56,7 +56,7 @@
                     <div class="card bg-info text-dark text-center">
                         <div class="card-body">
                             <h6>Tỷ lệ lấp đầy</h6>
-                            <h2>${avgFillRate}%</h2>
+                            <h2>${seatFillRate}%</h2>
                         </div>
                     </div>
                 </div>
