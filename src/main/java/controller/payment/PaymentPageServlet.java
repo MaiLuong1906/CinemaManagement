@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Admin
  */
-@WebServlet("/payment")
+@WebServlet("/payment1")
 public class PaymentPageServlet extends HttpServlet {
 
     /**
@@ -58,8 +58,8 @@ public class PaymentPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         InvoiceDAO dao = new InvoiceDAO();
-        request.setAttribute("invoices", dao.getPendingInvoices());
+//         InvoiceDAO dao = new InvoiceDAO();
+//        request.setAttribute("invoices", dao.getPendingInvoices());
         request.getRequestDispatcher("/views/payment/payment.jsp").forward(request, response);
     }
 

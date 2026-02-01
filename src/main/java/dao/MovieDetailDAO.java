@@ -4,6 +4,7 @@ import model.MovieDetailDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,47 @@ public class MovieDetailDAO extends DBConnect {
         }
         return null;
     }
+    public static List<MovieDetailDTO> findMovieDetailByMovieId(Connection conn, int movieId)
+        throws SQLException {
+
+    List<MovieDetailDTO> list = new ArrayList<>();
+
+    String sql = """
+        SELECT
+            showtime_id,
+            movie_title,
+            slot_name,
+            show_date,
+            start_time,
+            end_time,
+            hall_name,
+            genres
+        FROM vw_movie_showtime_detail
+        WHERE movie_id = ?
+        ORDER BY hall_name, start_time
+    """;
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, movieId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            MovieDetailDTO dto = new MovieDetailDTO(
+                rs.getInt("showtime_id"),
+                rs.getString("movie_title"),
+                rs.getString("slot_name"),
+                rs.getDate("show_date").toLocalDate(),
+                rs.getTime("start_time").toLocalTime(),
+                rs.getTime("end_time").toLocalTime(),
+                rs.getString("hall_name"),
+                rs.getString("genres")
+            );
+            list.add(dto);
+        }
+    }
+    return list;
+}
+
 
     /* ===================== MAP RESULT ===================== */
     private MovieDetailDTO mapRow(ResultSet rs) throws Exception {
