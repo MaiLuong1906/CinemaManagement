@@ -26,7 +26,8 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action == null) action = "view";
+        if (action == null)
+            action = "view";
 
         try {
             switch (action) {
@@ -43,7 +44,7 @@ public class CartServlet extends HttpServlet {
         } catch (Exception e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/views/user/cart.jsp")
-                   .forward(request, response);
+                    .forward(request, response);
         }
     }
 
@@ -89,32 +90,50 @@ public class CartServlet extends HttpServlet {
     private void update(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int itemId = Integer.parseInt(request.getParameter("itemId"));
         int qty = Integer.parseInt(request.getParameter("quantity"));
+        String redirectTo = request.getParameter("redirectTo");
 
         cartService.updateCart(request.getSession(), itemId, qty);
         request.getSession().setAttribute("successMessage", "Đã cập nhật giỏ hàng");
-        response.sendRedirect(request.getContextPath() + "/cart");
+
+        if ("product".equals(redirectTo)) {
+            response.sendRedirect(request.getContextPath() + "/product");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/cart");
+        }
     }
 
     private void remove(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int itemId = Integer.parseInt(request.getParameter("itemId"));
+        String redirectTo = request.getParameter("redirectTo");
 
         cartService.removeFromCart(request.getSession(), itemId);
         request.getSession().setAttribute("successMessage", "Đã xóa sản phẩm");
-        response.sendRedirect(request.getContextPath() + "/cart");
+
+        if ("product".equals(redirectTo)) {
+            response.sendRedirect(request.getContextPath() + "/product");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/cart");
+        }
     }
 
     private void clear(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String redirectTo = request.getParameter("redirectTo");
+
         cartService.clearCart(request.getSession());
-        request.getSession().setAttribute("successMessage", "Đã a toàn bộ giỏ hàng\")xóa toàn bộ giỏ hàng");
-        response.sendRedirect(request.getContextPath() + "/cart");
+        request.getSession().setAttribute("successMessage", "Đã xóa toàn bộ giỏ hàng");
+
+        if ("product".equals(redirectTo)) {
+            response.sendRedirect(request.getContextPath() + "/product");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/cart");
+        }
     }
 
     private void view(HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute(
-            "cartDetails",
-            cartService.getCartDetails(request.getSession())
-        );
+                "cartDetails",
+                cartService.getCartDetails(request.getSession()));
         request.getRequestDispatcher("/views/user/cart.jsp")
-               .forward(request, response);
+                .forward(request, response);
     }
 }
