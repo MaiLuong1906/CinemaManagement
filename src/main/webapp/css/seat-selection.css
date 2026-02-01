@@ -1,0 +1,180 @@
+:root {
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --seat-available: rgba(255, 255, 255, 0.2);
+    --seat-booked: #4a4a4a;
+    --seat-selected: #4facfe;
+    --seat-vip: #ffd700;
+    --seat-couple: #ff6b6b;
+}
+
+body {
+    background-color: #0a0a0a;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+/* Utilities reused */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+}
+
+/* Screen */
+.screen-container {
+    perspective: 1000px;
+    margin-bottom: 2rem;
+}
+
+.screen {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+    height: 60px;
+    width: 60%;
+    margin: 0 auto;
+    transform: rotateX(-30deg) scale(0.8);
+    box-shadow: 0 50px 40px rgba(255, 255, 255, 0.1);
+    opacity: 0.6;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 60px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    color: #000;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Seat Map */
+.seat-map-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 2rem;
+    overflow-x: auto;
+}
+
+.seat-row {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+}
+
+.seat {
+    width: 40px;
+    height: 35px;
+    border-radius: 8px 8px 12px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    /* Default: Standard */
+    background: var(--seat-available);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.seat:hover:not(:disabled) {
+    transform: translateY(-5px) scale(1.1);
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
+
+/* Seat Types */
+.seat.normal {
+    background: var(--seat-available);
+    border-top: 3px solid #fff;
+}
+
+.seat.vip {
+    background: rgba(255, 215, 0, 0.2);
+    border-top: 3px solid var(--seat-vip);
+    color: var(--seat-vip);
+}
+
+.seat.couple {
+    background: rgba(255, 107, 107, 0.2);
+    border-top: 3px solid var(--seat-couple);
+    color: var(--seat-couple);
+    width: 86px;
+    /* Width of 2 seats + gap approx */
+}
+
+/* States */
+.seat.booked {
+    background: var(--seat-booked);
+    border-color: #666;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.seat.selected {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(118, 75, 162, 0.5);
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Info Panel */
+.info-panel {
+    position: sticky;
+    top: 100px;
+}
+
+.seat-legend {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.legend-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+/* Action Bar */
+.booking-summary {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}

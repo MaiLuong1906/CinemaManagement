@@ -1,6 +1,5 @@
 package controller.payment;
 
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import config.VNPAYConfig;
@@ -9,7 +8,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;import java.net.URLEncoder;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-
 @WebServlet("/ajaxServlet")
 public class ajaxServlet extends HttpServlet {
 
@@ -31,11 +30,32 @@ public class ajaxServlet extends HttpServlet {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = Integer.parseInt(req.getParameter("invoiceId"))*100;
+
+        int invoiceId = Integer.parseInt(req.getParameter("invoiceId"));
+        dao.InvoiceDAO invoiceDAO = new dao.InvoiceDAO();
+        long amount = 0;
+        try {
+            model.Invoice invoice = invoiceDAO.findById(invoiceId);
+            if (invoice != null) {
+                amount = invoice.getTotalAmount().longValue() * 100;
+            } else {
+                resp.getWriter().write("Invoice not found");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
         String bankCode = req.getParameter("bankCode");
 
-        String vnp_TxnRef = VNPAYConfig.getRandomNumber(8);
+        // Use InvoiceId + Random/Time to ensure uniqueness but allow extraction
+        // Format: {invoiceId}_{random}
+        String vnp_TxnRef = invoiceId + "_" + VNPAYConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPAYConfig.getIpAddress(req);
+        if ("0:0:0:0:0:0:0:1".equals(vnp_IpAddr) || "0:0:0:0:0:0:1".equals(vnp_IpAddr)) {
+            vnp_IpAddr = "127.0.0.1";
+        }
 
         String vnp_TmnCode = VNPAYConfig.vnp_TmnCode;
 
@@ -50,7 +70,7 @@ public class ajaxServlet extends HttpServlet {
             vnp_Params.put("vnp_BankCode", bankCode);
         }
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan hoa don " + invoiceId);
         vnp_Params.put("vnp_OrderType", orderType);
 
         String locate = req.getParameter("language");
@@ -80,11 +100,11 @@ public class ajaxServlet extends HttpServlet {
             String fieldName = (String) itr.next();
             String fieldValue = (String) vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                //Build hash data
+                // Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
                 hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                //Build query
+                // Build query
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
                 query.append('=');
                 query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));

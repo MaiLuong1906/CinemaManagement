@@ -1,4 +1,3 @@
-
 <%-- Document : product Created on : Jan 26, 2026, 12:41:50 PM Author : itphu --%>
 
     <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -144,39 +143,70 @@
                                         <c:when test="${not empty cartDetails}">
                                             <div class="cart-items-container">
                                                 <c:set var="total" value="0" />
-                                                <c:forEach var="item" items="${cartDetails}">
-                                                    <div class="cart-item-row">
-                                                        <div class="item-name">${item.key.itemName}</div>
-                                                        <div class="item-qty">
-                                                            <form action="${pageContext.request.contextPath}/cart"
-                                                                method="post" id="sidebar-form-${item.key.itemId}">
-                                                                <input type="hidden" name="action" value="update">
-                                                                <input type="hidden" name="itemId"
-                                                                    value="${item.key.itemId}">
-                                                                <input type="hidden" name="redirectTo" value="product">
-                                                                <button type="button" class="qty-btn-sm"
-                                                                    onclick="updateSidebarQty(${item.key.itemId}, -1, ${item.key.stockQuantity})">−</button>
-                                                                <span class="qty-value"
-                                                                    id="sidebar-qty-${item.key.itemId}">${item.value}</span>
-                                                                <input type="hidden" name="quantity"
-                                                                    id="sidebar-qty-input-${item.key.itemId}"
-                                                                    value="${item.value}">
-                                                                <button type="button" class="qty-btn-sm"
-                                                                    onclick="updateSidebarQty(${item.key.itemId}, 1, ${item.key.stockQuantity})">+</button>
-                                                            </form>
+
+                                                <%-- DISPLAY SEATS --%>
+                                                    <c:if test="${not empty sessionScope.cartSeats}">
+                                                        <div class="cart-item-row" style="background-color: #f0f8ff;">
+                                                            <div class="item-name">
+                                                                <i class="fas fa-ticket-alt text-primary me-2"></i>Vé
+                                                                Xem Phim
+                                                                <br>
+                                                                <small class="text-muted">
+                                                                    <c:forEach var="seat"
+                                                                        items="${sessionScope.cartSeats}"
+                                                                        varStatus="status">
+                                                                        ${seat.seatCode}${!status.last ? ',' : ''}
+                                                                    </c:forEach>
+                                                                </small>
+                                                            </div>
+                                                            <div class="item-qty">x${sessionScope.cartSeats.size()}
+                                                            </div>
+                                                            <div class="item-subtotal">
+                                                                <c:set var="seatTotal" value="0" />
+                                                                <c:forEach var="seat" items="${sessionScope.cartSeats}">
+                                                                    <c:set var="seatTotal"
+                                                                        value="${seatTotal + seat.price}" />
+                                                                </c:forEach>
+                                                                <fmt:formatNumber value="${seatTotal}"
+                                                                    groupingUsed="true" />₫
+                                                            </div>
                                                         </div>
-                                                        <div class="item-subtotal">
-                                                            <fmt:formatNumber value="${item.key.price * item.value}"
-                                                                groupingUsed="true" />₫
+                                                        <c:set var="total" value="${total + seatTotal}" />
+                                                    </c:if>
+                                                    <c:forEach var="item" items="${cartDetails}">
+                                                        <div class="cart-item-row">
+                                                            <div class="item-name">${item.key.itemName}</div>
+                                                            <div class="item-qty">
+                                                                <form action="${pageContext.request.contextPath}/cart"
+                                                                    method="post" id="sidebar-form-${item.key.itemId}">
+                                                                    <input type="hidden" name="action" value="update">
+                                                                    <input type="hidden" name="itemId"
+                                                                        value="${item.key.itemId}">
+                                                                    <input type="hidden" name="redirectTo"
+                                                                        value="product">
+                                                                    <button type="button" class="qty-btn-sm"
+                                                                        onclick="updateSidebarQty(${item.key.itemId}, -1, ${item.key.stockQuantity})">−</button>
+                                                                    <span class="qty-value"
+                                                                        id="sidebar-qty-${item.key.itemId}">${item.value}</span>
+                                                                    <input type="hidden" name="quantity"
+                                                                        id="sidebar-qty-input-${item.key.itemId}"
+                                                                        value="${item.value}">
+                                                                    <button type="button" class="qty-btn-sm"
+                                                                        onclick="updateSidebarQty(${item.key.itemId}, 1, ${item.key.stockQuantity})">+</button>
+                                                                </form>
+                                                            </div>
+                                                            <div class="item-subtotal">
+                                                                <fmt:formatNumber value="${item.key.price * item.value}"
+                                                                    groupingUsed="true" />₫
+                                                            </div>
+                                                            <a href="${pageContext.request.contextPath}/cart?action=remove&itemId=${item.key.itemId}&redirectTo=product"
+                                                                class="item-remove" title="Xóa">
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
                                                         </div>
-                                                        <a href="${pageContext.request.contextPath}/cart?action=remove&itemId=${item.key.itemId}&redirectTo=product"
-                                                            class="item-remove" title="Xóa">
-                                                            <i class="fas fa-times"></i>
-                                                        </a>
-                                                    </div>
-                                                    <c:set var="total"
-                                                        value="${total + (item.key.price * item.value)}" />
-                                                </c:forEach>
+                                                        <c:set var="total"
+                                                            value="${total + (item.key.price * item.value)}" />
+                                                    </c:forEach>
                                             </div>
 
                                             <!-- Summary Section -->
@@ -225,7 +255,7 @@
                         }
 
                         function checkout() {
-                            alert("Chức năng thanh toán đang phát triển!");
+                            window.location.href = "${pageContext.request.contextPath}/confirm-booking";
                         }
                     </script>
                 </body>

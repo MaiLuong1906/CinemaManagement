@@ -11,11 +11,13 @@ import java.io.IOException;
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
 
-    private CartService cartService;
+    private service.CartService cartService;
+    private dao.SeatDAO seatDAO;
 
     @Override
     public void init() {
         cartService = new CartService();
+        seatDAO = new dao.SeatDAO();
     }
 
     // =====================
@@ -130,10 +132,7 @@ public class CartServlet extends HttpServlet {
     }
 
     private void view(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        request.setAttribute(
-                "cartDetails",
-                cartService.getCartDetails(request.getSession()));
-        request.getRequestDispatcher("/views/user/cart.jsp")
-                .forward(request, response);
+        // Redirect to product page as we no longer have a standalone cart page
+        response.sendRedirect(request.getContextPath() + "/product");
     }
 }
