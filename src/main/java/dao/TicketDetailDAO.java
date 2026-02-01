@@ -1,6 +1,5 @@
 package dao;
 
-
 import model.TicketDetail;
 
 import java.sql.Connection;
@@ -12,18 +11,15 @@ import java.util.List;
 
 public class TicketDetailDAO {
 
-    private static final String INSERT_SQL =
-            "INSERT INTO ticket_details (invoice_id, seat_id, hall_id, showtime_id, actual_price) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO ticket_details (invoice_id, seat_id, showtime_id, actual_price) "
+            +
+            "VALUES (?, ?, ?, ?)";
 
-    private static final String SELECT_BY_INVOICE_SQL =
-            "SELECT * FROM ticket_details WHERE invoice_id = ?";
+    private static final String SELECT_BY_INVOICE_SQL = "SELECT * FROM ticket_details WHERE invoice_id = ?";
 
-    private static final String DELETE_BY_INVOICE_SQL =
-            "DELETE FROM ticket_details WHERE invoice_id = ?";
+    private static final String DELETE_BY_INVOICE_SQL = "DELETE FROM ticket_details WHERE invoice_id = ?";
 
-    private static final String CHECK_SEAT_SQL =
-            "SELECT 1 FROM ticket_details WHERE showtime_id = ? AND seat_id = ?";
+    private static final String CHECK_SEAT_SQL = "SELECT 1 FROM ticket_details WHERE showtime_id = ? AND seat_id = ?";
 
     // =========================
     // 1. Đặt 1 ghế
@@ -32,9 +28,8 @@ public class TicketDetailDAO {
         try (PreparedStatement ps = conn.prepareStatement(INSERT_SQL)) {
             ps.setInt(1, t.getInvoiceId());
             ps.setInt(2, t.getSeatId());
-            ps.setInt(3, t.getHallId());
-            ps.setInt(4, t.getShowtimeId());
-            ps.setBigDecimal(5, t.getActualPrice());
+            ps.setInt(3, t.getShowtimeId());
+            ps.setBigDecimal(4, t.getActualPrice());
             ps.executeUpdate(); // nếu trùng ghế → SQLException
         }
     }
@@ -47,9 +42,8 @@ public class TicketDetailDAO {
             for (TicketDetail t : list) {
                 ps.setInt(1, t.getInvoiceId());
                 ps.setInt(2, t.getSeatId());
-                ps.setInt(3, t.getHallId());
-                ps.setInt(4, t.getShowtimeId());
-                ps.setBigDecimal(5, t.getActualPrice());
+                ps.setInt(3, t.getShowtimeId());
+                ps.setBigDecimal(4, t.getActualPrice());
                 ps.addBatch();
             }
             ps.executeBatch(); // ❗ SQLException nếu có ghế trùng
@@ -75,7 +69,7 @@ public class TicketDetailDAO {
     public List<TicketDetail> getByInvoice(int invoiceId) throws SQLException {
         List<TicketDetail> list = new ArrayList<>();
         try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SELECT_BY_INVOICE_SQL)) {
+                PreparedStatement ps = conn.prepareStatement(SELECT_BY_INVOICE_SQL)) {
 
             ps.setInt(1, invoiceId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -110,4 +104,3 @@ public class TicketDetailDAO {
         return t;
     }
 }
-

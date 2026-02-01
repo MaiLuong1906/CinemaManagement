@@ -15,8 +15,7 @@ public class CartService {
 
     @SuppressWarnings("unchecked")
     private Map<Integer, Integer> getCart(HttpSession session) {
-        Map<Integer, Integer> cart =
-                (Map<Integer, Integer>) session.getAttribute("cart");
+        Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
         if (cart == null) {
             cart = new HashMap<>();
             session.setAttribute("cart", cart);
@@ -40,8 +39,7 @@ public class CartService {
 
         if (newQty > product.getStockQuantity()) {
             throw new IllegalArgumentException(
-                "Số lượng vượt quá tồn kho! Chỉ còn " + product.getStockQuantity()
-            );
+                    "Số lượng vượt quá tồn kho! Chỉ còn " + product.getStockQuantity());
         }
 
         cart.put(itemId, newQty);
@@ -80,11 +78,11 @@ public class CartService {
     // VIEW
     // =====================
     public Map<Product, Integer> getCartDetails(HttpSession session) throws SQLException {
-        Map<Integer, Integer> cart =
-                (Map<Integer, Integer>) session.getAttribute("cart");
+        Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
 
         Map<Product, Integer> details = new HashMap<>();
-        if (cart == null) return details;
+        if (cart == null)
+            return details;
 
         for (Map.Entry<Integer, Integer> e : cart.entrySet()) {
             Product p = productDAO.findById(e.getKey());
