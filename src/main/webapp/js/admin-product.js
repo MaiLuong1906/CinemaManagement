@@ -5,20 +5,33 @@
 
 
 function resetForm() {
-    document.getElementById("productForm").reset();
+    const form = document.querySelector("#productModal form");
+    form.reset();
+
     document.getElementById("formAction").value = "insert";
     document.getElementById("itemId").value = "";
     document.getElementById("modalTitle").innerText = "Thêm Sản Phẩm";
+
+    // reset preview
+    const preview = document.getElementById("imagePreview");
+    if (preview) {
+        preview.src = "https://via.placeholder.com/300x200?text=Preview";
+    }
 }
 
-function editProduct(id, name, price, img, stock) {
+function editProduct(id, name, price, imgFileName, quantity) {
+    document.getElementById("modalTitle").innerText = "Sửa Sản Phẩm";
     document.getElementById("formAction").value = "update";
     document.getElementById("itemId").value = id;
     document.getElementById("itemName").value = name;
     document.getElementById("price").value = price;
-    document.getElementById("stockQuantity").value = stock;
-    document.getElementById("productImgUrl").value = img || "";
-    document.getElementById("modalTitle").innerText = "Chỉnh Sửa Sản Phẩm";
+    document.getElementById("stockQuantity").value = quantity;
+
+    // HIỆN ẢNH CŨ (đúng ImageServlet)
+    const preview = document.getElementById("imagePreview");
+    if (preview && imgFileName) {
+        preview.src = contextPath + "/image?path=" + imgFileName;
+    }
 
     new bootstrap.Modal(document.getElementById("productModal")).show();
 }
@@ -29,4 +42,14 @@ function confirmDelete(id, name) {
         contextPath + "/admin/product?action=delete&id=" + id;
 
     new bootstrap.Modal(document.getElementById("deleteModal")).show();
+}
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById("imagePreview").src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }

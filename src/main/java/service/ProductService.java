@@ -25,4 +25,9 @@ public class ProductService {
     public void delete(int id) throws SQLException {
         productDAO.delete(id);
     }
+
+   public Product findById(int id) throws SQLException {
+    return productDAO.findById(id);
+}
+
 }
