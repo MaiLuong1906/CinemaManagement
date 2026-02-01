@@ -9,6 +9,9 @@ import dao.DBConnect;
 import java.io.IOException;
 import java.sql.Connection;
 
+import jakarta.servlet.annotation.WebServlet;
+
+@WebServlet(name = "ToggleHallStatusServlet", urlPatterns = { "/admin/halls/toggle-status" })
 public class ToggleHallStatusServlet extends HttpServlet {
 
     @Override
@@ -16,8 +19,14 @@ public class ToggleHallStatusServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            int hallId = Integer.parseInt(req.getParameter("hallId"));
-            boolean status = Boolean.parseBoolean(req.getParameter("status"));
+            String hallIdStr = req.getParameter("hallId");
+            String statusStr = req.getParameter("status");
+            System.out
+                    .println("DEBUG: ToggleHallStatusServlet - hallIdStr: " + hallIdStr + ", statusStr: " + statusStr);
+
+            int hallId = Integer.parseInt(hallIdStr);
+            boolean status = Boolean.parseBoolean(statusStr);
+            System.out.println("DEBUG: Parsed - hallId: " + hallId + ", status: " + status);
 
             try (Connection conn = DBConnect.getConnection()) {
                 CinemaHallService hallService = new CinemaHallService(conn);

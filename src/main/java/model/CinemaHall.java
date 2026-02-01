@@ -10,9 +10,9 @@ public class CinemaHall {
     private boolean status;
     private LocalDate createdAt;
 
-
-    //Dung de lay du lieu
-    public CinemaHall(int hallId, String hallName, int total_rows, int total_cols, boolean status, LocalDate createdAt) {
+    // Dung de lay du lieu
+    public CinemaHall(int hallId, String hallName, int total_rows, int total_cols, boolean status,
+            LocalDate createdAt) {
         this.hallId = hallId;
         this.hallName = hallName;
         this.total_rows = total_rows;
@@ -20,8 +20,9 @@ public class CinemaHall {
         this.status = status;
         this.createdAt = createdAt;
     }
-    //Dung cho tao moi
-    public CinemaHall( String hallName, int total_rows, int total_cols, boolean status, LocalDate createdAt) {
+
+    // Dung cho tao moi
+    public CinemaHall(String hallName, int total_rows, int total_cols, boolean status, LocalDate createdAt) {
         this.hallName = hallName;
         this.total_rows = total_rows;
         this.total_cols = total_cols;
@@ -61,7 +62,7 @@ public class CinemaHall {
         this.total_cols = total_cols;
     }
 
-    public boolean getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
@@ -77,4 +78,3 @@ public class CinemaHall {
         this.createdAt = createdAt;
     }
 }
-

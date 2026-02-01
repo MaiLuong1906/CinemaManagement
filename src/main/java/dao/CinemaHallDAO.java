@@ -19,7 +19,7 @@ public class CinemaHallDAO {
         String sql = "SELECT hall_id, hall_name, total_rows, total_cols, status, created_at FROM cinema_halls";
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 CinemaHall hall = new CinemaHall(
@@ -28,8 +28,7 @@ public class CinemaHallDAO {
                         rs.getInt("total_rows"),
                         rs.getInt("total_cols"),
                         rs.getBoolean("status"),
-                        rs.getDate("created_at").toLocalDate()
-                );
+                        rs.getDate("created_at").toLocalDate());
                 list.add(hall);
             }
         }
@@ -50,8 +49,7 @@ public class CinemaHallDAO {
                         rs.getInt("total_rows"),
                         rs.getInt("total_cols"),
                         rs.getBoolean("status"),
-                        rs.getDate("created_at").toLocalDate()
-                );
+                        rs.getDate("created_at").toLocalDate());
             }
         }
         return null;
@@ -60,15 +58,15 @@ public class CinemaHallDAO {
     // 3. Thêm phòng chiếu - GIỮ NGUYÊN NHƯNG SỬA LẠI
     public int insert(CinemaHall hall) throws SQLException {
         String sql = """
-            INSERT INTO cinema_halls (hall_name, total_rows, total_cols, status, created_at)
-            VALUES (?, ?, ?, ?, GETDATE())
-        """;
+                    INSERT INTO cinema_halls (hall_name, total_rows, total_cols, status, created_at)
+                    VALUES (?, ?, ?, ?, GETDATE())
+                """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, hall.getHallName());
             ps.setInt(2, hall.getTotal_rows());
             ps.setInt(3, hall.getTotal_cols());
-            ps.setBoolean(4, hall.getStatus());
+            ps.setBoolean(4, hall.isStatus());
 
             ps.executeUpdate();
 
@@ -136,9 +134,9 @@ public class CinemaHallDAO {
     // 9. Kiểm tra phòng có đang được sử dụng không (có suất chiếu)
     public boolean hasActiveShowtimes(int hallId) throws SQLException {
         String sql = """
-            SELECT 1 FROM showtimes 
-            WHERE hall_id = ? AND show_date >= CAST(GETDATE() AS DATE)
-            """;
+                SELECT 1 FROM showtimes
+                WHERE hall_id = ? AND show_date >= CAST(GETDATE() AS DATE)
+                """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, hallId);
             ResultSet rs = ps.executeQuery();
@@ -150,7 +148,7 @@ public class CinemaHallDAO {
     public int countTotalHalls() throws SQLException {
         String sql = "SELECT COUNT(*) FROM cinema_halls";
         try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -162,7 +160,7 @@ public class CinemaHallDAO {
     public int countActiveHalls() throws SQLException {
         String sql = "SELECT COUNT(*) FROM cinema_halls WHERE status = 1";
         try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -174,14 +172,14 @@ public class CinemaHallDAO {
     public List<CinemaHall> getActiveHalls() throws SQLException {
         List<CinemaHall> list = new ArrayList<>();
         String sql = """
-            SELECT hall_id, hall_name, total_rows, total_cols, status, created_at 
-            FROM cinema_halls 
-            WHERE status = 1
-            ORDER BY hall_name
-            """;
+                SELECT hall_id, hall_name, total_rows, total_cols, status, created_at
+                FROM cinema_halls
+                WHERE status = 1
+                ORDER BY hall_name
+                """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 CinemaHall hall = new CinemaHall(
@@ -190,8 +188,7 @@ public class CinemaHallDAO {
                         rs.getInt("total_rows"),
                         rs.getInt("total_cols"),
                         rs.getBoolean("status"),
-                        rs.getDate("created_at").toLocalDate()
-                );
+                        rs.getDate("created_at").toLocalDate());
                 list.add(hall);
             }
         }
