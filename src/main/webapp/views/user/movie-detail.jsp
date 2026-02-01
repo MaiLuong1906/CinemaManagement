@@ -136,7 +136,7 @@
     <script>
         function bookTicket(showtimeId) {
             // Chuyển hướng đến trang đặt ghế với ID suất chiếu
-            window.location.href = `${pageContext.request.contextPath}/booking?showtimeId=` + showtimeId;
+            window.location.href = `${pageContext.request.contextPath}/seat-selection?showtimeId=` + showtimeId;
         }
     </script>
 </body>
