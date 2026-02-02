@@ -77,6 +77,3 @@
 .admin-sidebar-custom::-webkit-scrollbar-thumb:hover {
     background: rgba(230, 9, 20, 0.5);
 }
-
-/* IMPORTANT: Body padding is now controlled by JavaScript */
-/* Do NOT add body padding here - it causes conflicts */
