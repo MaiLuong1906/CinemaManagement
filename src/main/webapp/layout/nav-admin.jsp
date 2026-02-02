@@ -146,6 +146,57 @@
                         <div class="text-white-50 small">Administrator</div>
                     </div>
                 </div>
+            </li>
+
+            <!-- Rooms -->
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/halls" 
+                   class="nav-link sidebar-link-custom text-white d-flex align-items-center gap-3 px-4 py-3 rounded-0">
+                    <i class="fas fa-door-open fs-5" style="width: 24px;"></i>
+                    <span class="fw-semibold">Rooms</span>
+                </a>
+            </li>
+
+            <!-- Users -->
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/views/admin/users/list.jsp" 
+                   class="nav-link sidebar-link-custom text-white d-flex align-items-center gap-3 px-4 py-3 rounded-0">
+                    <i class="fas fa-users fs-5" style="width: 24px;"></i>
+                    <span class="fw-semibold">Users</span>
+                </a>
+            </li>
+            <!-- Statistic -->
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/AdminStatisticServlet" 
+                   class="nav-link sidebar-link-custom text-white d-flex align-items-center gap-3 px-4 py-3 rounded-0">
+                    <i class="fas fa-chart-bar fs-5" style="width: 24px;"></i>
+                    <span class="fw-semibold">Statistic</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-top border-secondary border-opacity-25">
+        <!-- Admin Info -->
+        <div class="d-flex align-items-center gap-3 p-3 mb-3 rounded-3"
+             style="background: rgba(230, 9, 20, 0.1); border: 1px solid rgba(230, 9, 20, 0.2);">
+            <div class="admin-avatar-custom rounded-circle d-flex align-items-center justify-content-center text-white"
+                 style="width: 45px; height: 45px; flex-shrink: 0;">
+                <i class="fas fa-user-shield fs-5"></i>
+            </div>
+            <div class="flex-grow-1 overflow-hidden">
+                <div class="text-white fw-semibold text-truncate">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.user.fullName}">
+                            ${sessionScope.user.fullName}
+                        </c:when>
+                        <c:otherwise>
+                            Admin
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                <div class="text-white-50 small">Administrator</div>
             </div>
         </div>
 

@@ -138,5 +138,19 @@ public class TimeSlotDAO {
         }
         return list;
     }
+    // lay so timeslot
+    public int countAllTimeSlots() throws SQLException {
 
+        String sql = "SELECT COUNT(*) FROM time_slots";
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
 }

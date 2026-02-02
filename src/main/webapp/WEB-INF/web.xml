@@ -73,6 +73,22 @@
         <servlet-name>hall</servlet-name>
         <servlet-class>controller.AddCinemaHallServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminRevenueServlet</servlet-name>
+        <servlet-class>controller.AdminRevenueServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminStatisticServlet</servlet-name>
+        <servlet-class>controller.AdminStatisticServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminTicketServlet</servlet-name>
+        <servlet-class>controller.AdminTicketServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminShowtimeServlet</servlet-name>
+        <servlet-class>controller.AdminShowtimeServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -140,6 +156,22 @@
     <servlet-mapping>
         <servlet-name>hall</servlet-name>
         <url-pattern>/hall</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminRevenueServlet</servlet-name>
+        <url-pattern>/AdminRevenueServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminStatisticServlet</servlet-name>
+        <url-pattern>/AdminStatisticServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminTicketServlet</servlet-name>
+        <url-pattern>/AdminTicketServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminShowtimeServlet</servlet-name>
+        <url-pattern>/AdminShowtimeServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
