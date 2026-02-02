@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import model.Movie_Ticket_ViewDTO;
 import service.TicketManagementService;
+import service.TimeSlotService;
 
 /**
  *
@@ -24,7 +25,7 @@ import service.TicketManagementService;
 public class AdminStatisticServlet extends HttpServlet {
     IncomeStatictisService incomeStatictisService = new IncomeStatictisService();
     TicketManagementService ticketManagementService  = new TicketManagementService();
-
+    TimeSlotService timeslotService = new TimeSlotService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,6 +64,14 @@ public class AdminStatisticServlet extends HttpServlet {
         } catch (RuntimeException ex) {
             request.setAttribute("errorMessage", ex.getMessage());
         }
+        // lay ra so suat chieu hien tai
+        try {
+            int numberOfShowtime = timeslotService.countTimeSlot(); // so ve da ban
+            request.setAttribute("numberOfShowtime", numberOfShowtime);
+        } catch (RuntimeException ex) {
+            request.setAttribute("msg", ex.getMessage());
+        } 
+
         // dieu huong
         request.getRequestDispatcher("/views/admin/users/admin-statictis.jsp").forward(request, response);
         

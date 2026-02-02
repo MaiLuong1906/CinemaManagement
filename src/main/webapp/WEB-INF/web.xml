@@ -85,6 +85,10 @@
         <servlet-name>AdminTicketServlet</servlet-name>
         <servlet-class>controller.AdminTicketServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminShowtimeServlet</servlet-name>
+        <servlet-class>controller.AdminShowtimeServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -164,6 +168,10 @@
     <servlet-mapping>
         <servlet-name>AdminTicketServlet</servlet-name>
         <url-pattern>/AdminTicketServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminShowtimeServlet</servlet-name>
+        <url-pattern>/AdminShowtimeServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

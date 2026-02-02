@@ -183,3 +183,30 @@ GROUP BY
     h.hall_id, h.hall_name, h.total_rows, h.total_cols,
     ts.slot_id, ts.slot_name, ts.start_time, ts.end_time;
 GO
+-- view showtime statistic
+CREATE VIEW vw_kpi_timeslot_revenue
+AS
+SELECT
+    s.show_date,
+
+    ts.slot_id,
+    ts.slot_name,
+    ts.start_time,
+    ts.end_time,
+
+    COUNT(td.seat_id)        AS tickets_sold,
+    SUM(i.total_amount)     AS revenue
+FROM showtimes s
+JOIN time_slots ts
+    ON s.slot_id = ts.slot_id
+JOIN invoices i
+    ON s.showtime_id = i.showtime_id
+    AND i.status = N'Paid'
+JOIN ticket_details td
+    ON i.invoice_id = td.invoice_id
+GROUP BY
+    s.show_date,
+    ts.slot_id,
+    ts.slot_name,
+    ts.start_time,
+    ts.end_time;
