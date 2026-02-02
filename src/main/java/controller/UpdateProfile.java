@@ -1,77 +1,74 @@
 package controller;
 
 import dao.MovieDAO;
+import dao.UserProfileDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Movie;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-@WebServlet("/movies")
-public class MovieListServlet extends HttpServlet {
+import java.sql.SQLException;
+import java.time.LocalDate;
+import model.UserProfile;
+@WebServlet("/update-profile")
+public class UpdateProfile extends HttpServlet {
     
     private MovieDAO movieDAO = new MovieDAO();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserProfile user = (UserProfile) session.getAttribute("userProfile");
         
-        // Lấy tham số từ URL
-        String[] selectedGenres = request.getParameterValues("genres");
-        String keyword = request.getParameter("search");
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String gender = request.getParameter("gender");
+        String dob = request.getParameter("dob");
+        String address = request.getParameter("address");
         
-        List<Movie> movies;
+        String error ="";
         
-        // Xử lý filter
-        if (selectedGenres != null && selectedGenres.length > 0) {
-            // Lọc theo nhiều thể loại
-            movies = movieDAO.getMoviesByMultipleGenres(selectedGenres);
+        if (fullName == null || fullName.trim().isEmpty()) {
+            error += "Fullname is empty<br>";
+        }
+        if (email == null || email.trim().isEmpty()
+                || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+            error += "Invalid email<br>";
+        }
+
+        LocalDate dateOfBirth = null;
+        if (dob == null || dob.trim().isEmpty()) {
+            error += "Date of birth is required<br>";
         } else {
-            // Lấy tất cả phim
-            movies = movieDAO.getAllMovies();
+            try {
+                dateOfBirth = LocalDate.parse(dob);
+                if (dateOfBirth.isAfter(LocalDate.now())) {
+                    error += "Date of birth cannot be in the future<br>";
+                }
+            } catch (Exception e) {
+                error += "Invalid date format for date of birth<br>";
+            }
+        }
+
+        if (!error.isEmpty()) {
+            request.setAttribute("error", error);
+            request.getRequestDispatcher("views/user/profile.jsp").forward(request, response);
+            return;
         }
         
-        // Áp dụng search nếu có keyword
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            movies = movieDAO.searchMovies(movies, keyword.trim());
+        UserProfileDAO udao = new UserProfileDAO();
+        
+        try {
+            UserProfile userUpdate = new UserProfile(user.getUserId(),fullName, email, gender.equals("male"), address, dateOfBirth);
+            udao.update(userUpdate);
+            session.setAttribute("userProfile", userUpdate);
+            request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
+        } catch (SQLException ex) {
+            
         }
-        
-        // Xác định page title
-        String pageTitle = buildPageTitle(selectedGenres, keyword);
-        
-        // Gửi data sang JSP
-        request.setAttribute("pageTitle", pageTitle);
-        request.setAttribute("movies", movies);
-        request.setAttribute("totalMovies", movies.size());
-        request.setAttribute("selectedGenres", selectedGenres);
-        
-        // Forward sang JSP
-        request.getRequestDispatcher("/views/user/movies.jsp").forward(request, response);
     }
     
-    /**
-     * Tạo page title dựa trên filters
-     */
-    private String buildPageTitle(String[] genres, String keyword) {
-        List<String> titleParts = new ArrayList<>();
-        
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            titleParts.add("Tìm kiếm: \"" + keyword + "\"");
-        }
-        
-        if (genres != null && genres.length > 0) {
-            String genreText = String.join(", ", genres);
-            titleParts.add("Thể loại: " + genreText);
-        }
-        
-        if (titleParts.isEmpty()) {
-            return "Tất cả phim";
-        }
-        
-        return String.join(" - ", titleParts);
-    }
 }

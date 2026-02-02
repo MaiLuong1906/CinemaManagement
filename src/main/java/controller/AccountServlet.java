@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import model.UserDTO;
+import model.UserProfile;
 
 /**
  *
@@ -58,6 +59,7 @@ public class AccountServlet extends HttpServlet {
             // --- TRƯỜNG HỢP THÀNH CÔNG ---
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
+            session.setAttribute("userProfile", new UserProfile(user.getProfileId(),user.getFullName(), user.getEmail(), user.isGender(), user.getAddress(), user.getDateOfBirth()));
 
             // SỬ DỤNG REDIRECT: Trình duyệt sẽ tải trang mới, URL sẽ đổi
             // request.getContextPath() để lấy tên project (ví dụ: /cinema)

@@ -13,6 +13,7 @@ public class UserProfile {
     public UserProfile() {}
 
     public UserProfile(int id, String fullName, String email, boolean gender, String address, LocalDate dateOfBirth) {
+        this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.gender = gender;
@@ -21,7 +22,6 @@ public class UserProfile {
     }
 
     public UserProfile( String fullName, String email, boolean gender, String address, LocalDate dateOfBirth) {
-        this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.gender = gender;
