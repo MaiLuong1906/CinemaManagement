@@ -9,8 +9,14 @@ body {
     transition: padding-left 0.3s ease;
 }
 
-/* IMPORTANT: Admin layout padding is now controlled by JavaScript in nav-admin.jsp */
-/* Do NOT set padding-left here to avoid conflicts */
+/* Admin layout - set body padding immediately for desktop to prevent content being covered */
+@media (min-width: 992px) {
+    body.admin-layout {
+        padding-left: 280px;
+    }
+}
+
+/* JavaScript in nav-admin.jsp will maintain this padding and adjust when sidebar is toggled */
 
 /* Hero Slider */
 .hero-slider {
@@ -38,7 +44,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
 }
 
 .slide-content {
@@ -72,8 +78,13 @@ body {
     background: rgba(102, 126, 234, 0.8);
 }
 
-.slider-arrow.prev { left: 20px; }
-.slider-arrow.next { right: 20px; }
+.slider-arrow.prev {
+    left: 20px;
+}
+
+.slider-arrow.next {
+    right: 20px;
+}
 
 .slider-controls {
     position: absolute;
@@ -124,7 +135,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
     padding: 20px 15px;
     transform: translateY(10px);
     opacity: 0;
@@ -184,6 +195,7 @@ body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -195,12 +207,12 @@ body {
     body {
         padding-top: 80px !important;
     }
-    
+
     body.admin-layout {
         padding-top: 80px !important;
         padding-left: 0 !important;
     }
-    
+
     .hero-slider {
         height: 400px;
         margin-top: 0;

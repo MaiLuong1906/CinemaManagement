@@ -23,18 +23,16 @@ import model.Movie;
 @WebServlet("/home")
 public class HomeServlet extends HttpServlet {
 
-
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         MovieDAO movie = new MovieDAO();
-        List<Movie> latestMovies = movie.getAllMovies();    // phim mới
-        List<Movie> topRatedMovies = movie.getAllMovies();  // phim rating cao
-        
+        List<Movie> latestMovies = movie.getAllMovies(); // phim mới
+        List<Movie> topRatedMovies = movie.getAllMovies(); // phim rating cao
+
         request.setAttribute("latestMovies", latestMovies);
         request.setAttribute("topRatedMovies", topRatedMovies);
-        
+
         request.getRequestDispatcher("/views/user/home.jsp").forward(request, response);
     }
 

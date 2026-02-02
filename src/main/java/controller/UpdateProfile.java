@@ -12,31 +12,37 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import model.UserProfile;
+import model.UserDTO;
+
 @WebServlet("/update-profile")
 public class UpdateProfile extends HttpServlet {
-    
+
     private MovieDAO movieDAO = new MovieDAO();
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        UserProfile user = (UserProfile) session.getAttribute("userProfile");
-        
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String gender = request.getParameter("gender");
         String dob = request.getParameter("dob");
         String address = request.getParameter("address");
-        
-        String error ="";
-        
+
+        String error = "";
+
         if (fullName == null || fullName.trim().isEmpty()) {
             error += "Fullname is empty<br>";
         }
         if (email == null || email.trim().isEmpty()
                 || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
             error += "Invalid email<br>";
+        }
+
+        if (gender == null || gender.trim().isEmpty()) {
+            error += "Gender is required<br>";
         }
 
         LocalDate dateOfBirth = null;
@@ -58,17 +64,40 @@ public class UpdateProfile extends HttpServlet {
             request.getRequestDispatcher("views/user/profile.jsp").forward(request, response);
             return;
         }
-        
+
         UserProfileDAO udao = new UserProfileDAO();
-        
+
         try {
-            UserProfile userUpdate = new UserProfile(user.getUserId(),fullName, email, gender.equals("male"), address, dateOfBirth);
-            udao.update(userUpdate);
-            session.setAttribute("userProfile", userUpdate);
+            UserProfile userProfileUpdate = new UserProfile(user.getProfileId(), fullName, email, gender.equals("male"),
+                    address, dateOfBirth);
+
+            int rowsAffected = udao.update(userProfileUpdate);
+
+            if (rowsAffected == 0) {
+                request.setAttribute("error",
+                        "Không tìm thấy thông tin người dùng trong database. Vui lòng đăng nhập lại.");
+                request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
+                return;
+            }
+
+            // Update UserDTO object with new information
+            user.setFullName(fullName);
+            user.setEmail(email);
+            user.setGender(gender.equals("male"));
+            user.setAddress(address);
+            user.setDateOfBirth(dateOfBirth);
+
+            // Update both session attributes
+            session.setAttribute("user", user);
+            session.setAttribute("userProfile", userProfileUpdate);
+
+            request.setAttribute("success", "Cập nhật thông tin thành công!");
             request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
         } catch (SQLException ex) {
-            
+            request.setAttribute("error", "Lỗi cập nhật thông tin: " + ex.getMessage());
+            request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
+
         }
     }
-    
+
 }

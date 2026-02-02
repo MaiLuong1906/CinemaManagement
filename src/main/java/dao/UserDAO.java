@@ -44,6 +44,7 @@ public class UserDAO {
                 user.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
 
                 // UserProfile fields
+                user.setProfileId(rs.getInt("user_id")); // CRITICAL FIX: Set profileId for update operations
                 user.setFullName(rs.getString("full_name"));
                 user.setEmail(rs.getString("email"));
                 user.setGender(rs.getBoolean("gender"));
@@ -66,9 +67,9 @@ public class UserDAO {
 
         try {
             con = DBConnect.getConnection();
-            con.setAutoCommit(false);        // Start transaction
+            con.setAutoCommit(false); // Start transaction
 
-            //Insert Accounts
+            // Insert Accounts
             String sqlAccounts = "insert into accounts (phone_number, password_hash, role_id, created_at)"
                     + "values(?, ?, ?, ?)";
             // To get primary key after excute

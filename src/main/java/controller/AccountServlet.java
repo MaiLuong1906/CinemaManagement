@@ -59,7 +59,8 @@ public class AccountServlet extends HttpServlet {
             // --- TRƯỜNG HỢP THÀNH CÔNG ---
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            session.setAttribute("userProfile", new UserProfile(user.getProfileId(),user.getFullName(), user.getEmail(), user.isGender(), user.getAddress(), user.getDateOfBirth()));
+            session.setAttribute("userProfile", new UserProfile(user.getProfileId(), user.getFullName(),
+                    user.getEmail(), user.isGender(), user.getAddress(), user.getDateOfBirth()));
 
             // SỬ DỤNG REDIRECT: Trình duyệt sẽ tải trang mới, URL sẽ đổi
             // request.getContextPath() để lấy tên project (ví dụ: /cinema)
@@ -84,7 +85,8 @@ public class AccountServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/home");
     }
 
-    private void register(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void register(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
         String cpassword = request.getParameter("cpassword");
@@ -156,8 +158,7 @@ public class AccountServlet extends HttpServlet {
                 fullname,
                 genderValue,
                 address,
-                dateOfBirth
-        );
+                dateOfBirth);
 
         if (success) {
             response.sendRedirect("views/auth/login.jsp");
