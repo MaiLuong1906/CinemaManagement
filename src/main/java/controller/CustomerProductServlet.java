@@ -1,62 +1,92 @@
 package controller;
 
-import java.io.IOException;
-import java.util.List;
-import model.Product;
-import dao.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
+
+import model.Product;
+import service.ProductService;
+import service.CartService;
+
+import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/product")
 public class CustomerProductServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    private ProductDAO productDAO;
+
+    private ProductService productService;
+    private CartService cartService;
+    private dao.SeatDAO seatDAO;
 
     @Override
-    public void init() throws ServletException {
-        productDAO = new ProductDAO();
+    public void init() {
+        productService = new ProductService();
+        cartService = new CartService();
+        seatDAO = new dao.SeatDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        listProducts(request, response);
+
+        try {
+            List<Product> products = productService.findAll();
+
+            // DEBUG
+            System.out.println("===== CustomerProductServlet =====");
+            System.out.println("Số lượng sản phẩm: " + products.size());
+
+            request.setAttribute("products", products);
+
+            // Load cart details for sidebar
+            // Load cart details for sidebar
+            request.setAttribute(
+                    "cartDetails",
+                    cartService.getCartDetails(request.getSession()));
+
+            // Re-hydrate Seat Details from Session IDs
+            HttpSession session = request.getSession();
+            String seatIdsStr = (String) session.getAttribute("BOOKING_SEAT_IDS");
+            String showtimeIdStr = (String) session.getAttribute("BOOKING_SHOWTIME_ID");
+
+            if (seatIdsStr != null && showtimeIdStr != null) {
+                try {
+                    int showtimeId = Integer.parseInt(showtimeIdStr);
+                    java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
+                    java.util.List<model.SeatSelectionDTO> selectedSeats = new java.util.ArrayList<>();
+                    String[] ids = seatIdsStr.split(",");
+                    for (String id : ids) {
+                        try {
+                            int seatId = Integer.parseInt(id.trim());
+                            for (model.SeatSelectionDTO s : allSeats) {
+                                if (s.getSeatId() == seatId) {
+                                    selectedSeats.add(s);
+                                    break;
+                                }
+                            }
+                        } catch (NumberFormatException ignored) {
+                        }
+                    }
+                    session.setAttribute("cartSeats", selectedSeats);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            request.getRequestDispatcher("/views/user/product.jsp")
+                    .forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Có lỗi xảy ra");
+            request.getRequestDispatcher("/views/user/product.jsp")
+                    .forward(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
-    }
-
-    private void listProducts(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            // Lấy tất cả sản phẩm
-            List<Product> products = productDAO.findAll();
-            
-            // DEBUG: In ra console
-            System.out.println("===== CustomerProductServlet =====");
-            System.out.println("Số lượng sản phẩm: " + (products != null ? products.size() : "null"));
-            if (products != null && !products.isEmpty()) {
-                for (Product p : products) {
-                    System.out.println("- " + p.getItemName() + " | Giá: " + p.getPrice() + " | Tồn: " + p.getStockQuantity());
-                }
-            } else {
-                System.out.println("Danh sách sản phẩm RỖNG hoặc NULL!");
-            }
-            System.out.println("==================================");
-            
-            request.setAttribute("products", products);
-            request.getRequestDispatcher("/views/user/product.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("LỖI trong CustomerProductServlet: " + e.getMessage());
-            request.setAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
-            request.getRequestDispatcher("views/user/product.jsp").forward(request, response);
-        }
     }
 }

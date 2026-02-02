@@ -27,6 +27,27 @@ public class AccountDAO {
         }
         return null;
     }
+    // Admin: update role
+    public void updateRole(int accountId, String role) throws SQLException {
+        String sql = "UPDATE accounts SET role_id = ? WHERE account_id = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, role);
+            ps.setInt(2, accountId);
+            ps.executeUpdate();
+        }
+    }
+
+    // Admin: lock / unlock
+    public void updateStatus(int accountId, boolean status) throws SQLException {
+        String sql = "UPDATE accounts SET status = ? WHERE account_id = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, status);
+            ps.setInt(2, accountId);
+            ps.executeUpdate();
+        }
+    }
 
     public boolean existsByPhone(Connection conn, String phone) throws SQLException {
         String sql = "SELECT 1 FROM accounts WHERE phone_number = ?";

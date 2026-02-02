@@ -4,8 +4,13 @@
  */
 package service;
 import dao.DBConnect;
+import dao.MovieDetailDAO;
 import dao.ShowtimeDAO;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import model.MovieDetailDTO;
+import model.Showtime;
 
 /**
  *
@@ -31,4 +36,13 @@ public class ShowtimeService {
     }
 
     }
+    
+    //Bố mày tạo
+    //tìm kiếm theo id movie
+    public List<MovieDetailDTO> getMovieDetailByMovieId(int movieId) throws SQLException {
+    try (Connection conn = DBConnect.getConnection()) {
+        return MovieDetailDAO.findMovieDetailByMovieId(conn, movieId);
+    }
+}
+
 }

@@ -6,6 +6,8 @@ import model.SeatType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.SeatSelectionDTO;
+
 
 public class SeatDAO {
 
@@ -333,6 +335,59 @@ public class SeatDAO {
             throw e;
         }
     }
+    public List<SeatSelectionDTO> getSeatsByShowtime(int showtimeId) {
+    List<SeatSelectionDTO> list = new ArrayList<>();
+
+    String sql = """
+        SELECT
+            s.seat_id,
+            s.seat_code,
+            s.row_index,
+            s.column_index,
+            s.seat_type_id,
+            (ts.slot_price + st.extra_fee) AS price,
+            CASE
+                WHEN td.seat_id IS NULL THEN 'AVAILABLE'
+                ELSE 'BOOKED'
+            END AS seat_status
+        FROM showtimes sh
+        JOIN cinema_halls h ON sh.hall_id = h.hall_id
+        JOIN seats s ON h.hall_id = s.hall_id
+        JOIN seat_types st ON s.seat_type_id = st.seat_type_id
+        JOIN time_slots ts ON sh.slot_id = ts.slot_id
+        LEFT JOIN ticket_details td
+               ON td.seat_id = s.seat_id
+              AND td.showtime_id = sh.showtime_id
+        WHERE sh.showtime_id = ?
+          AND s.is_active = 1
+        ORDER BY s.row_index, s.column_index
+    """;
+
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, showtimeId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            list.add(new SeatSelectionDTO(
+                rs.getInt("seat_id"),
+                rs.getString("seat_code"),
+                rs.getInt("row_index"),
+                rs.getInt("column_index"),
+                rs.getInt("seat_type_id"), 
+                rs.getDouble("price"),
+                rs.getString("seat_status")
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+
+    
     /* =========================
        8. MAP RESULTSET → OBJECT
        ========================= */

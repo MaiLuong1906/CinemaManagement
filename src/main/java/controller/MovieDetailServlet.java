@@ -11,10 +11,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import dao.DBConnect;
+import java.util.List;
+import model.MovieDetailDTO;
+import service.ShowtimeService;
 
 @WebServlet("/movie-detail")
 public class MovieDetailServlet extends HttpServlet {
     private MovieDAO movieDAO = new MovieDAO();
+    private ShowtimeService showtimeService = new ShowtimeService();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,10 +30,12 @@ public class MovieDetailServlet extends HttpServlet {
             // Lấy connection từ DBConnect
             Connection conn = DBConnect.getConnection();
             Movie movie = movieDAO.findById(conn, movieId);
-            conn.close();
+            List<MovieDetailDTO> showtimes =
+                        showtimeService.getMovieDetailByMovieId(movieId);
             
             if (movie != null) {
                 request.setAttribute("movie", movie);
+                request.setAttribute("showtimes", showtimes);
                 request.getRequestDispatcher("/views/user/movie-detail.jsp").forward(request, response);
             } else {
                 response.sendRedirect(request.getContextPath() + "/movies");

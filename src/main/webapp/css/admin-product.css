@@ -70,11 +70,132 @@ body {
     border-radius: 20px;
 }
 
-.stock-available { background: #28a745; }
-.stock-low { background: #ffc107; color: black; }
-.stock-out { background: #dc3545; }
+.stock-available {
+    background: #28a745;
+}
+.stock-low {
+    background: #ffc107;
+    color: black;
+}
+.stock-out {
+    background: #dc3545;
+}
 
 .empty-state {
     text-align: center;
     padding: 50px;
+}
+.product-info {
+    font-size: 14px;
+    color: #555;
+}
+
+
+
+#deleteModal .modal-content {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: fadeInScale 0.25s ease;
+}
+
+/* Header */
+#deleteModal .modal-header {
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+    color: #000;
+    border-bottom: none;
+    padding: 16px 20px;
+}
+
+#deleteModal .modal-header h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+#deleteModal .modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+/* Body */
+#deleteModal .modal-body {
+    padding: 24px 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+#deleteModal .modal-body strong {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* Footer */
+#deleteModal .modal-footer {
+    border-top: none;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* Buttons */
+#deleteModal .btn {
+    min-width: 110px;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-weight: 500;
+}
+
+#deleteModal .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+#deleteModal .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+#deleteModal .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+    border: none;
+}
+
+#deleteModal .btn-danger:hover {
+    background: linear-gradient(135deg, #b02a37, #891f2b);
+}
+
+.product-card {
+    width: 280px;              /* hoặc auto theo grid */
+    background: #2b2b2b;
+    border-radius: 12px;
+    overflow: hidden;          /* QUAN TRỌNG */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    padding-bottom: 12px;
+}
+
+/* Wrapper cho ảnh */
+.product-card img {
+    width: 100%;
+    height: 180px;             /* cố định chiều cao */
+    object-fit: cover;         /* KHÔNG MÉO ẢNH */
+    display: block;
+    background: #111;
+}
+
+#modalTitle .modalTitle {
+    color: #000;
+    font-weight: 700; /* in đậm */
+}
+
+/* Animation */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
