@@ -112,7 +112,7 @@
                     <span class="fw-semibold">Users</span>
                 </a>
             </li>
-            <!-- Product -->
+            <!<!-- Product -->
             <li class="nav-item">
                 <a href="${pageContext.request.contextPath}/admin/product"
                    class="nav-link sidebar-link-custom text-white d-flex align-items-center gap-3 px-4 py-3 rounded-0">
@@ -120,140 +120,132 @@
                     <span class="fw-semibold">Products</span>
                 </a>
             </li>
-            <!-- Statistic -->
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/AdminStatisticServlet" 
-                   class="nav-link sidebar-link-custom text-white d-flex align-items-center gap-3 px-4 py-3 rounded-0">
-                    <i class="fas fa-chart-bar fs-5" style="width: 24px;"></i>
-                    <span class="fw-semibold">Statistic</span>
-                </a>
-            </li>
         </ul>
     </nav>
 
-
-<!-- Sidebar Footer -->
-<div class="p-4 border-top border-secondary border-opacity-25">
-    <!-- Admin Info -->
-    <div class="d-flex align-items-center gap-3 p-3 mb-3 rounded-3"
-         style="background: rgba(230, 9, 20, 0.1); border: 1px solid rgba(230, 9, 20, 0.2);">
-        <div class="admin-avatar-custom rounded-circle d-flex align-items-center justify-content-center text-white"
-             style="width: 45px; height: 45px; flex-shrink: 0;">
-            <i class="fas fa-user-shield fs-5"></i>
-        </div>
-        <div class="flex-grow-1 overflow-hidden">
-            <div class="text-white fw-semibold text-truncate">
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user.fullName}">
-                        ${sessionScope.user.fullName}
-                    </c:when>
-                    <c:otherwise>
-                        Admin
-                    </c:otherwise>
-                </c:choose>
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-top border-secondary border-opacity-25">
+        <!-- Admin Info -->
+        <div class="d-flex align-items-center gap-3 p-3 mb-3 rounded-3"
+             style="background: rgba(230, 9, 20, 0.1); border: 1px solid rgba(230, 9, 20, 0.2);">
+            <div class="admin-avatar-custom rounded-circle d-flex align-items-center justify-content-center text-white"
+                 style="width: 45px; height: 45px; flex-shrink: 0;">
+                <i class="fas fa-user-shield fs-5"></i>
             </div>
-            <div class="text-white-50 small">Administrator</div>
+            <div class="flex-grow-1 overflow-hidden">
+                <div class="text-white fw-semibold text-truncate">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.user.fullName}">
+                            ${sessionScope.user.fullName}
+                        </c:when>
+                        <c:otherwise>
+                            Admin
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                <div class="text-white-50 small">Administrator</div>
+            </div>
         </div>
     </div>
 </div>
-    <!-- Sidebar Toggle Button (Desktop & Mobile) -->
-    <button
-        class="btn btn-danger position-fixed shadow-lg rounded-3 d-flex align-items-center justify-content-center"
-        style="top: 90px; left: 300px; width: 50px; height: 50px; z-index: 1000; transition: left 0.3s ease;"
-        onclick="toggleAdminSidebar()" id="sidebarToggleBtn">
-        <i class="fas fa-times fs-5" id="toggleIcon"></i>
-    </button>
 
-    <!-- Overlay for mobile -->
-    <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark d-none" style="opacity: 0.7; z-index: 998;"
-         id="sidebarOverlay" onclick="toggleAdminSidebar()">
-    </div>
+<!-- Sidebar Toggle Button (Desktop & Mobile) -->
+<button
+    class="btn btn-danger position-fixed shadow-lg rounded-3 d-flex align-items-center justify-content-center"
+    style="top: 90px; left: 300px; width: 50px; height: 50px; z-index: 1000; transition: left 0.3s ease;"
+    onclick="toggleAdminSidebar()" id="sidebarToggleBtn">
+    <i class="fas fa-times fs-5" id="toggleIcon"></i>
+</button>
 
-    <script>
-        // Sidebar state management
-        let sidebarCollapsed = false;
+<!-- Overlay for mobile -->
+<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark d-none" style="opacity: 0.7; z-index: 998;"
+     id="sidebarOverlay" onclick="toggleAdminSidebar()">
+</div>
 
-        function toggleAdminSidebar() {
-            const sidebar = document.getElementById('adminSidebar');
-            const toggleBtn = document.getElementById('sidebarToggleBtn');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const overlay = document.getElementById('sidebarOverlay');
-            const body = document.body;
+<script>
+    // Sidebar state management
+    let sidebarCollapsed = false;
 
-            sidebarCollapsed = !sidebarCollapsed;
+    function toggleAdminSidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const overlay = document.getElementById('sidebarOverlay');
+        const body = document.body;
 
-            if (window.innerWidth >= 992) {
-                // Desktop behavior
-                if (sidebarCollapsed) {
-                    sidebar.style.transform = 'translateX(-280px)';
-                    toggleBtn.style.left = '1rem';
-                    toggleIcon.className = 'fas fa-bars fs-5';
-                    body.style.paddingLeft = '0';
-                } else {
-                    sidebar.style.transform = 'translateX(0)';
-                    toggleBtn.style.left = '300px';
-                    toggleIcon.className = 'fas fa-times fs-5';
-                    body.style.paddingLeft = '280px';
-                }
-            } else {
-                // Mobile behavior
-                if (sidebarCollapsed) {
-                    sidebar.style.transform = 'translateX(-280px)';
-                    overlay.classList.add('d-none');
-                    toggleIcon.className = 'fas fa-bars fs-5';
-                } else {
-                    sidebar.style.transform = 'translateX(0)';
-                    overlay.classList.remove('d-none');
-                    toggleIcon.className = 'fas fa-times fs-5';
-                }
-            }
-        }
+        sidebarCollapsed = !sidebarCollapsed;
 
-        // Initialize on page load
-        window.addEventListener('load', function () {
-            const sidebar = document.getElementById('adminSidebar');
-            const toggleBtn = document.getElementById('sidebarToggleBtn');
-            const body = document.body;
-
-            if (window.innerWidth >= 992) {
-                // Desktop - sidebar visible by default
-                sidebar.style.transform = 'translateX(0)';
-                toggleBtn.style.left = '300px';
-                document.getElementById('toggleIcon').className = 'fas fa-times fs-5';
-                body.style.paddingLeft = '280px';
-                sidebarCollapsed = false;
-            } else {
-                // Mobile - sidebar hidden by default
+        if (window.innerWidth >= 992) {
+            // Desktop behavior
+            if (sidebarCollapsed) {
                 sidebar.style.transform = 'translateX(-280px)';
                 toggleBtn.style.left = '1rem';
-                document.getElementById('toggleIcon').className = 'fas fa-bars fs-5';
-                sidebarCollapsed = true;
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function () {
-            const sidebar = document.getElementById('adminSidebar');
-            const toggleBtn = document.getElementById('sidebarToggleBtn');
-            const overlay = document.getElementById('sidebarOverlay');
-            const body = document.body;
-
-            if (window.innerWidth >= 992) {
-                // Switch to desktop mode
-                overlay.classList.add('d-none');
-                if (!sidebarCollapsed) {
-                    sidebar.style.transform = 'translateX(0)';
-                    toggleBtn.style.left = '300px';
-                    body.style.paddingLeft = '280px';
-                }
-            } else {
-                // Switch to mobile mode
-                toggleBtn.style.left = '1rem';
+                toggleIcon.className = 'fas fa-bars fs-5';
                 body.style.paddingLeft = '0';
-                if (sidebarCollapsed) {
-                    sidebar.style.transform = 'translateX(-280px)';
-                }
+            } else {
+                sidebar.style.transform = 'translateX(0)';
+                toggleBtn.style.left = '300px';
+                toggleIcon.className = 'fas fa-times fs-5';
+                body.style.paddingLeft = '280px';
             }
-        });
-    </script>
-    </div>
+        } else {
+            // Mobile behavior
+            if (sidebarCollapsed) {
+                sidebar.style.transform = 'translateX(-280px)';
+                overlay.classList.add('d-none');
+                toggleIcon.className = 'fas fa-bars fs-5';
+            } else {
+                sidebar.style.transform = 'translateX(0)';
+                overlay.classList.remove('d-none');
+                toggleIcon.className = 'fas fa-times fs-5';
+            }
+        }
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', function () {
+        const sidebar = document.getElementById('adminSidebar');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        const body = document.body;
+
+        if (window.innerWidth >= 992) {
+            // Desktop - sidebar visible by default
+            sidebar.style.transform = 'translateX(0)';
+            toggleBtn.style.left = '300px';
+            document.getElementById('toggleIcon').className = 'fas fa-times fs-5';
+            body.style.paddingLeft = '280px';
+            sidebarCollapsed = false;
+        } else {
+            // Mobile - sidebar hidden by default
+            sidebar.style.transform = 'translateX(-280px)';
+            toggleBtn.style.left = '1rem';
+            document.getElementById('toggleIcon').className = 'fas fa-bars fs-5';
+            sidebarCollapsed = true;
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function () {
+        const sidebar = document.getElementById('adminSidebar');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        const overlay = document.getElementById('sidebarOverlay');
+        const body = document.body;
+
+        if (window.innerWidth >= 992) {
+            // Switch to desktop mode
+            overlay.classList.add('d-none');
+            if (!sidebarCollapsed) {
+                sidebar.style.transform = 'translateX(0)';
+                toggleBtn.style.left = '300px';
+                body.style.paddingLeft = '280px';
+            }
+        } else {
+            // Switch to mobile mode
+            toggleBtn.style.left = '1rem';
+            body.style.paddingLeft = '0';
+            if (sidebarCollapsed) {
+                sidebar.style.transform = 'translateX(-280px)';
+            }
+        }
+    });
+</script>
