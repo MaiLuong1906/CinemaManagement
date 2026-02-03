@@ -29,12 +29,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="${pageContext.request.contextPath}/views/user/booking.jsp"
-                                class="nav-link nav-link-custom text-white px-4 py-2 rounded-3 fw-semibold fs-5">
-                                <i class="fas fa-ticket-alt me-2"></i> Booking
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="${pageContext.request.contextPath}/movies"
                                 class="nav-link nav-link-custom text-white px-4 py-2 rounded-3 fw-semibold fs-5">
                                 <i class="fas fa-film me-2"></i> Movies
