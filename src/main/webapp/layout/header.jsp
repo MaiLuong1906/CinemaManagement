@@ -58,7 +58,7 @@
 
                                 <%-- Regular User logged in --%>
                                     <c:when test="${sessionScope.user != null && sessionScope.user.roleId == 'User'}">
-                                        <a href="${pageContext.request.contextPath}/views/user/profile.jsp"
+                                        <a href="${pageContext.request.contextPath}/AccountServlet?action=profile"
                                             class="btn btn-sm btn-outline-light rounded-pill px-3 py-2 fw-semibold me-2">
                                             <i class="fas fa-user me-1"></i> ${sessionScope.user.fullName}
                                         </a>
