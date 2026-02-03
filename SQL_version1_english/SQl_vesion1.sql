@@ -150,70 +150,70 @@ CREATE TABLE showtimes (
 
 
 
-/* =========================
-   10. Invoices (Hóa đơn vé tổng quát)
-   ========================= */
-CREATE TABLE invoices (
-                          invoice_id INT IDENTITY(1,1) PRIMARY KEY,
-                          user_id INT,
-                          showtime_id INT,
-                          booking_time DATETIME DEFAULT GETDATE(),
-                          expiry_time DATETIME, -- Hết hạn sau 5 phút nếu không thanh toán
-                          status NVARCHAR(30) DEFAULT N'Pending', -- Pending (Chờ), Paid (Đã trả), Canceled (Hủy)
-                          total_amount DECIMAL(15,2),
-                          ticket_code AS ('TIC' + RIGHT('000000' + CAST(invoice_id AS VARCHAR(10)), 6)) PERSISTED,
-                          FOREIGN KEY (user_id) REFERENCES user_profiles(user_id),
-                          FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
+   /* =========================
+      10. Invoices (Hóa đơn vé tổng quát)
+      ========================= */
+   CREATE TABLE invoices (
+                           invoice_id INT IDENTITY(1,1) PRIMARY KEY,
+                           user_id INT,
+                           showtime_id INT,
+                           booking_time DATETIME DEFAULT GETDATE(),
+                           expiry_time DATETIME, -- Hết hạn sau 5 phút nếu không thanh toán
+                           status NVARCHAR(30) DEFAULT N'Pending', -- Pending (Chờ), Paid (Đã trả), Canceled (Hủy)
+                           total_amount DECIMAL(15,2),
+                           ticket_code AS ('TIC' + RIGHT('000000' + CAST(invoice_id AS VARCHAR(10)), 6)) PERSISTED,
+                           FOREIGN KEY (user_id) REFERENCES user_profiles(user_id),
+                           FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
 
-                        CONSTRAINT CK_Invoice_Status
-                              CHECK (status IN (N'Pending', N'Paid', N'Canceled'))
+                           CONSTRAINT CK_Invoice_Status
+                                 CHECK (status IN (N'Pending', N'Paid', N'Canceled'))
 
-);
+   );
 
-/* =========================
-   11. Ticket_Details (Chi tiết ghế đã đặt)
-   ========================= */
-CREATE TABLE ticket_details (
-                                invoice_id INT NOT NULL,       -- liên kết hóa đơn
-                                seat_id INT NOT NULL,          -- ghế được đặt
-                                showtime_id INT NOT NULL,      -- suất chiếu ghế thuộc
-                                actual_price DECIMAL(10,2),   -- base_price + extra_fee
-
-
-
-    -- UNIQUE constraint để chống trùng ghế cùng suất chiếu
-                                CONSTRAINT UQ_Showtime_Seat UNIQUE (showtime_id, seat_id),
-
-    -- FOREIGN KEY
-                                CONSTRAINT FK_Ticket_Invoice FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
-                                CONSTRAINT FK_Ticket_Seat FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
-                                CONSTRAINT FK_Ticket_Showtime FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
-);
+   /* =========================
+      11. Ticket_Details (Chi tiết ghế đã đặt)
+      ========================= */
+   CREATE TABLE ticket_details (
+                                 invoice_id INT NOT NULL,       -- liên kết hóa đơn
+                                 seat_id INT NOT NULL,          -- ghế được đặt
+                                 showtime_id INT NOT NULL,      -- suất chiếu ghế thuộc
+                                 actual_price DECIMAL(10,2),   -- base_price + extra_fee
 
 
-/* =========================
-   12. Foods_Drinks (Danh mục đồ ăn thức uống)
-   ========================= */
 
-CREATE TABLE products (
-                          item_id INT IDENTITY(1,1) PRIMARY KEY,
-                          item_name NVARCHAR(100),
-                          price DECIMAL(10,2),
-                          img_user_url VARCHAR(500),
-                          stock_quantity INT DEFAULT 0
-);
+      -- UNIQUE constraint để chống trùng ghế cùng suất chiếu
+                                 CONSTRAINT UQ_Showtime_Seat UNIQUE (showtime_id, seat_id),
 
-/* =========================
-   13. Food_Order_Details (Chi tiết đồ ăn kèm theo hóa đơn)
-   ========================= */
-CREATE TABLE products_details (
-                                  invoice_id INT,
-                                  item_id INT,
-                                  quantity INT,
-                                  PRIMARY KEY (invoice_id, item_id),
-                                  FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
-                                  FOREIGN KEY (item_id) REFERENCES products(item_id)
-);
+      -- FOREIGN KEY
+                                 CONSTRAINT FK_Ticket_Invoice FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
+                                 CONSTRAINT FK_Ticket_Seat FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
+                                 CONSTRAINT FK_Ticket_Showtime FOREIGN KEY (showtime_id) REFERENCES showtimes(showtime_id)
+   );
+
+
+   /* =========================
+      12. Foods_Drinks (Danh mục đồ ăn thức uống)
+      ========================= */
+
+   CREATE TABLE products (
+                           item_id INT IDENTITY(1,1) PRIMARY KEY,
+                           item_name NVARCHAR(100),
+                           price DECIMAL(10,2),
+                           img_user_url VARCHAR(500),
+                           stock_quantity INT DEFAULT 0
+   );
+
+   /* =========================
+      13. Food_Order_Details (Chi tiết đồ ăn kèm theo hóa đơn)
+      ========================= */
+   CREATE TABLE products_details (
+                                    invoice_id INT,
+                                    item_id INT,
+                                    quantity INT,
+                                    PRIMARY KEY (invoice_id, item_id),
+                                    FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id),
+                                    FOREIGN KEY (item_id) REFERENCES products(item_id)
+   );
 
 /* =========================
    14. INDEXES (Chỉ mục tối ưu tìm kiếm)
