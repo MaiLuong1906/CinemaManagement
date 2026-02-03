@@ -49,6 +49,15 @@ public class AccountServlet extends BaseServlet {
         UserDTO user = UserDAO.login(phoneNumber, password);
 
         if (user != null) {
+            // --- KIỂM TRA TRẠNG THÁI TÀI KHOẢN ---
+            if (!user.isStatus()) {
+                // Tài khoản bị khóa/vô hiệu hóa
+                request.setAttribute("Error",
+                        "Your account has been deactivated. Please contact support for assistance.");
+                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+                return;
+            }
+
             // --- TRƯỜNG HỢP THÀNH CÔNG ---
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
