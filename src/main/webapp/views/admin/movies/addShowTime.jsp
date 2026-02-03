@@ -44,7 +44,7 @@
 
         
         <!--input dau vao-->
-        <form action="<%=request.getContextPath()%>/AddShowTimeServlet"
+        <form action="<%=request.getContextPath()%>/venue?action=add-showtime"
                 method="post">
         <!--cac hang muc-->
        <div class="form-group">

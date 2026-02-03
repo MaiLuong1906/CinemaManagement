@@ -69,7 +69,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="${pageContext.request.contextPath}/AdminShowtimeServlet">
+            <a href="${pageContext.request.contextPath}/venue?action=dashboard">
             <div class="glass rounded-4 p-4 hover-lift text-center">
                 <i class="fas fa-video fa-2x mb-3 icon-primary"></i>
                 <h6 class="text-secondary">Suất chiếu</h6>

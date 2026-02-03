@@ -26,7 +26,7 @@
             <h2 style="margin: 0; color: #1a202c; font-size: 1.75rem;">Danh sách phòng chiếu</h2>
             <p style="margin: 0.5rem 0 0; color: #718096;">Quản lý sơ đồ và trạng thái phòng chiếu</p>
           </div>
-          <a href="${pageContext.request.contextPath}/admin/halls/add" class="btn-primary-admin">
+          <a href="${pageContext.request.contextPath}/venue?action=add-hall" class="btn-primary-admin">
             <i class="fas fa-plus"></i> Thêm phòng mới
           </a>
         </div>
@@ -73,7 +73,7 @@
                       </span>
                     </td>
                     <td class="text-right">
-                      <form action="${pageContext.request.contextPath}/admin/halls/toggle-status" method="post"
+                      <form action="${pageContext.request.contextPath}/venue?action=toggle-hall" method="post"
                         style="display: inline-block; margin: 0;">
                         <input type="hidden" name="hallId" value="${h.hallId}">
                         <input type="hidden" name="status" value="${!h.status}">
@@ -84,7 +84,7 @@
                         </button>
                       </form>
 
-                      <a href="${pageContext.request.contextPath}/admin/halls/seats?hallId=${h.hallId}"
+                      <a href="${pageContext.request.contextPath}/venue?action=seats&hallId=${h.hallId}"
                         class="btn-primary-admin"
                         style="padding: 0.25rem 0.75rem; font-size: 0.85rem; margin-right: 0.5rem; margin-left: 0.5rem;">
                         <i class="fas fa-chair"></i> Sơ đồ ghế

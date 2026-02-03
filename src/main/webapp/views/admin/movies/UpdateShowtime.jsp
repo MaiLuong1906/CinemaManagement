@@ -20,7 +20,7 @@
 <div class="container mt-4">
     <h3 class="mb-3 fw-bold">Cập nhật suất chiếu</h3>
 
-    <form action="${pageContext.request.contextPath}/UpdateShowtimeServlet"
+    <form action="${pageContext.request.contextPath}/venue?action=update-showtime"
           method="post"
           class="card p-4 shadow-sm">
 

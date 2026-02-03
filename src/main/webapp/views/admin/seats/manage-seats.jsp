@@ -153,7 +153,7 @@
           Kích thước: ${hall.total_rows} hàng × ${hall.total_cols} cột
         </p>
       </div>
-      <a href="${pageContext.request.contextPath}/admin/halls" class="btn btn-light">
+      <a href="${pageContext.request.contextPath}/venue?action=halls" class="btn btn-light">
         <i class="bi bi-arrow-left me-2"></i>Quay lại
       </a>
     </div>
@@ -170,7 +170,7 @@
 
   <!-- Tool Panel -->
   <div class="tool-panel">
-    <form id="seatUpdateForm" action="${pageContext.request.contextPath}/admin/seats/update" method="post">
+    <form id="seatUpdateForm" action="${pageContext.request.contextPath}/venue?action=update-seat" method="post">
       <input type="hidden" name="hallId" value="${hall.hallId}">
 
       <div class="row align-items-end">

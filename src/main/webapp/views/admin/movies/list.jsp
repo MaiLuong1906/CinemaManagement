@@ -59,7 +59,7 @@
                             </div>
                         </td>
                         <td>
-                            <form action="${pageContext.request.contextPath}/UpdateShowtimeServlet?showtimeId=${detail.showtimeId}"
+                            <form action="${pageContext.request.contextPath}/venue?action=update-showtime"
                                 method="get"
                                 style="display:inline">
                               <input type="hidden" name="showtimeId" value="${m.showtimeId}">
@@ -68,7 +68,7 @@
                                   Sửa
                               </button>
                           </form>
-                            <form action="${pageContext.request.contextPath}/DeleteShowtimeServlet"
+                            <form action="${pageContext.request.contextPath}/venue?action=delete-showtime"
                                 method="post"
                                 style="display:inline">
                               <input type="hidden" name="showtimeId" value="${m.showtimeId}">

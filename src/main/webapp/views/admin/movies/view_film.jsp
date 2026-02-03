@@ -69,7 +69,7 @@
                 >
               </li>
               <li>
-                <a href="<%= request.getContextPath() %>//addShowTimeServlet" class="btn-next"
+                <a href="<%= request.getContextPath() %>/venue?action=add-showtime" class="btn-next"
                   >Thêm khung giờ chiếu</a
                 >
               </li>

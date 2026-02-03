@@ -14,7 +14,7 @@
 
         <!-- Breadcrumb -->
         <div style="margin-bottom: 2rem; font-size: 0.9rem; color: #718096;">
-          <a href="${pageContext.request.contextPath}/admin/halls/list" class="action-link"
+          <a href="${pageContext.request.contextPath}/venue?action=halls" class="action-link"
             style="padding-left: 0;">&larr; Quay lại danh sách</a>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
 
             <div class="admin-card-body">
-              <form action="${pageContext.request.contextPath}/admin/halls/add" method="post">
+              <form action="${pageContext.request.contextPath}/venue?action=add-hall" method="post">
 
                 <div class="form-group">
                   <label class="form-label">Tên phòng chiếu</label>
@@ -61,7 +61,7 @@
                 </div>
 
                 <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;">
-                  <a href="${pageContext.request.contextPath}/admin/halls/list" class="action-link"
+                  <a href="${pageContext.request.contextPath}/venue?action=halls" class="action-link"
                     style="margin-right: 1rem;">Hủy bỏ</a>
                   <button type="submit" class="btn-primary-admin" style="padding: 0.6rem 1.5rem;">
                     <i class="fas fa-magic"></i> Tạo phòng & Sinh ghế
