@@ -1,103 +1,76 @@
 package controller;
 
-import dao.MovieDAO;
 import dao.UserProfileDAO;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.time.LocalDate;
 import model.UserProfile;
 import model.UserDTO;
+import exception.ValidationException;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+
+/**
+ * User profile update servlet
+ * Extends BaseServlet for parameter extraction and error handling
+ */
 @WebServlet("/update-profile")
-public class UpdateProfile extends HttpServlet {
-
-    private MovieDAO movieDAO = new MovieDAO();
+public class UpdateProfile extends BaseServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected boolean requiresAuthentication() {
+        return true;
+    }
+
+    @Override
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
 
-        String fullName = request.getParameter("fullName");
-        String email = request.getParameter("email");
-        String gender = request.getParameter("gender");
-        String dob = request.getParameter("dob");
-        String address = request.getParameter("address");
+        String fullName = getStringParam(request, "fullName");
+        String email = getStringParam(request, "email");
+        String gender = getStringParam(request, "gender");
+        LocalDate dateOfBirth = getDateParam(request, "dob");
+        String address = getStringParam(request, "address", "");
 
-        String error = "";
-
-        if (fullName == null || fullName.trim().isEmpty()) {
-            error += "Fullname is empty<br>";
+        // Validate
+        if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+            throw new ValidationException("Invalid email");
         }
-        if (email == null || email.trim().isEmpty()
-                || !email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
-            error += "Invalid email<br>";
-        }
-
-        if (gender == null || gender.trim().isEmpty()) {
-            error += "Gender is required<br>";
-        }
-
-        LocalDate dateOfBirth = null;
-        if (dob == null || dob.trim().isEmpty()) {
-            error += "Date of birth is required<br>";
-        } else {
-            try {
-                dateOfBirth = LocalDate.parse(dob);
-                if (dateOfBirth.isAfter(LocalDate.now())) {
-                    error += "Date of birth cannot be in the future<br>";
-                }
-            } catch (Exception e) {
-                error += "Invalid date format for date of birth<br>";
-            }
-        }
-
-        if (!error.isEmpty()) {
-            request.setAttribute("error", error);
-            request.getRequestDispatcher("views/user/profile.jsp").forward(request, response);
-            return;
+        if (dateOfBirth.isAfter(LocalDate.now())) {
+            throw new ValidationException("Date of birth cannot be in the future");
         }
 
         UserProfileDAO udao = new UserProfileDAO();
 
-        try {
-            UserProfile userProfileUpdate = new UserProfile(user.getProfileId(), fullName, email, gender.equals("male"),
-                    address, dateOfBirth);
+        UserProfile userProfileUpdate = new UserProfile(user.getProfileId(), fullName, email, gender.equals("male"),
+                address, dateOfBirth);
 
-            int rowsAffected = udao.update(userProfileUpdate);
+        int rowsAffected = udao.update(userProfileUpdate);
 
-            if (rowsAffected == 0) {
-                request.setAttribute("error",
-                        "Không tìm thấy thông tin người dùng trong database. Vui lòng đăng nhập lại.");
-                request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
-                return;
-            }
-
-            // Update UserDTO object with new information
-            user.setFullName(fullName);
-            user.setEmail(email);
-            user.setGender(gender.equals("male"));
-            user.setAddress(address);
-            user.setDateOfBirth(dateOfBirth);
-
-            // Update both session attributes
-            session.setAttribute("user", user);
-            session.setAttribute("userProfile", userProfileUpdate);
-
-            request.setAttribute("success", "Cập nhật thông tin thành công!");
-            request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
-        } catch (SQLException ex) {
-            request.setAttribute("error", "Lỗi cập nhật thông tin: " + ex.getMessage());
-            request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
-
+        if (rowsAffected == 0) {
+            request.setAttribute("error",
+                    "Không tìm thấy thông tin người dùng trong database. Vui lòng đăng nhập lại.");
+            forward(request, response, "/views/user/profile.jsp");
+            return;
         }
+
+        // Update UserDTO object with new information
+        user.setFullName(fullName);
+        user.setEmail(email);
+        user.setGender(gender.equals("male"));
+        user.setAddress(address);
+        user.setDateOfBirth(dateOfBirth);
+
+        // Update both session attributes
+        session.setAttribute("user", user);
+        session.setAttribute("userProfile", userProfileUpdate);
+
+        request.setAttribute("success", "Cập nhật thông tin thành công!");
+        forward(request, response, "/views/user/profile.jsp");
     }
 
 }

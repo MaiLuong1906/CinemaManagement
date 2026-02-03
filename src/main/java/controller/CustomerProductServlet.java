@@ -11,8 +11,12 @@ import service.CartService;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Customer product browsing servlet
+ * Extends BaseServlet for automatic error handling
+ */
 @WebServlet("/product")
-public class CustomerProductServlet extends HttpServlet {
+public class CustomerProductServlet extends BaseServlet {
 
     private ProductService productService;
     private CartService cartService;
@@ -26,67 +30,50 @@ public class CustomerProductServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        List<Product> products = productService.findAll();
 
-        try {
-            List<Product> products = productService.findAll();
+        // DEBUG
+        System.out.println("===== CustomerProductServlet =====");
+        System.out.println("Số lượng sản phẩm: " + products.size());
 
-            // DEBUG
-            System.out.println("===== CustomerProductServlet =====");
-            System.out.println("Số lượng sản phẩm: " + products.size());
+        request.setAttribute("products", products);
 
-            request.setAttribute("products", products);
+        // Load cart details for sidebar
+        request.setAttribute(
+                "cartDetails",
+                cartService.getCartDetails(request.getSession()));
 
-            // Load cart details for sidebar
-            // Load cart details for sidebar
-            request.setAttribute(
-                    "cartDetails",
-                    cartService.getCartDetails(request.getSession()));
+        // Re-hydrate Seat Details from Session IDs
+        HttpSession session = request.getSession();
+        String seatIdsStr = (String) session.getAttribute("BOOKING_SEAT_IDS");
+        String showtimeIdStr = (String) session.getAttribute("BOOKING_SHOWTIME_ID");
 
-            // Re-hydrate Seat Details from Session IDs
-            HttpSession session = request.getSession();
-            String seatIdsStr = (String) session.getAttribute("BOOKING_SEAT_IDS");
-            String showtimeIdStr = (String) session.getAttribute("BOOKING_SHOWTIME_ID");
-
-            if (seatIdsStr != null && showtimeIdStr != null) {
-                try {
-                    int showtimeId = Integer.parseInt(showtimeIdStr);
-                    java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
-                    java.util.List<model.SeatSelectionDTO> selectedSeats = new java.util.ArrayList<>();
-                    String[] ids = seatIdsStr.split(",");
-                    for (String id : ids) {
-                        try {
-                            int seatId = Integer.parseInt(id.trim());
-                            for (model.SeatSelectionDTO s : allSeats) {
-                                if (s.getSeatId() == seatId) {
-                                    selectedSeats.add(s);
-                                    break;
-                                }
+        if (seatIdsStr != null && showtimeIdStr != null) {
+            try {
+                int showtimeId = Integer.parseInt(showtimeIdStr);
+                java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
+                java.util.List<model.SeatSelectionDTO> selectedSeats = new java.util.ArrayList<>();
+                String[] ids = seatIdsStr.split(",");
+                for (String id : ids) {
+                    try {
+                        int seatId = Integer.parseInt(id.trim());
+                        for (model.SeatSelectionDTO s : allSeats) {
+                            if (s.getSeatId() == seatId) {
+                                selectedSeats.add(s);
+                                break;
                             }
-                        } catch (NumberFormatException ignored) {
                         }
+                    } catch (NumberFormatException ignored) {
                     }
-                    session.setAttribute("cartSeats", selectedSeats);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                session.setAttribute("cartSeats", selectedSeats);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            request.getRequestDispatcher("/views/user/product.jsp")
-                    .forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Có lỗi xảy ra");
-            request.getRequestDispatcher("/views/user/product.jsp")
-                    .forward(request, response);
         }
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+        forward(request, response, "/views/user/product.jsp");
     }
 }
