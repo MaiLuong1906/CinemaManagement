@@ -65,8 +65,12 @@ public class ConfirmBookingServlet extends BaseServlet {
         try {
             int showtimeId = Integer.parseInt(showtimeIdStr);
 
+            // Start transaction early to reuse connection
+            conn = DBConnect.getConnection();
+            conn.setAutoCommit(false);
+
             // Re-hydrate seat details to get prices
-            java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
+            java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(conn, showtimeId);
 
             // Parse selected seat IDs
             String[] ids = seatIdsStr.split(",");
@@ -95,10 +99,6 @@ public class ConfirmBookingServlet extends BaseServlet {
             }
 
             BigDecimal grandTotal = seatTotal.add(productTotal);
-
-            // Start transaction
-            conn = DBConnect.getConnection();
-            conn.setAutoCommit(false);
 
             // Create invoice
             Invoice invoice = new Invoice();

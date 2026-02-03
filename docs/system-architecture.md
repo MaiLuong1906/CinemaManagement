@@ -64,3 +64,38 @@ The system leverages database-side processing for performance:
 ### File System Integration
 - **Movie Posters**: Served via `ImageServlet` from a configurable disk path.
 - **Constraint**: Currently hardcoded to `C:/imgForCinema`, representing a technical debt item for portability.
+
+## Servlet Consolidation (Phase 3 - Feb 2026)
+
+### VenueServlet - Action-Based Routing
+Consolidated 9 venue-related servlets into a single `VenueServlet` with action-based routing:
+
+**Previous Servlets (Removed)**:
+- AdminShowtimeServlet
+- addShowTimeServlet
+- UpdateShowtimeServlet
+- DeleteShowtimeServlet
+- ListCinemaHallsServlet
+- AddCinemaHallServlet
+- ToggleHallStatusServlet
+- ManageSeatsServlet
+- UpdateSeatServlet
+
+**New VenueServlet Actions**:
+- `/venue?action=dashboard` - Showtime dashboard
+- `/venue?action=add-showtime` - Create new showtime
+- `/venue?action=update-showtime` - Modify existing showtime
+- `/venue?action=delete-showtime` - Remove showtime
+- `/venue?action=halls` - List cinema halls
+- `/venue?action=add-hall` - Create new hall
+- `/venue?action=toggle-hall` - Enable/disable hall
+- `/venue?action=seats` - Manage seat configuration
+- `/venue?action=update-seat` - Update seat type/status
+
+**Benefits**:
+- Reduced servlet count by 90%
+- Unified authentication/authorization
+- Consistent error handling
+- Single entry point for venue management
+- Easier maintenance and testing
+

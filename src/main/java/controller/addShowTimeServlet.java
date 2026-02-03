@@ -82,10 +82,10 @@ public class addShowTimeServlet extends HttpServlet {
         List<Movie> movieList = movieDAO.getAllMovies();
         request.setAttribute("movieList", movieList);
         // chon phong
-        CinemaHallDAO cinemaHallDAO = new CinemaHallDAO(DBConnect.getConnection());
+        CinemaHallDAO cinemaHallDAO = new CinemaHallDAO();
         List<CinemaHall> hallList = new ArrayList<>();
-        try {
-            hallList = cinemaHallDAO.getAllHalls();
+        try (java.sql.Connection conn = DBConnect.getConnection()) {
+            hallList = cinemaHallDAO.getAllHalls(conn);
         } catch (SQLException ex) {
             System.out.println("Khong co phong nao");
         }

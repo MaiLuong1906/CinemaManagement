@@ -51,9 +51,9 @@ public class CustomerProductServlet extends BaseServlet {
         String showtimeIdStr = (String) session.getAttribute("BOOKING_SHOWTIME_ID");
 
         if (seatIdsStr != null && showtimeIdStr != null) {
-            try {
+            try (java.sql.Connection conn = dao.DBConnect.getConnection()) {
                 int showtimeId = Integer.parseInt(showtimeIdStr);
-                java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
+                java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(conn, showtimeId);
                 java.util.List<model.SeatSelectionDTO> selectedSeats = new java.util.ArrayList<>();
                 String[] ids = seatIdsStr.split(",");
                 for (String id : ids) {

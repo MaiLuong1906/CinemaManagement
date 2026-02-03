@@ -35,18 +35,18 @@ public class UpdateShowtimeServlet extends HttpServlet {
             throws ServletException, IOException {
         // lay ra du lieu da co
         int showtimeId = MovieUtils.getIntParameter(request, "showtimeId");
-        try {
+        try (java.sql.Connection conn = DBConnect.getConnection()) {
 
             ShowtimeDAO showtimeDAO = new ShowtimeDAO();
             TimeSlotDAO slotDAO = new TimeSlotDAO();
             MovieDAO movieDAO = new MovieDAO();
-            CinemaHallDAO hallDAO = new CinemaHallDAO(DBConnect.getConnection());
-            Showtime st = showtimeDAO.findById(DBConnect.getConnection(), showtimeId);
-            List<Movie> movieList = movieDAO.findAll(DBConnect.getConnection());
-            List<CinemaHall> hallList = hallDAO.getAllHalls();
+            CinemaHallDAO hallDAO = new CinemaHallDAO();
+            Showtime st = showtimeDAO.findById(conn, showtimeId);
+            List<Movie> movieList = movieDAO.findAll(conn);
+            List<CinemaHall> hallList = hallDAO.getAllHalls(conn);
 
             List<TimeSlot> availableSlots =slotDAO.getAvailableSlots(
-                            DBConnect.getConnection(),
+                            conn,
                             st.getHallId(),
                             st.getShowDate(),
                             st.getShowtimeId()

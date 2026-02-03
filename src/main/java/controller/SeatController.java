@@ -1,10 +1,12 @@
 package controller;
 
+import dao.DBConnect;
 import dao.InvoiceDAO;
 import dao.SeatDAO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import java.util.List;
 import model.SeatSelectionDTO;
 
@@ -19,15 +21,17 @@ public class SeatController extends BaseServlet {
             throws Exception {
         int showtimeId = getIntParam(request, "showtimeId");
 
-        // Cleanup expired invoices
-        invoiceDAO.cleanupExpiredInvoices();
+        try (Connection conn = DBConnect.getConnection()) {
+            // Cleanup expired invoices
+            invoiceDAO.cleanupExpiredInvoices();
 
-        // Load seats for showtime
-        List<SeatSelectionDTO> seats = seatDAO.getSeatsByShowtime(showtimeId);
+            // Load seats for showtime
+            List<SeatSelectionDTO> seats = seatDAO.getSeatsByShowtime(conn, showtimeId);
 
-        request.setAttribute("seats", seats);
-        request.setAttribute("showtimeId", showtimeId);
+            request.setAttribute("seats", seats);
+            request.setAttribute("showtimeId", showtimeId);
 
-        forward(request, response, "/views/user/seat-selection.jsp");
+            forward(request, response, "/views/user/seat-selection.jsp");
+        }
     }
 }
