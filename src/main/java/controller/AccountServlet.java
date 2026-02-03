@@ -5,47 +5,40 @@
 package controller;
 
 import dao.UserDAO;
-import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
 import model.UserDTO;
 import model.UserProfile;
 
+import java.io.IOException;
+import java.time.LocalDate;
+
 /**
- *
- * @author LENOVO
+ * Account management servlet (login, register, logout)
+ * Extends BaseServlet for automatic UTF-8 encoding and error handling
  */
 @WebServlet("/AccountServlet")
-public class AccountServlet extends HttpServlet {
+public class AccountServlet extends BaseServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if ("login".equals(action)) {
-            login(request, response);
-        } else if ("logout".equals(action)) {
-            logout(request, response);
-        } else {
-            register(request, response);
-        }
-    }
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        String action = getStringParam(request, "action", "register");
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action.equals("login")) {
-            login(request, response);
-        } else if (action.equals("register")) {
-            register(request, response);
-        } else {
-            logout(request, response);
+        switch (action) {
+            case "login":
+                login(request, response);
+                break;
+            case "logout":
+                logout(request, response);
+                break;
+            case "register":
+            default:
+                register(request, response);
+                break;
         }
     }
 
