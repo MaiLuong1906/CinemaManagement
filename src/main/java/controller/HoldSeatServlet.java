@@ -1,35 +1,31 @@
 package controller;
 
-import java.io.IOException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/hold-seats")
-public class HoldSeatServlet extends HttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // 1. Lấy dữ liệu từ form chọn ghế
-        String showtimeId = request.getParameter("showtimeId");
-        String seatIds = request.getParameter("seatIds");
-        String totalPrice = request.getParameter("totalPrice");
+public class HoldSeatServlet extends BaseServlet {
 
-        // 2. Lưu vào Session (Bộ nhớ tạm)
+    @Override
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        // Get seat selection data from form
+        String showtimeId = getStringParam(request, "showtimeId");
+        String seatIds = getStringParam(request, "seatIds");
+        String totalPrice = getStringParam(request, "totalPrice");
+
+        // Store in session
         HttpSession session = request.getSession();
         session.setAttribute("BOOKING_SHOWTIME_ID", showtimeId);
         session.setAttribute("BOOKING_SEAT_IDS", seatIds);
         session.setAttribute("BOOKING_SEAT_TOTAL", totalPrice);
 
-        // DEBUG: In ra console để kiểm tra
-        System.out.println("=== HoldSeatServlet ===");
-        System.out.println("SeatIDs: " + seatIds);
-        System.out.println("Redirecting to /product...");
+        // Debug logging
+        log("HoldSeatServlet - SeatIDs: " + seatIds + ", redirecting to /product");
 
-        // 3. Chuyển hướng sang trang chọn sản phẩm
-        response.sendRedirect(request.getContextPath() + "/product");
+        // Redirect to product selection page
+        redirect(response, request.getContextPath() + "/product");
     }
 }

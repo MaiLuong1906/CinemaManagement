@@ -8,7 +8,6 @@ import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,11 +16,12 @@ import dao.DBConnect;
 import dao.InvoiceDAO;
 import model.Invoice;
 import model.Product;
-import model.Account;
 import service.CartService;
+import exception.ValidationException;
+import exception.BusinessException;
 
 @WebServlet("/confirm-booking")
-public class ConfirmBookingServlet extends HttpServlet {
+public class ConfirmBookingServlet extends BaseServlet {
 
     private CartService cartService;
     private InvoiceDAO invoiceDAO;
@@ -43,41 +43,32 @@ public class ConfirmBookingServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected boolean requiresAuthentication() {
+        return true;
+    }
+
+    @Override
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         HttpSession session = request.getSession();
+        int userId = getCurrentUserId(request);
 
-        // 1. Kiểm tra đăng nhập
-        Object userObj = session.getAttribute("user");
-        if (userObj == null) {
-            response.sendRedirect(request.getContextPath() + "/views/auth/login.jsp");
-            return;
-        }
-
-        int userId = -1;
-        if (userObj instanceof model.UserDTO) {
-            userId = ((model.UserDTO) userObj).getAccountId();
-        }
-
-        // 2. Lấy thông tin ghế từ Session
-        String seatIdsStr = (String) session.getAttribute("BOOKING_SEAT_IDS"); // "1,2,3"
+        // Get booking info from session
+        String seatIdsStr = (String) session.getAttribute("BOOKING_SEAT_IDS");
         String showtimeIdStr = (String) session.getAttribute("BOOKING_SHOWTIME_ID");
 
         if (seatIdsStr == null || showtimeIdStr == null || seatIdsStr.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
+            throw new ValidationException("Missing booking information. Please select seats again.");
         }
 
         Connection conn = null;
         try {
             int showtimeId = Integer.parseInt(showtimeIdStr);
 
-            // Re-hydrate seat details to get prices if not in session, or just fetch all
-            // for showtime
-            // Better: use SeatDAO.getSeatsByShowtime to get prices
+            // Re-hydrate seat details to get prices
             java.util.List<model.SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
 
-            // Parse selected IDs
+            // Parse selected seat IDs
             String[] ids = seatIdsStr.split(",");
             java.util.List<model.SeatSelectionDTO> selectedSeatDTOs = new java.util.ArrayList<>();
             BigDecimal seatTotal = BigDecimal.ZERO;
@@ -93,7 +84,7 @@ public class ConfirmBookingServlet extends HttpServlet {
                 }
             }
 
-            // 3. Tính tổng tiền Cart (Products)
+            // Calculate product total
             Map<Product, Integer> cartDetails = cartService.getCartDetails(session);
             BigDecimal productTotal = BigDecimal.ZERO;
 
@@ -105,11 +96,11 @@ public class ConfirmBookingServlet extends HttpServlet {
 
             BigDecimal grandTotal = seatTotal.add(productTotal);
 
-            // 4. BẮT ĐẦU TRANSACTION
+            // Start transaction
             conn = DBConnect.getConnection();
             conn.setAutoCommit(false);
 
-            // A. Tạo Invoice
+            // Create invoice
             Invoice invoice = new Invoice();
             invoice.setUserId(userId);
             invoice.setShowtimeId(showtimeId);
@@ -119,10 +110,9 @@ public class ConfirmBookingServlet extends HttpServlet {
             int invoiceId = invoiceDAO.insert(conn, invoice);
             invoice.setInvoiceId(invoiceId);
 
-            // B. Lưu Ticket Details
-            // Cần HallID. Lấy từ showtimeId
+            // Save ticket details
             model.Showtime showtime = showtimeDAO.findById(conn, showtimeId);
-            int hallId = (showtime != null) ? showtime.getHallId() : 0; // fallback
+            int hallId = (showtime != null) ? showtime.getHallId() : 0;
 
             java.util.List<model.TicketDetail> tickets = new java.util.ArrayList<>();
             for (model.SeatSelectionDTO s : selectedSeatDTOs) {
@@ -136,50 +126,53 @@ public class ConfirmBookingServlet extends HttpServlet {
             }
             ticketDetailDAO.insertBatch(conn, tickets);
 
-            // C. Lưu Product Details & Giảm Tồn Kho
+            // Save product details and update stock
             for (Map.Entry<Product, Integer> entry : cartDetails.entrySet()) {
                 Product p = entry.getKey();
                 int qty = entry.getValue();
 
-                // Lưu detail
                 model.ProductDetail pd = new model.ProductDetail();
                 pd.setInvoiceId(invoiceId);
                 pd.setItemId(p.getItemId());
                 pd.setQuantity(qty);
                 productDetailDAO.insert(conn, pd);
 
-                // Giảm tồn kho
                 productDAO.updateStock(conn, p.getItemId(), -qty);
             }
 
-            // COMMIT
+            // Commit transaction
             conn.commit();
 
-            // 6. Forward sang payment.jsp
+            // Forward to payment page
             java.util.List<Invoice> invoices = new java.util.ArrayList<>();
             invoices.add(invoice);
             request.setAttribute("invoices", invoices);
-            request.getRequestDispatcher("/views/payment/payment.jsp").forward(request, response);
+            forward(request, response, "/views/payment/payment.jsp");
 
+        } catch (NumberFormatException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    log("Rollback failed", ex);
+                }
+            }
+            throw new ValidationException("Invalid booking data format");
         } catch (Exception e) {
             if (conn != null) {
                 try {
                     conn.rollback();
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    log("Rollback failed", ex);
                 }
             }
-            e.printStackTrace();
-            // Handle error (show user)
-            String errorMsg = (e.getMessage() != null) ? e.getMessage() : e.toString();
-            response.sendRedirect(request.getContextPath() + "/home?error=transaction_failed&msg="
-                    + java.net.URLEncoder.encode(errorMsg, "UTF-8"));
+            throw new BusinessException("Failed to create booking: " + e.getMessage(), e);
         } finally {
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    log("Connection close failed", e);
                 }
             }
         }

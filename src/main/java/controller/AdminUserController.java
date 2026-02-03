@@ -1,95 +1,64 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import dao.AccountDAO;
 import dao.UserProfileDAO;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.UserDTO;
+import exception.ValidationException;
 
-/**
- *
- * @author Admin
- */
 @WebServlet("/admin/users")
-public class AdminUserController extends HttpServlet {
+public class AdminUserController extends BaseServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AdminUserController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AdminUserController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+    @Override
+    protected boolean requiresAuthentication() {
+        return true;
+    }
+
+    @Override
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        String method = request.getMethod();
+
+        if ("GET".equals(method)) {
+            handleGetRequest(request, response);
+        } else if ("POST".equals(method)) {
+            handlePostRequest(request, response);
         }
     }
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+    private void handleGetRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         List<UserDTO> users = UserProfileDAO.getAllUsers();
         request.setAttribute("users", users);
-        request.getRequestDispatcher("/views/admin/users/user-list.jsp")
-       .forward(request, response);
-
+        forward(request, response, "/views/admin/users/user-list.jsp");
     }
 
+    private void handlePostRequest(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        String action = getStringParam(request, "action");
+        int id = getIntParam(request, "id");
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        AccountDAO dao = new AccountDAO();
 
-        String action = request.getParameter("action");
-        int id = Integer.parseInt(request.getParameter("id"));
-
-        try {
-            AccountDAO dao = new AccountDAO();
-
-            if ("lock".equals(action)) {
+        switch (action) {
+            case "lock":
                 dao.updateStatus(id, false);
-            } else if ("unlock".equals(action)) {
+                break;
+            case "unlock":
                 dao.updateStatus(id, true);
-            } else if ("role".equals(action)) {
-                String role = request.getParameter("role");
+                break;
+            case "role":
+                String role = getStringParam(request, "role");
                 dao.updateRole(id, role);
-            }
-
-            response.sendRedirect("users");
-        } catch (Exception e) {
-            throw new ServletException(e);
+                break;
+            default:
+                throw new ValidationException("Invalid action: " + action);
         }
+
+        redirect(response, "users");
     }
-
-
-    
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
