@@ -14,10 +14,9 @@ public class SeatDAO {
     /* =========================
        1. KIỂM TRA GHẾ TỒN TẠI
        ========================= */
-    public boolean exists(int seatId) {
+    public boolean exists(Connection conn, int seatId) {
         String sql = "SELECT 1 FROM seats WHERE seat_id = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, seatId);
             ResultSet rs = ps.executeQuery();
@@ -31,7 +30,7 @@ public class SeatDAO {
     /* =========================
        2. TÌMGHẾ THEO ID
        ========================= */
-    public Seat findById(int seatId) throws SQLException {
+    public Seat findById(Connection conn, int seatId) throws SQLException {
         String sql = """
             SELECT s.*, st.type_name, st.extra_fee
             FROM seats s
@@ -39,8 +38,7 @@ public class SeatDAO {
             WHERE s.seat_id = ?
         """;
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, seatId);
             ResultSet rs = ps.executeQuery();
@@ -55,7 +53,7 @@ public class SeatDAO {
     /* =========================
        3. DANH SÁCH GHẾ THEO PHÒNG
        ========================= */
-    public List<Seat> findByHall(int hallId) throws SQLException {
+    public List<Seat> findByHall(Connection conn, int hallId) throws SQLException {
         String sql = """
             SELECT s.*, st.type_name, st.extra_fee
             FROM seats s
@@ -66,8 +64,7 @@ public class SeatDAO {
 
         List<Seat> list = new ArrayList<>();
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ResultSet rs = ps.executeQuery();
@@ -83,6 +80,7 @@ public class SeatDAO {
        4. THÊM 1 GHẾ
        ========================= */
     public void insert(
+            Connection conn,
             int hallId,
             String seatCode,
             int rowIndex,
@@ -97,8 +95,7 @@ public class SeatDAO {
             VALUES (?, ?, ?, ?, ?, ?)
         """;
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ps.setString(2, seatCode);
@@ -114,10 +111,9 @@ public class SeatDAO {
     /* =========================
        5. CẬP NHẬT LOẠI GHẾ
        ========================= */
-    public void updateSeatType(int seatId, int seatTypeId) throws SQLException {
+    public void updateSeatType(Connection conn, int seatId, int seatTypeId) throws SQLException {
         String sql = "UPDATE seats SET seat_type_id = ? WHERE seat_id = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, seatTypeId);
             ps.setInt(2, seatId);
@@ -128,10 +124,9 @@ public class SeatDAO {
     /* =========================
        6. BẬT / TẮT GHẾ
        ========================= */
-    public void updateActive(int seatId, boolean active) throws SQLException {
+    public void updateActive(Connection conn, int seatId, boolean active) throws SQLException {
         String sql = "UPDATE seats SET is_active = ? WHERE seat_id = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setBoolean(1, active);
             ps.setInt(2, seatId);
@@ -142,10 +137,9 @@ public class SeatDAO {
     /* =========================
        7. XOÁ GHẾ THEO PHÒNG
        ========================= */
-    public void deleteByHall(int hallId) throws SQLException {
+    public void deleteByHall(Connection conn, int hallId) throws SQLException {
         String sql = "DELETE FROM seats WHERE hall_id = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ps.executeUpdate();
@@ -157,10 +151,9 @@ public class SeatDAO {
     /* =========================
        8. ĐẾM TỔNG SỐ GHẾ TRONG PHÒNG
        ========================= */
-    public int countSeatsByHall(int hallId) throws SQLException {
+    public int countSeatsByHall(Connection conn, int hallId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM seats WHERE hall_id = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ResultSet rs = ps.executeQuery();
@@ -174,10 +167,9 @@ public class SeatDAO {
     /* =========================
        9. ĐẾM SỐ GHẾ HOẠT ĐỘNG TRONG PHÒNG
        ========================= */
-    public int countActiveSeats(int hallId) throws SQLException {
+    public int countActiveSeats(Connection conn, int hallId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM seats WHERE hall_id = ? AND is_active = 1";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ResultSet rs = ps.executeQuery();
@@ -191,10 +183,9 @@ public class SeatDAO {
     /* =========================
        10. KIỂM TRA MÃ GHẾ ĐÃ TỒN TẠI TRONG PHÒNG
        ========================= */
-    public boolean isSeatCodeExists(int hallId, String seatCode) throws SQLException {
+    public boolean isSeatCodeExists(Connection conn, int hallId, String seatCode) throws SQLException {
         String sql = "SELECT 1 FROM seats WHERE hall_id = ? AND seat_code = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ps.setString(2, seatCode);
@@ -206,10 +197,9 @@ public class SeatDAO {
     /* =========================
        11. KIỂM TRA TỌA ĐỘ ĐÃ TỒN TẠI TRONG PHÒNG
        ========================= */
-    public boolean isCoordinateExists(int hallId, int rowIndex, int colIndex) throws SQLException {
+    public boolean isCoordinateExists(Connection conn, int hallId, int rowIndex, int colIndex) throws SQLException {
         String sql = "SELECT 1 FROM seats WHERE hall_id = ? AND row_index = ? AND column_index = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ps.setInt(2, rowIndex);
@@ -222,10 +212,9 @@ public class SeatDAO {
     /* =========================
        12. XOÁ 1 GHẾ CỤ THỂ
        ========================= */
-    public boolean deleteSeat(int seatId) throws SQLException {
+    public boolean deleteSeat(Connection conn, int seatId) throws SQLException {
         String sql = "DELETE FROM seats WHERE seat_id = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, seatId);
             return ps.executeUpdate() > 0;
@@ -235,7 +224,7 @@ public class SeatDAO {
     /* =========================
        13. LẤY GHẾ THEO TỌA ĐỘ
        ========================= */
-    public Seat findByCoordinate(int hallId, int rowIndex, int colIndex) throws SQLException {
+    public Seat findByCoordinate(Connection conn, int hallId, int rowIndex, int colIndex) throws SQLException {
         String sql = """
             SELECT s.*, st.type_name, st.extra_fee
             FROM seats s
@@ -243,8 +232,7 @@ public class SeatDAO {
             WHERE s.hall_id = ? AND s.row_index = ? AND s.column_index = ?
         """;
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ps.setInt(2, rowIndex);
@@ -261,13 +249,12 @@ public class SeatDAO {
     /* =========================
        14. CẬP NHẬT HÀNG LOẠT LOẠI GHẾ (dùng khi chọn nhiều ghế cùng lúc)
        ========================= */
-    public void batchUpdateSeatType(List<Integer> seatIds, int seatTypeId) throws SQLException {
+    public void batchUpdateSeatType(Connection conn, List<Integer> seatIds, int seatTypeId) throws SQLException {
         String sql = "UPDATE seats SET seat_type_id = ? WHERE seat_id = ?";
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            con.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
             for (Integer seatId : seatIds) {
                 ps.setInt(1, seatTypeId);
@@ -276,17 +263,20 @@ public class SeatDAO {
             }
 
             ps.executeBatch();
-            con.commit();
+            conn.commit();
 
         } catch (SQLException e) {
+            conn.rollback();
             throw e;
+        } finally {
+            conn.setAutoCommit(true);
         }
     }
 
     /* =========================
        15. LẤY DANH SÁCH GHẾ THEO LOẠI
        ========================= */
-    public List<Seat> findBySeatType(int hallId, int seatTypeId) throws SQLException {
+    public List<Seat> findBySeatType(Connection conn, int hallId, int seatTypeId) throws SQLException {
         String sql = """
             SELECT s.*, st.type_name, st.extra_fee
             FROM seats s
@@ -297,8 +287,7 @@ public class SeatDAO {
 
         List<Seat> list = new ArrayList<>();
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
             ps.setInt(2, seatTypeId);
@@ -313,13 +302,12 @@ public class SeatDAO {
     /* ========
     16. CẬP NHẬT HÀNG LOẠT TRẠNG THÁI GHẾ (THÊM MỚI)
        ========================= */
-    public void batchUpdateSeatStatus(List<Integer> seatIds, boolean active) throws SQLException {
+    public void batchUpdateSeatStatus(Connection conn, List<Integer> seatIds, boolean active) throws SQLException {
         String sql = "UPDATE seats SET is_active = ? WHERE seat_id = ?";
 
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            con.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
             for (Integer seatId : seatIds) {
                 ps.setBoolean(1, active);
@@ -328,14 +316,17 @@ public class SeatDAO {
             }
 
             ps.executeBatch();
-            con.commit();
-            con.setAutoCommit(true);
+            conn.commit();
 
         } catch (SQLException e) {
+            conn.rollback();
             throw e;
+        } finally {
+            conn.setAutoCommit(true);
         }
     }
-    public List<SeatSelectionDTO> getSeatsByShowtime(int showtimeId) {
+
+    public List<SeatSelectionDTO> getSeatsByShowtime(Connection conn, int showtimeId) {
     List<SeatSelectionDTO> list = new ArrayList<>();
 
     String sql = """
@@ -363,8 +354,7 @@ public class SeatDAO {
         ORDER BY s.row_index, s.column_index
     """;
 
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
         ps.setInt(1, showtimeId);
         ResultSet rs = ps.executeQuery();
@@ -375,7 +365,7 @@ public class SeatDAO {
                 rs.getString("seat_code"),
                 rs.getInt("row_index"),
                 rs.getInt("column_index"),
-                rs.getInt("seat_type_id"), 
+                rs.getInt("seat_type_id"),
                 rs.getDouble("price"),
                 rs.getString("seat_status")
             ));
@@ -387,7 +377,7 @@ public class SeatDAO {
 }
 
 
-    
+
     /* =========================
        8. MAP RESULTSET → OBJECT
        ========================= */

@@ -7,14 +7,8 @@ import java.util.List;
 
 public class CinemaHallDAO {
 
-    private Connection conn;
-
-    public CinemaHallDAO(Connection conn) {
-        this.conn = conn;
-    }
-
     // 1. Lấy tất cả phòng chiếu
-    public List<CinemaHall> getAllHalls() throws SQLException {
+    public List<CinemaHall> getAllHalls(Connection conn) throws SQLException {
         List<CinemaHall> list = new ArrayList<>();
         String sql = "SELECT hall_id, hall_name, total_rows, total_cols, status, created_at FROM cinema_halls";
 
@@ -36,7 +30,7 @@ public class CinemaHallDAO {
     }
 
     // 2. Lấy phòng chiếu theo ID
-    public CinemaHall getHallById(int hallId) throws SQLException {
+    public CinemaHall getHallById(Connection conn, int hallId) throws SQLException {
         String sql = "SELECT hall_id, hall_name, total_rows, total_cols, status, created_at FROM cinema_halls WHERE hall_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, hallId);
@@ -55,8 +49,8 @@ public class CinemaHallDAO {
         return null;
     }
 
-    // 3. Thêm phòng chiếu - GIỮ NGUYÊN NHƯNG SỬA LẠI
-    public int insert(CinemaHall hall) throws SQLException {
+    // 3. Thêm phòng chiếu
+    public int insert(Connection conn, CinemaHall hall) throws SQLException {
         String sql = """
                     INSERT INTO cinema_halls (hall_name, total_rows, total_cols, status, created_at)
                     VALUES (?, ?, ?, ?, GETDATE())
@@ -78,8 +72,8 @@ public class CinemaHallDAO {
         return -1;
     }
 
-    // 4. Cập nhật trạng thái - GIỮ NGUYÊN NHƯNG SỬA LẠI
-    public void updateStatus(int hallId, boolean status) throws SQLException {
+    // 4. Cập nhật trạng thái
+    public void updateStatus(Connection conn, int hallId, boolean status) throws SQLException {
         String sql = "UPDATE cinema_halls SET status = ? WHERE hall_id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -90,7 +84,7 @@ public class CinemaHallDAO {
     }
 
     // 5. Cập nhật phòng chiếu
-    public boolean updateHall(CinemaHall hall) throws SQLException {
+    public boolean updateHall(Connection conn, CinemaHall hall) throws SQLException {
         String sql = "UPDATE cinema_halls SET hall_name = ? WHERE hall_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, hall.getHallName());
@@ -100,7 +94,7 @@ public class CinemaHallDAO {
     }
 
     // 6. Xóa phòng chiếu
-    public boolean deleteHall(int hallId) throws SQLException {
+    public boolean deleteHall(Connection conn, int hallId) throws SQLException {
         String sql = "DELETE FROM cinema_halls WHERE hall_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, hallId);
@@ -111,7 +105,7 @@ public class CinemaHallDAO {
     // ===== CÁC METHOD CẦN BỔ SUNG =====
 
     // 7. Kiểm tra tên phòng đã tồn tại chưa (để validate khi thêm mới)
-    public boolean isHallNameExists(String hallName) throws SQLException {
+    public boolean isHallNameExists(Connection conn, String hallName) throws SQLException {
         String sql = "SELECT 1 FROM cinema_halls WHERE hall_name = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, hallName);
@@ -121,7 +115,7 @@ public class CinemaHallDAO {
     }
 
     // 8. Kiểm tra tên phòng đã tồn tại chưa (trừ phòng hiện tại - dùng cho update)
-    public boolean isHallNameExistsExcept(String hallName, int exceptHallId) throws SQLException {
+    public boolean isHallNameExistsExcept(Connection conn, String hallName, int exceptHallId) throws SQLException {
         String sql = "SELECT 1 FROM cinema_halls WHERE hall_name = ? AND hall_id != ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, hallName);
@@ -132,7 +126,7 @@ public class CinemaHallDAO {
     }
 
     // 9. Kiểm tra phòng có đang được sử dụng không (có suất chiếu)
-    public boolean hasActiveShowtimes(int hallId) throws SQLException {
+    public boolean hasActiveShowtimes(Connection conn, int hallId) throws SQLException {
         String sql = """
                 SELECT 1 FROM showtimes
                 WHERE hall_id = ? AND show_date >= CAST(GETDATE() AS DATE)
@@ -145,7 +139,7 @@ public class CinemaHallDAO {
     }
 
     // 10. Đếm tổng số phòng
-    public int countTotalHalls() throws SQLException {
+    public int countTotalHalls(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM cinema_halls";
         try (PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
@@ -157,7 +151,7 @@ public class CinemaHallDAO {
     }
 
     // 11. Đếm số phòng đang hoạt động
-    public int countActiveHalls() throws SQLException {
+    public int countActiveHalls(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM cinema_halls WHERE status = 1";
         try (PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
@@ -169,7 +163,7 @@ public class CinemaHallDAO {
     }
 
     // 12. Lấy danh sách phòng đang hoạt động (cho dropdown khi tạo suất chiếu)
-    public List<CinemaHall> getActiveHalls() throws SQLException {
+    public List<CinemaHall> getActiveHalls(Connection conn) throws SQLException {
         List<CinemaHall> list = new ArrayList<>();
         String sql = """
                 SELECT hall_id, hall_name, total_rows, total_cols, status, created_at
@@ -196,7 +190,7 @@ public class CinemaHallDAO {
     }
 
     // 13. Kiểm tra phòng có tồn tại không
-    public boolean exists(int hallId) throws SQLException {
+    public boolean exists(Connection conn, int hallId) throws SQLException {
         String sql = "SELECT 1 FROM cinema_halls WHERE hall_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, hallId);
