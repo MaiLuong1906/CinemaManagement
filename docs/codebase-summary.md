@@ -7,6 +7,7 @@ The project follows a classic **3-Tier Architecture** implemented with Jakarta E
 - **Customer Views**: Located in `src/main/webapp/views/user/`, utilizing JSTL for dynamic rendering.
 - **Admin Dashboard**: Located in `src/main/webapp/views/admin/`, providing management interfaces.
 - **Servlets**: Acting as controllers to handle HTTP requests, coordinate with services/DAOs, and manage session state.
+  - **VenueServlet**: Consolidated servlet using action-based routing for showtime/hall/seat management (replaces 9 legacy servlets).
 
 ### 2. Business Logic Layer (Services)
 - **Services**: Located in `src/main/java/service/`, these classes encapsulate business rules such as revenue calculation, seat availability logic, and booking coordination.
