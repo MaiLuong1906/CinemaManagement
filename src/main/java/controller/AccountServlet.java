@@ -38,6 +38,9 @@ public class AccountServlet extends BaseServlet {
             case "change-password":
                 changePassword(request, response);
                 break;
+            case "profile":
+                showProfile(request, response);
+                break;
             case "register":
             default:
                 register(request, response);
@@ -135,6 +138,27 @@ public class AccountServlet extends BaseServlet {
             request.setAttribute("activeTab", "password");
         }
 
+        request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
+    }
+
+    private void showProfile(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/views/auth/login.jsp");
+            return;
+        }
+
+        // Load booking history
+        dao.InvoiceDAO invoiceDAO = new dao.InvoiceDAO();
+        java.util.List<model.BookingHistoryDTO> bookingHistory = invoiceDAO.getBookingHistory(user.getAccountId());
+
+        System.out.println("DEBUG - User Account ID: " + user.getAccountId());
+        System.out.println("DEBUG - Booking History Size: " + bookingHistory.size());
+
+        request.setAttribute("bookingHistory", bookingHistory);
         request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
     }
 
