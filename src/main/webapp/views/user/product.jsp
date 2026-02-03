@@ -22,8 +22,11 @@
                     <div class="header-section">
                         <div class="container-fluid px-4">
                             <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <h2><i class="fas fa-popcorn me-2"></i>Combo Bắp Nước</h2>
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <a href="javascript:history.back()" class="btn btn-back me-3">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </a>
+                                    <h2 class="mb-0"><i class="fas fa-popcorn me-2"></i>Combo Bắp Nước</h2>
                                 </div>
                                 <div class="col-md-6 text-end">
                                     <span class="text-white">
@@ -140,7 +143,7 @@
                                     </h4>
 
                                     <c:choose>
-                                        <c:when test="${not empty cartDetails}">
+                                        <c:when test="${not empty cartDetails or not empty sessionScope.cartSeats}">
                                             <div class="cart-items-container">
                                                 <c:set var="total" value="0" />
 
