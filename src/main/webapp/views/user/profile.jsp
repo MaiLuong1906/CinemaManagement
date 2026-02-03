@@ -220,52 +220,77 @@
                                         <i class="fas fa-key text-primary me-2"></i>Đổi mật khẩu
                                     </h3>
 
-                                    <form action="${pageContext.request.contextPath}/customer/change-password"
-                                        method="post">
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <label class="form-label fw-semibold">Mật khẩu hiện tại</label>
-                                                <div class="input-group">
-                                                    <input type="password" class="form-control rounded-start-3"
-                                                        name="currentPassword" required>
-                                                    <button class="btn btn-outline-secondary rounded-end-3"
-                                                        type="button" onclick="togglePassword(this)">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="form-label fw-semibold">Mật khẩu mới</label>
-                                                <div class="input-group">
-                                                    <input type="password" class="form-control rounded-start-3"
-                                                        name="newPassword" required>
-                                                    <button class="btn btn-outline-secondary rounded-end-3"
-                                                        type="button" onclick="togglePassword(this)">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                </div>
-                                                <small class="text-secondary">Mật khẩu phải có ít nhất 8 ký tự</small>
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="form-label fw-semibold">Xác nhận mật khẩu mới</label>
-                                                <div class="input-group">
-                                                    <input type="password" class="form-control rounded-start-3"
-                                                        name="confirmPassword" required>
-                                                    <button class="btn btn-outline-secondary rounded-end-3"
-                                                        type="button" onclick="togglePassword(this)">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                    <% if (request.getAttribute("passwordError") !=null) { %>
+                                        <div class="alert alert-danger mb-3" role="alert">
+                                            <i class="fas fa-exclamation-circle me-2"></i>
+                                            <%= request.getAttribute("passwordError") %>
                                         </div>
+                                        <% } %>
 
-                                        <div class="mt-4">
-                                            <button type="submit"
-                                                class="btn btn-gradient text-white px-4 rounded-3 fw-semibold">
-                                                <i class="fas fa-lock me-2"></i>Đổi mật khẩu
-                                            </button>
-                                        </div>
-                                    </form>
+                                            <% if (request.getAttribute("passwordSuccess") !=null) { %>
+                                                <div class="alert alert-success mb-3" role="alert">
+                                                    <i class="fas fa-check-circle me-2"></i>
+                                                    <%= request.getAttribute("passwordSuccess") %>
+                                                </div>
+                                                <% } %>
+
+                                                    <form
+                                                        action="${pageContext.request.contextPath}/AccountServlet?action=change-password"
+                                                        method="post">
+                                                        <div class="row g-3">
+                                                            <div class="col-12">
+                                                                <label class="form-label fw-semibold">Mật khẩu hiện
+                                                                    tại</label>
+                                                                <div class="input-group">
+                                                                    <input type="password"
+                                                                        class="form-control rounded-start-3"
+                                                                        name="currentPassword" required>
+                                                                    <button
+                                                                        class="btn btn-outline-secondary rounded-end-3"
+                                                                        type="button" onclick="togglePassword(this)">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <label class="form-label fw-semibold">Mật khẩu
+                                                                    mới</label>
+                                                                <div class="input-group">
+                                                                    <input type="password"
+                                                                        class="form-control rounded-start-3"
+                                                                        name="newPassword" required>
+                                                                    <button
+                                                                        class="btn btn-outline-secondary rounded-end-3"
+                                                                        type="button" onclick="togglePassword(this)">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <small class="text-secondary">Minimum 6 characters with
+                                                                    uppercase, lowercase, and number</small>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <label class="form-label fw-semibold">Xác nhận mật khẩu
+                                                                    mới</label>
+                                                                <div class="input-group">
+                                                                    <input type="password"
+                                                                        class="form-control rounded-start-3"
+                                                                        name="confirmPassword" required>
+                                                                    <button
+                                                                        class="btn btn-outline-secondary rounded-end-3"
+                                                                        type="button" onclick="togglePassword(this)">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mt-4">
+                                                            <button type="submit"
+                                                                class="btn btn-gradient text-white px-4 rounded-3 fw-semibold">
+                                                                <i class="fas fa-lock me-2"></i>Đổi mật khẩu
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                 </div>
                             </div>
 
@@ -305,6 +330,24 @@
                         reader.readAsDataURL(file);
                     }
                 });
+
+                // Auto-activate password tab if coming from password change form
+                <% if ("password".equals(request.getAttribute("activeTab"))) { %>
+                    const passwordTab = document.querySelector('button[data-bs-target="#password"]');
+                    const passwordTabPane = document.getElementById('password');
+                    const infoTab = document.querySelector('button[data-bs-target="#info"]');
+                    const infoTabPane = document.getElementById('info');
+
+                    if (passwordTab && passwordTabPane) {
+                        // Deactivate info tab
+                        infoTab.classList.remove('active');
+                        infoTabPane.classList.remove('show', 'active');
+
+                        // Activate password tab
+                        passwordTab.classList.add('active');
+                        passwordTabPane.classList.add('show', 'active');
+                    }
+                <% } %>
             </script>
         </body>
 

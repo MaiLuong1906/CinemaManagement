@@ -35,6 +35,9 @@ public class AccountServlet extends BaseServlet {
             case "logout":
                 logout(request, response);
                 break;
+            case "change-password":
+                changePassword(request, response);
+                break;
             case "register":
             default:
                 register(request, response);
@@ -85,6 +88,54 @@ public class AccountServlet extends BaseServlet {
         // 2. SỬ DỤNG REDIRECT: Chuyển hướng về trang chủ (hoặc trang login)
         // URL trên trình duyệt sẽ thay đổi về .../home.jsp thay vì .../AccountServlet
         response.sendRedirect(request.getContextPath() + "/home");
+    }
+
+    private void changePassword(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/views/auth/login.jsp");
+            return;
+        }
+
+        String currentPassword = request.getParameter("currentPassword");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        // Validation
+        String error = "";
+
+        if (currentPassword == null || currentPassword.trim().isEmpty()) {
+            error = "Current password is required";
+        } else if (newPassword == null || newPassword.trim().isEmpty()) {
+            error = "New password is required";
+        } else if (!newPassword.equals(confirmPassword)) {
+            error = "New password and confirm password do not match!";
+        } else if (!newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,}$")) {
+            error = "Password must be minimum 6 characters with at least one uppercase, one lowercase, and one number.";
+        } else {
+            // Verify current password and update
+            boolean success = UserDAO.changePassword(
+                    user.getAccountId(),
+                    util.Encoding.toSHA1(currentPassword),
+                    util.Encoding.toSHA1(newPassword));
+
+            if (!success) {
+                error = "Current password is incorrect!";
+            }
+        }
+
+        if (!error.isEmpty()) {
+            request.setAttribute("passwordError", error);
+            request.setAttribute("activeTab", "password");
+        } else {
+            request.setAttribute("passwordSuccess", "Password changed successfully!");
+            request.setAttribute("activeTab", "password");
+        }
+
+        request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);
     }
 
     private void register(HttpServletRequest request, HttpServletResponse response)

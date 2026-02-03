@@ -134,4 +134,32 @@ public class UserDAO {
         }
         return ok;
     }
+
+    /**
+     * Change user password
+     * 
+     * @param accountId           User's account ID
+     * @param currentPasswordHash Current password (SHA1 hashed)
+     * @param newPasswordHash     New password (SHA1 hashed)
+     * @return true if password changed successfully, false if current password
+     *         incorrect
+     */
+    public static boolean changePassword(int accountId, String currentPasswordHash, String newPasswordHash) {
+        String sql = "UPDATE accounts SET password_hash = ? WHERE account_id = ? AND password_hash = ?";
+
+        try (Connection con = DBConnect.getConnection();
+                PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, newPasswordHash);
+            pst.setInt(2, accountId);
+            pst.setString(3, currentPasswordHash);
+
+            int rowsAffected = pst.executeUpdate();
+            return rowsAffected > 0; // true if password was updated
+
+        } catch (Exception e) {
+            System.out.println("Error changing password: " + e.getMessage());
+            return false;
+        }
+    }
 }
