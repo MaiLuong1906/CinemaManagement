@@ -66,7 +66,7 @@
 
             <!-- Genre Filter Form - Cập nhật để giữ lại search keyword -->
             <div class="mb-5 p-4 rounded-3 border" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1) !important;">
-                <form action="movies" method="get" id="genreForm">
+                <form action="movie" method="get" id="genreForm">
                     <!-- Hidden input để giữ lại search keyword khi filter genre -->
                     <c:if test="${not empty param.search}">
                         <input type="hidden" name="search" value="${param.search}">
@@ -140,7 +140,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="${pageContext.request.contextPath}/movies" 
+                        <a href="${pageContext.request.contextPath}/movie" 
                            class="btn btn-outline-light rounded-pill px-4 py-3 fs-6 fw-semibold border-2">
                             <i class="fas fa-redo-alt me-2"></i>Xóa bộ lọc
                         </a>
@@ -189,7 +189,7 @@
                         </div>
                         <h2 class="text-white mb-3 fw-bold">Không tìm thấy phim nào</h2>
                         <p class="text-secondary mb-4">Vui lòng thử tìm kiếm với từ khóa khác hoặc chọn thể loại khác</p>
-                        <a href="${pageContext.request.contextPath}/movies" 
+                        <a href="${pageContext.request.contextPath}/movie" 
                            class="btn btn-lg rounded-3 px-4 text-white fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                             <i class="fas fa-arrow-left me-2"></i>Xem tất cả phim
                         </a>
