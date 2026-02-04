@@ -93,7 +93,7 @@
         <section class="container-fluid px-4 py-5" style="max-width: 1400px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold fs-2 m-0">🎬 Phim mới cập nhật</h2>
-                <a href="${pageContext.request.contextPath}/movies" 
+                <a href="${pageContext.request.contextPath}/movie" 
                    class="text-decoration-none fw-semibold d-flex align-items-center gap-2"
                    style="color: #667eea;">
                     Xem tất cả <i class="fas fa-arrow-right"></i>
@@ -136,7 +136,7 @@
         <section class="container-fluid px-4 py-5" style="max-width: 1400px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold fs-2 m-0">⭐ Top phim được yêu thích</h2>
-                <a href="${pageContext.request.contextPath}/movies" 
+                <a href="${pageContext.request.contextPath}/movie" 
                    class="text-decoration-none fw-semibold d-flex align-items-center gap-2"
                    style="color: #667eea;">
                     Xem tất cả <i class="fas fa-arrow-right"></i>
