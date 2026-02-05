@@ -15,7 +15,7 @@
     <jsp:include page="../../layout/header.jsp"></jsp:include>
 
     <div class="container-fluid px-4 py-5" style="max-width: 1400px;">
-        <a href="${pageContext.request.contextPath}/movies" 
+        <a href="${pageContext.request.contextPath}/movie" 
            class="btn btn-outline-light rounded-pill mb-4 px-4 py-2 fw-semibold hover-glow text-decoration-none d-inline-flex align-items-center gap-2">
             <i class="fas fa-arrow-left"></i>
             <span>Quay lại danh sách phim</span>
