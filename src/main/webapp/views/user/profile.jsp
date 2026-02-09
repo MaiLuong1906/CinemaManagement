@@ -221,8 +221,10 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 text-md-end">
+
                                                                     <c:choose>
-                                                                        <c:when test="${booking.status == 'Paid'}">
+                                                                        <c:when
+                                                                            test="${booking.status.equalsIgnoreCase('paid')}">
                                                                             <span
                                                                                 class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-2 mb-2 d-inline-block">
                                                                                 <i
@@ -230,7 +232,8 @@
                                                                                 thanh toán
                                                                             </span>
                                                                         </c:when>
-                                                                        <c:when test="${booking.status == 'Pending'}">
+                                                                        <c:when
+                                                                            test="${booking.status.equalsIgnoreCase('pending')}">
                                                                             <span
                                                                                 class="badge bg-warning bg-opacity-25 text-warning border border-warning rounded-pill px-3 py-2 mb-2 d-inline-block">
                                                                                 <i class="fas fa-clock me-1"></i>Chờ
@@ -361,6 +364,7 @@
                 <jsp:include page="../../layout/footer.jsp"></jsp:include>
 
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="${pageContext.request.contextPath}/js/tab-activation.js"></script>
                 <script>
                     function togglePassword(button) {
                         const input = button.previousElementSibling;
@@ -389,24 +393,40 @@
                         }
                     });
 
-                // Auto-activate password tab if coming from password change form
-                <% if ("password".equals(request.getAttribute("activeTab"))) { %>
-                    const passwordTab = document.querySelector('button[data-bs-target="#password"]');
-                        const passwordTabPane = document.getElementById('password');
+                    // Auto-activate tab based on URL parameter or server attribute
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const tabParam = urlParams.get('tab');
+                    const serverActiveTab = '<%= request.getAttribute("activeTab") != null ? request.getAttribute("activeTab") : "" %>';
+
+                    // Determine which tab to activate
+                    let activeTabId = null;
+                    if (tabParam) {
+                        // URL parameter takes priority
+                        activeTabId = tabParam;
+                    } else if (serverActiveTab === 'password') {
+                        // Server-side attribute (for password change)
+                        activeTabId = 'password';
+                    }
+
+                    // Activate the target tab if specified
+                    if (activeTabId) {
+                        const targetTab = document.querySelector(`button[data-bs-target="#${activeTabId}"]`);
+                        const targetTabPane = document.getElementById(activeTabId);
                         const infoTab = document.querySelector('button[data-bs-target="#info"]');
                         const infoTabPane = document.getElementById('info');
 
-                        if (passwordTab && passwordTabPane) {
+                        if (targetTab && targetTabPane) {
                             // Deactivate info tab
                             infoTab.classList.remove('active');
                             infoTabPane.classList.remove('show', 'active');
 
-                            // Activate password tab
-                            passwordTab.classList.add('active');
-                            passwordTabPane.classList.add('show', 'active');
+                            // Activate target tab
+                            targetTab.classList.add('active');
+                            targetTabPane.classList.add('show', 'active');
                         }
-                <% } %>
+                    }
                 </script>
+
             </body>
 
             </html>

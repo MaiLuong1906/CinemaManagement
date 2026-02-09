@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.InvoiceDAO;
 import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +16,8 @@ import model.UserProfile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import model.BookingHistoryDTO;
 
 /**
  * Account management servlet (login, register, logout)
@@ -152,11 +155,8 @@ public class AccountServlet extends BaseServlet {
         }
 
         // Load booking history
-        dao.InvoiceDAO invoiceDAO = new dao.InvoiceDAO();
-        java.util.List<model.BookingHistoryDTO> bookingHistory = invoiceDAO.getBookingHistory(user.getAccountId());
-
-        System.out.println("DEBUG - User Account ID: " + user.getAccountId());
-        System.out.println("DEBUG - Booking History Size: " + bookingHistory.size());
+        InvoiceDAO invoiceDAO = new InvoiceDAO();
+        List<BookingHistoryDTO> bookingHistory = invoiceDAO.getBookingHistory(user.getAccountId());
 
         request.setAttribute("bookingHistory", bookingHistory);
         request.getRequestDispatcher("/views/user/profile.jsp").forward(request, response);

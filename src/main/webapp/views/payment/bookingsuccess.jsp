@@ -68,8 +68,8 @@
                         </a>
 
                         <c:if test="${fn:containsIgnoreCase(message, 'thành công')}">
-                            <a href="${pageContext.request.contextPath}/AccountServlet?action=profile" class="home-btn"
-                                style="background: var(--gradient-primary); border:none;">
+                            <a href="${pageContext.request.contextPath}/AccountServlet?action=profile&tab=tickets"
+                                class="home-btn" style="background: var(--gradient-primary); border:none;">
                                 <i class="fas fa-ticket-alt me-2"></i>Vé Của Tôi
                             </a>
                         </c:if>
