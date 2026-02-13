@@ -141,30 +141,60 @@
 
 </div>
 
-<!-- ===== AI MINI DASHBOARD (1/8 MÀN HÌNH) ===== 
-<div class="ai-panel glass rounded-4 p-3">
+<!-- Floating Button -->
+<button class="chatbot-toggle" onclick="toggleChat()">
+    <i class="fas fa-robot"></i>
+</button>
 
-    <div class="ai-header text-gradient">
-         AI Assistant
+<!-- Chat Window -->
+<div class="chatbot-window" id="chatbot">
+    <div class="chatbot-header">
+        AI Cinema Assistant
     </div>
 
-    <div class="ai-content">
-        <p>• Phim nên tăng suất chiếu</p>
-        <p>• Khung giờ doanh thu cao</p>
-        <p>• Xu hướng vé trong tuần</p>
-        <hr>
-        <p class="small text-secondary">
-            Avatar đang có tỷ lệ lấp ghế 92%
-        </p>
+    <div class="chatbot-body" id="chatBody">
+        <div class="message bot-message">
+            Xin chào Admin 👋<br>
+            Tôi có thể phân tích doanh thu cho bạn.
+        </div>
     </div>
 
-    <div class="ai-footer">
-        <textarea rows="2"
-                  class="form-control"
-                  placeholder="Hỏi AI về doanh thu..."></textarea>
+    <div class="chatbot-footer">
+        <input type="text" id="chatInput" placeholder="Hỏi về doanh thu..." />
+        <button onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
-phan ai se mo khi nao phat trien phan ai
-</div>--> 
+</div>
+    <script>
+    function toggleChat() {
+        const chat = document.getElementById("chatbot");
+        chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+    }
+
+    function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+        if(message === "") return;
+
+        const chatBody = document.getElementById("chatBody");
+
+        // User message
+        const userDiv = document.createElement("div");
+        userDiv.className = "message user-message";
+        userDiv.innerText = message;
+        chatBody.appendChild(userDiv);
+
+        // Fake AI response (sau này thay bằng fetch API)
+        const botDiv = document.createElement("div");
+        botDiv.className = "message bot-message";
+        botDiv.innerText = "AI đang phân tích dữ liệu...";
+        chatBody.appendChild(botDiv);
+
+        chatBody.scrollTop = chatBody.scrollHeight;
+        input.value = "";
+    }
+    </script>
 
 </body>
 </html>
