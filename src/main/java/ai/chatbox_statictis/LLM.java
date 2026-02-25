@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ai;
-
-/**
- *
- * @author nguye
- */
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +14,9 @@ import java.util.List;
 
 public class LLM {
 
-    private static final String OLLAMA_URL = "http://localhost:11434/api/chat";
+    private static final String API_KEY = "dan_key_o_day_nhaaaaaa";
+    private static final String MODEL = "llama-3.3-70b-versatile";
+    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(30))
@@ -31,26 +24,31 @@ public class LLM {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    /**
-     * Dùng cho agent (nhiều message)
-     */
     public String generate(List<Message> messages) {
         try {
             ObjectNode body = mapper.createObjectNode();
-            body.put("model", "gemma3:4b");
-            body.put("stream", false);
-            ArrayNode msgArray = mapper.createArrayNode();
+            body.put("model", MODEL);
+
+            ArrayNode msgs = mapper.createArrayNode();
             for (Message m : messages) {
+                if (m.getContent() == null || m.getContent().isBlank()) continue;
                 ObjectNode msg = mapper.createObjectNode();
-                msg.put("role", normalizeRole(m.getRole()));
+                msg.put("role", m.getRole().equalsIgnoreCase("assistant")
+                    ? "assistant" : m.getRole().toLowerCase());
                 msg.put("content", m.getContent());
-                msgArray.add(msg);
+                msgs.add(msg);
             }
-            body.set("messages", msgArray);
+
+            if (msgs.isEmpty()) {
+                return "Không có nội dung để xử lý.";
+            }
+
+            body.set("messages", msgs);
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(OLLAMA_URL))
+                    .uri(URI.create(API_URL))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + API_KEY)
                     .timeout(Duration.ofSeconds(60))
                     .POST(HttpRequest.BodyPublishers.ofString(
                             mapper.writeValueAsString(body)
@@ -61,23 +59,27 @@ public class LLM {
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
             JsonNode root = mapper.readTree(response.body());
-            return root.get("message").get("content").asText();
 
+            if (root.has("error")) {
+                throw new RuntimeException("API error: "
+                    + root.get("error").get("message").asText());
+            }
+
+            return root.get("choices").get(0)
+                       .get("message")
+                       .get("content").asText();
+
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Ollama call failed", e);
+            throw new RuntimeException("API call failed: " + e.getMessage(), e);
         }
     }
+
     public String generate(String prompt) {
-        return generate(List.of(
-                new Message("user", prompt)
-        ));
-    }
-    private String normalizeRole(String role) {
-        if (role == null) return "user";
-        return switch (role.toLowerCase()) {
-            case "system", "user", "assistant" -> role.toLowerCase();
-            default -> "user";
-        };
+        if (prompt == null || prompt.isBlank()) {
+            return "Prompt không được để trống.";
+        }
+        return generate(List.of(new Message("user", prompt)));
     }
 }
-

@@ -28,4 +28,11 @@ public class SeatFillRate_ViewService {
             throw new RuntimeException("Lỗi khi lấy dữ liệu!");
         }
     }
+    public List<SeatFillRate_ViewDTO> getAllCurrentMonth() {
+    try {
+        return dao.getAllSeatCoverageCurrentMonth();
+    } catch (Exception ex) {
+        throw new RuntimeException("Lỗi khi lấy dữ liệu!", ex);
+    }
+}
 }

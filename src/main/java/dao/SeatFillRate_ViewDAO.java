@@ -96,5 +96,45 @@ public class SeatFillRate_ViewDAO {
 
         return list;
     }
+    // du lieu day cho gemini
+    public List<SeatFillRate_ViewDTO> getAllSeatCoverageCurrentMonth() throws Exception {
+    String sql = """
+        SELECT
+            show_date,
+            movie_title,
+            hall_name,
+            start_time,
+            end_time,
+            seats_sold,
+            total_seats,
+            seat_coverage_percent
+        FROM vw_seat_coverage_detail
+        WHERE year  = YEAR(GETDATE())
+          AND month = MONTH(GETDATE())
+        ORDER BY show_date, start_time
+    """;
+
+    List<SeatFillRate_ViewDTO> list = new ArrayList<>();
+
+    try (Connection conn = DBConnect.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            SeatFillRate_ViewDTO dto = new SeatFillRate_ViewDTO();
+            dto.setShowDate(rs.getDate("show_date").toLocalDate());
+            dto.setMovieTitle(rs.getString("movie_title"));
+            dto.setHallName(rs.getString("hall_name"));
+            dto.setStartTime(rs.getTime("start_time").toLocalTime());
+            dto.setEndTime(rs.getTime("end_time").toLocalTime());
+            dto.setTicketsSold(rs.getInt("seats_sold"));
+            dto.setTotalSeats(rs.getInt("total_seats"));
+            dto.setFillRate(rs.getDouble("seat_coverage_percent"));
+            list.add(dto);
+        }
+    }
+
+    return list;
+}
 
 }

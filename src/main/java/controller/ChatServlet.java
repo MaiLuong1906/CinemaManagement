@@ -2,8 +2,6 @@ package controller;
 
 import ai.Agent;
 import ai.LLM;
-import ai.IntentClassifier;
-import ai.agent.FillRateEnvironment;
 import ai.memory.Memory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,16 +16,8 @@ import service.SeatFillRate_ViewService;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * Servlet xử lý chat với AI Agent tư vấn độ phủ ghế
- *
- * Endpoints:
- * - POST /ChatServlet        : Gửi tin nhắn và nhận phản hồi
- * - POST /ChatServlet/reset  : Reset memory của agent
- */
 public class ChatServlet extends HttpServlet {
 
-    // Các resource dùng chung cho mọi request (stateless)
     private LLM llm;
     private SeatFillRate_ViewService seatService;
     private ObjectMapper objectMapper;
@@ -36,10 +26,9 @@ public class ChatServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            llm         = new LLM();
-            seatService = new SeatFillRate_ViewService();
+            llm          = new LLM();
+            seatService  = new SeatFillRate_ViewService();
             objectMapper = new ObjectMapper();
-
             log("ChatServlet initialized successfully");
         } catch (Exception e) {
             log("Error initializing ChatServlet", e);
@@ -47,20 +36,13 @@ public class ChatServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Lấy hoặc tạo Agent riêng cho mỗi session người dùng
-     */
     private Agent getOrCreateAgent(HttpSession session) {
         Agent agent = (Agent) session.getAttribute("agent");
 
         if (agent == null) {
-            FillRateEnvironment fillRateEnv = new FillRateEnvironment(seatService);
-            IntentClassifier intentClassifier = new IntentClassifier(llm);
             Memory memory = new Memory();
-
-            agent = new Agent(intentClassifier, memory, llm, fillRateEnv);
+            agent = new Agent(memory, llm, seatService); // bỏ IntentClassifier và FillRateEnvironment
             session.setAttribute("agent", agent);
-
             log("Created new agent for session: " + session.getId());
         }
 
@@ -80,9 +62,6 @@ public class ChatServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Xử lý chat request
-     */
     private void handleChat(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -122,9 +101,6 @@ public class ChatServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Reset memory của agent trong session
-     */
     private void handleReset(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -157,9 +133,6 @@ public class ChatServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Gửi error response dạng JSON
-     */
     private void sendErrorResponse(PrintWriter out, String errorMessage) {
         try {
             ObjectNode jsonResponse = objectMapper.createObjectNode();
