@@ -172,28 +172,50 @@
         chat.style.display = chat.style.display === "flex" ? "none" : "flex";
     }
 
-    function sendMessage() {
-        const input = document.getElementById("chatInput");
-        const message = input.value.trim();
-        if(message === "") return;
 
-        const chatBody = document.getElementById("chatBody");
+        function sendMessage() {
 
-        // User message
-        const userDiv = document.createElement("div");
-        userDiv.className = "message user-message";
-        userDiv.innerText = message;
-        chatBody.appendChild(userDiv);
+            const input = document.getElementById("chatInput");
+            const message = input.value.trim();
+            if (message === "") return;
 
-        // Fake AI response (sau này thay bằng fetch API)
-        const botDiv = document.createElement("div");
-        botDiv.className = "message bot-message";
-        botDiv.innerText = "AI đang phân tích dữ liệu...";
-        chatBody.appendChild(botDiv);
+            const chatBody = document.getElementById("chatBody");
 
-        chatBody.scrollTop = chatBody.scrollHeight;
-        input.value = "";
-    }
+            // Hiển thị user message
+            const userDiv = document.createElement("div");
+            userDiv.className = "message user-message";
+            userDiv.innerText = message;
+            chatBody.appendChild(userDiv);
+
+            input.value = "";
+
+            // Gửi lên server
+            fetch("${pageContext.request.contextPath}/ChatServlet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "message=" + encodeURIComponent(message)
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                const botDiv = document.createElement("div");
+                botDiv.className = "message bot-message";
+                botDiv.innerText = data.reply;
+                chatBody.appendChild(botDiv);
+
+                chatBody.scrollTop = chatBody.scrollHeight;
+            });
+        }
+         const input = document.getElementById("chatInput");
+
+        input.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();   // tránh reload form
+                sendMessage();
+            }
+        });
     </script>
 
 </body>

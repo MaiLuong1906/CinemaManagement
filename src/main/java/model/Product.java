@@ -12,7 +12,7 @@ public class Product {
     public Product() {
         this.stockQuantity = 0;
     }
-
+    
     public Product(int itemId, String itemName, BigDecimal price, int stockQuantity) {
         this.itemId = itemId;
         this.itemName = itemName;
