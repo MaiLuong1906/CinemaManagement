@@ -15,7 +15,8 @@ import java.util.List;
 
 public class LLM {
 
-    private static final String API_KEY = "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";
+    // private static final String API_KEY = "";//API key 
+    private static final String API_KEY = System.getenv("GROQ_API_KEY");
     private static final String MODEL = "llama-3.3-70b-versatile";
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
