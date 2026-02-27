@@ -16,9 +16,10 @@
         <div>
             <h2>Thêm lịch chiếu</h2>
         <!--tra ket qua-->
-                                    <% HttpSession sessionObj=request.getSession(false); // li do false la neu da co session thi lay khong thi tra null, khong tao moi 
-                                    if (sessionObj !=null) {
-.getAttribute("message");
+        <%
+        HttpSession sessionObj = request.getSession(false); // li do false la neu da co session thi lay khong thi tra null, khong tao moi
+        if (sessionObj != null) {
+            String message = (String) sessionObj.getAttribute("message");
             Boolean success = (Boolean) sessionObj.getAttribute("success");
             String messageDb = (String) sessionObj.getAttribute("dbError");
             if (message != null) {
@@ -43,9 +44,8 @@
 
         
         <!--input dau vao-->
-        <form action="<%=request.getContextPath()%>/MovieAdminServlet"
+        <form action="<%=request.getContextPath()%>/AddShowTimeServlet"
                 method="post">
-            <input type="hidden" name="command" value="add-showtime">
         <!--cac hang muc-->
        <div class="form-group">
     <label for="movieSelect">Chọn phim</label>

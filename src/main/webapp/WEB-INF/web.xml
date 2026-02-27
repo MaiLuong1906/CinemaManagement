@@ -30,10 +30,6 @@
         <servlet-class>controller.ImageServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>addShowTimeServlet</servlet-name>
-        <servlet-class>controller.addShowTimeServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>UpdateMovie</servlet-name>
         <servlet-class>controller.UpdateMovieServlet</servlet-class>
     </servlet>
@@ -93,6 +89,10 @@
         <servlet-name>ChatServlet</servlet-name>
         <servlet-class>controller.ChatServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MovieAdminServlet</servlet-name>
+        <servlet-class>controller.servlet.AdminServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -116,10 +116,6 @@
     <servlet-mapping>
         <servlet-name>ImageServlet</servlet-name>
         <url-pattern>/ImageServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>addShowTimeServlet</servlet-name>
-        <url-pattern>/addShowTimeServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateMovie</servlet-name>
@@ -180,6 +176,10 @@
     <servlet-mapping>
         <servlet-name>ChatServlet</servlet-name>
         <url-pattern>/ChatServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MovieAdminServlet</servlet-name>
+        <url-pattern>/MovieAdminServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
