@@ -22,7 +22,7 @@
                     class="btn btn-outline-light rounded-pill mb-4 px-4 py-2 fw-semibold hover-glow text-decoration-none d-inline-flex align-items-center gap-2">
 
                     <i class="fas fa-arrow-left"></i>
-                    <span>Quay lại</span>
+                    <span>Back</span>
                 </a>
 
                 <c:choose>
