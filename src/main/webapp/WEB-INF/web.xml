@@ -85,10 +85,7 @@
         <servlet-name>AdminShowtimeServlet</servlet-name>
         <servlet-class>controller.AdminShowtimeServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>MovieDetailServlet</servlet-name>
-        <servlet-class>controller.MovieDetailServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>ChatServlet</servlet-name>
         <servlet-class>controller.ChatServlet</servlet-class>
@@ -173,10 +170,7 @@
         <servlet-name>AdminShowtimeServlet</servlet-name>
         <url-pattern>/AdminShowtimeServlet</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MovieDetailServlet</servlet-name>
-        <url-pattern>/MovieDetailServlet</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ChatServlet</servlet-name>
         <url-pattern>/ChatServlet</url-pattern>

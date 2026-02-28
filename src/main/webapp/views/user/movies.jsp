@@ -52,6 +52,7 @@
                     <div class="row justify-content-center mb-5">
                         <div class="col-lg-8 col-md-10">
                             <form action="movie" method="get">
+                                <input type="hidden" name="action" value="list">
                                 <div class="search-wrapper position-relative">
                                     <i class="fas fa-search position-absolute text-secondary"
                                         style="left: 20px; top: 50%; transform: translateY(-50%); font-size: 18px;"></i>
@@ -199,7 +200,7 @@
                                 <c:forEach var="movie" items="${movies}">
                                     <div class="col">
                                         <div class="movie-card"
-                                            onclick="location.href = 'movie-detail?id=${movie.movieId}'">
+                                            onclick="location.href = 'movie?action=detail&movieId=${movie.movieId}'">
                                             <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}"
                                                 alt="${movie.title}" class="movie-poster"
                                                 onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
