@@ -31,10 +31,12 @@ public class LLM {
 
             ArrayNode msgs = mapper.createArrayNode();
             for (Message m : messages) {
-                if (m.getContent() == null || m.getContent().isBlank()) continue;
+                if (m.getContent() == null || m.getContent().isBlank())
+                    continue;
                 ObjectNode msg = mapper.createObjectNode();
                 msg.put("role", m.getRole().equalsIgnoreCase("assistant")
-                    ? "assistant" : m.getRole().toLowerCase());
+                        ? "assistant"
+                        : m.getRole().toLowerCase());
                 msg.put("content", m.getContent());
                 msgs.add(msg);
             }
@@ -51,23 +53,21 @@ public class LLM {
                     .header("Authorization", "Bearer " + API_KEY)
                     .timeout(Duration.ofSeconds(60))
                     .POST(HttpRequest.BodyPublishers.ofString(
-                            mapper.writeValueAsString(body)
-                    ))
+                            mapper.writeValueAsString(body)))
                     .build();
 
-            HttpResponse<String> response =
-                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             JsonNode root = mapper.readTree(response.body());
 
             if (root.has("error")) {
                 throw new RuntimeException("API error: "
-                    + root.get("error").get("message").asText());
+                        + root.get("error").get("message").asText());
             }
 
             return root.get("choices").get(0)
-                       .get("message")
-                       .get("content").asText();
+                    .get("message")
+                    .get("content").asText();
 
         } catch (RuntimeException e) {
             throw e;

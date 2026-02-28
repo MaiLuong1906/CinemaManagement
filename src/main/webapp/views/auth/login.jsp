@@ -90,7 +90,7 @@
                                         <p class="mt-5 mb-3 text-muted">&copy; 2025</p>
                             </form>
                             <div class="text-center">
-                                <a class="btn" href="register.jsp">New around here? Register</a>
+                                <a class="btn" href="${pageContext.request.contextPath}/views/auth/register.jsp">New around here? Register</a>
                             </div>
                         </div>
                     </div>

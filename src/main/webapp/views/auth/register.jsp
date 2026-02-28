@@ -143,7 +143,8 @@
 
                                     <div class="text-center text-muted mt-3 small login-link">
                                         Already have an account?
-                                        <a href="login.jsp" class="text-decoration-none">Login here</a>
+                                        <a href="${pageContext.request.contextPath}/views/auth/login.jsp"
+                                            class="text-decoration-none">Login here</a>
                                     </div>
                                 </form>
                     </div>
