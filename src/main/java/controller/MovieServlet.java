@@ -213,8 +213,10 @@ public class MovieServlet extends BaseServlet {
             throw new ValidationException("Movie not found with ID: " + movieId);
         }
         List<MovieDetailDTO> showtimes = showtimeService.getMovieDetailByMovieId(movieId);
+        List<MovieGenre> genres = movieGenreDAO.getGenresByMovieId(movieId);
         req.setAttribute("movie", movie);
         req.setAttribute("showtimes", showtimes);
+        req.setAttribute("movieGenres", genres);
         forward(req, resp, "/views/user/movie-detail.jsp");
     }
 

@@ -52,6 +52,14 @@
                                                 <i class="fas fa-user-shield me-2"></i>${movie.ageRating}
                                             </span>
                                         </c:if>
+                                        <c:if test="${not empty movieGenres}">
+                                            <c:forEach var="genre" items="${movieGenres}">
+                                                <span class="badge rounded-pill px-3 py-2 fs-6"
+                                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
+                                                    <i class="fas fa-tag me-1"></i>${genre.genreName}
+                                                </span>
+                                            </c:forEach>
+                                        </c:if>
                                     </div>
 
                                     <c:if test="${not empty movie.description}">
