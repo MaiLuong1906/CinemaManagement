@@ -1,12 +1,11 @@
 package controller;
 
-import ai.chatbox_statictis.Agent;
-import ai.chatbox_statictis.LLM;
-import ai.chatbox_statictis.Memory;
+import ai.Agent;
+import ai.LLM;
+import ai.memory.Memory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

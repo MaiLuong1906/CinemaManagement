@@ -105,9 +105,11 @@
                                                     </div>
                                                     <% }%>
 
-                                                        <form action="${pageContext.request.contextPath}/update-profile"
+                                                        <form action="${pageContext.request.contextPath}/AccountServlet"
                                                             method="POST">
                                                             <div class="row g-3">
+                                                                <input type="hidden" name="action"
+                                                                    value="update-profile">
                                                                 <div class="col-md-6">
                                                                     <label class="form-label fw-semibold">Họ và
                                                                         tên</label>
@@ -255,7 +257,10 @@
                                                                     </div>
                                                                     <c:if test="${booking.ticketCode != null}">
                                                                         <button
-                                                                            class="btn btn-sm btn-outline-light rounded-pill px-3">
+                                                                            class="btn btn-sm btn-outline-light rounded-pill px-3"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#ticketModal"
+                                                                            onclick="showTicket('${booking.ticketCode}', '${booking.movieTitle}', '${booking.showDate}', '${booking.startTime}', '${booking.endTime}', '${booking.hallName}', '${booking.seatCodes}', '${booking.totalAmount}', '${booking.status}', '${booking.invoiceId}')">
                                                                             <i class="fas fa-qrcode me-1"></i>Xem vé
                                                                         </button>
                                                                     </c:if>
@@ -360,11 +365,117 @@
                     </div>
                 </div>
 
+                <!-- Ticket Detail Modal -->
+                <div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+                        <div class="modal-content border-0 rounded-4 overflow-hidden" style="background: #1a1a2e;">
+                            <!-- Ticket Header -->
+                            <div class="text-center py-4 px-4"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h4 class="fw-bold text-white mb-1"><i class="fas fa-ticket-alt me-2"></i>VÉ XEM PHIM
+                                </h4>
+                                <small class="text-white-50">Cinema Management System</small>
+                            </div>
+
+                            <!-- Dashed separator -->
+                            <div style="border-top: 2px dashed rgba(255,255,255,0.15); margin: 0 20px;"></div>
+
+                            <!-- Ticket Body -->
+                            <div class="modal-body p-4">
+                                <h5 class="fw-bold text-white text-center mb-3" id="tkMovieTitle"></h5>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <div class="text-secondary small mb-1"><i class="fas fa-calendar me-1"></i>Ngày
+                                            chiếu</div>
+                                        <div class="text-white fw-semibold" id="tkShowDate"></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-secondary small mb-1"><i class="fas fa-clock me-1"></i>Giờ
+                                            chiếu</div>
+                                        <div class="text-white fw-semibold" id="tkTime"></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-secondary small mb-1"><i
+                                                class="fas fa-door-open me-1"></i>Phòng chiếu</div>
+                                        <div class="text-white fw-semibold" id="tkHall"></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-secondary small mb-1"><i class="fas fa-couch me-1"></i>Ghế
+                                        </div>
+                                        <div class="text-white fw-semibold" id="tkSeats"></div>
+                                    </div>
+                                </div>
+
+                                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 16px 0;"></div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-secondary">Tổng tiền</span>
+                                    <span class="h5 fw-bold mb-0" style="color: #667eea;" id="tkAmount"></span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-secondary">Trạng thái</span>
+                                    <span id="tkStatus"></span>
+                                </div>
+
+                                <div style="border-top: 2px dashed rgba(255,255,255,0.15); margin: 16px 0;"></div>
+
+                                <!-- QR Code -->
+                                <div class="text-center">
+                                    <div class="bg-white rounded-3 d-inline-block p-3 mb-2">
+                                        <img id="tkQrCode" width="160" height="160" alt="QR Code">
+                                    </div>
+                                    <div class="text-white fw-bold" id="tkCode"></div>
+                                    <div class="text-secondary small">Đưa mã này cho nhân viên để nhận vé</div>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                                <button type="button" class="btn btn-outline-light rounded-pill px-4"
+                                    data-bs-dismiss="modal">
+                                    <i class="fas fa-times me-2"></i>Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Footer -->
                 <jsp:include page="../../layout/footer.jsp"></jsp:include>
 
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
                 <script src="${pageContext.request.contextPath}/js/tab-activation.js"></script>
+                <script>
+                    function showTicket(code, movie, date, start, end, hall, seats, amount, status, invoiceId) {
+                        document.getElementById('tkMovieTitle').textContent = movie;
+                        document.getElementById('tkShowDate').textContent = date;
+                        document.getElementById('tkTime').textContent = start + ' - ' + end;
+                        document.getElementById('tkHall').textContent = hall;
+                        document.getElementById('tkSeats').textContent = seats;
+                        document.getElementById('tkCode').textContent = code;
+
+                        // Format amount
+                        const formatted = Number(amount).toLocaleString('vi-VN');
+                        document.getElementById('tkAmount').textContent = formatted + ' đ';
+
+                        // Status badge
+                        let statusHtml = '';
+                        const s = status.toLowerCase();
+                        if (s === 'paid') {
+                            statusHtml = '<span class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-2"><i class="fas fa-check-circle me-1"></i>Đã thanh toán</span>';
+                        } else if (s === 'pending') {
+                            statusHtml = '<span class="badge bg-warning bg-opacity-25 text-warning border border-warning rounded-pill px-3 py-2"><i class="fas fa-clock me-1"></i>Chờ thanh toán</span>';
+                        } else {
+                            statusHtml = '<span class="badge bg-danger bg-opacity-25 text-danger border border-danger rounded-pill px-3 py-2"><i class="fas fa-times-circle me-1"></i>Đã hủy</span>';
+                        }
+                        document.getElementById('tkStatus').innerHTML = statusHtml;
+
+                        // QR Code using free API
+                        const qrData = 'TICKET:' + code + '|INVOICE:' + invoiceId;
+                        document.getElementById('tkQrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(qrData);
+                    }
+                </script>
                 <script>
                     function togglePassword(button) {
                         const input = button.previousElementSibling;

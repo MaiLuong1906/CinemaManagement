@@ -8,6 +8,7 @@ import jakarta.servlet.http.*;
 import dao.*;
 import model.*;
 import exception.ValidationException;
+import service.ShowtimeService;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,17 +23,14 @@ import java.util.List;
  * - User: Browse and view movies (list, detail, view)
  */
 @WebServlet("/movie")
-@MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,
-    maxFileSize = 1024 * 1024 * 5,
-    maxRequestSize = 1024 * 1024 * 10
-)
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 10)
 public class MovieServlet extends BaseServlet {
 
     private MovieDAO movieDAO;
     private MovieGenreDAO movieGenreDAO;
     private MovieGenreRelDAO movieGenreRelDAO;
     private MovieShowtimeDAO movieShowtimeDAO;
+    private ShowtimeService showtimeService;
 
     @Override
     public void init() {
@@ -40,6 +38,7 @@ public class MovieServlet extends BaseServlet {
         movieGenreDAO = new MovieGenreDAO();
         movieGenreRelDAO = new MovieGenreRelDAO();
         movieShowtimeDAO = new MovieShowtimeDAO();
+        showtimeService = new ShowtimeService();
     }
 
     @Override
@@ -72,7 +71,6 @@ public class MovieServlet extends BaseServlet {
 
             // User actions
             case "list":
-            default:
                 listMovies(req, resp);
                 break;
             case "detail":
@@ -212,9 +210,13 @@ public class MovieServlet extends BaseServlet {
         int movieId = getIntParam(req, "movieId");
         Movie movie = movieDAO.findById(DBConnect.getConnection(), movieId);
         if (movie == null) {
-            throw new ValidationException("Movie not found");
+            throw new ValidationException("Movie not found with ID: " + movieId);
         }
+        List<MovieDetailDTO> showtimes = showtimeService.getMovieDetailByMovieId(movieId);
+        List<MovieGenre> genres = movieGenreDAO.getGenresByMovieId(movieId);
         req.setAttribute("movie", movie);
+        req.setAttribute("showtimes", showtimes);
+        req.setAttribute("movieGenres", genres);
         forward(req, resp, "/views/user/movie-detail.jsp");
     }
 
@@ -241,7 +243,7 @@ public class MovieServlet extends BaseServlet {
         }
 
         String fileName = System.currentTimeMillis() + "_"
-            + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
         File dir = new File(uploadDir);
         if (!dir.exists()) {

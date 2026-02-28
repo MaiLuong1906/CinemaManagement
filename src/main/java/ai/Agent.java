@@ -1,7 +1,6 @@
-package ai.chatbox_statictis;
+package ai;
 
-import ai.chatbox_statictis.Message;
-import ai.chatbox_statictis.Memory;
+import ai.memory.Memory;
 import model.SeatFillRate_ViewDTO;
 import service.SeatFillRate_ViewService;
 import java.util.List;
