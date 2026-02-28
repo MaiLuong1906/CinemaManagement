@@ -14,7 +14,7 @@
 
                 <body>
                     <div class="back-home">
-                        <a href="${pageContext.request.contextPath}/views/user/home.jsp" class="btn btn-success">
+                        <a href="${pageContext.request.contextPath}/home" class="btn btn-success">
                             Trang chủ
                         </a>
                     </div>
