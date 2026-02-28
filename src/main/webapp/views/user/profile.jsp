@@ -105,9 +105,11 @@
                                                     </div>
                                                     <% }%>
 
-                                                        <form action="${pageContext.request.contextPath}/update-profile"
+                                                        <form action="${pageContext.request.contextPath}/AccountServlet"
                                                             method="POST">
                                                             <div class="row g-3">
+                                                                <input type="hidden" name="action"
+                                                                    value="update-profile">
                                                                 <div class="col-md-6">
                                                                     <label class="form-label fw-semibold">Họ và
                                                                         tên</label>

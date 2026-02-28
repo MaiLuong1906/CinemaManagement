@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ai.chatbox_statictis;
+package ai.memory;
 
-import ai.chatbox_statictis.Message;
+import ai.Message;
 import java.util.ArrayList;
 import java.util.List;
 

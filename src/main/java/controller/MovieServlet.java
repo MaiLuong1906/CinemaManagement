@@ -72,7 +72,6 @@ public class MovieServlet extends BaseServlet {
 
             // User actions
             case "list":
-            default:
                 listMovies(req, resp);
                 break;
             case "detail":
