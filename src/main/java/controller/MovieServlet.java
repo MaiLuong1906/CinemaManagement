@@ -31,6 +31,7 @@ public class MovieServlet extends BaseServlet {
     private MovieGenreRelDAO movieGenreRelDAO;
     private MovieShowtimeDAO movieShowtimeDAO;
     private ShowtimeService showtimeService;
+    private MovieDetailDAO movieDetailDAO;
 
     @Override
     public void init() {
@@ -39,12 +40,22 @@ public class MovieServlet extends BaseServlet {
         movieGenreRelDAO = new MovieGenreRelDAO();
         movieShowtimeDAO = new MovieShowtimeDAO();
         showtimeService = new ShowtimeService();
+        movieDetailDAO = new MovieDetailDAO();
     }
 
     @Override
     protected void handleRequest(HttpServletRequest req, HttpServletResponse resp)
             throws Exception {
         String action = getStringParam(req, "action", "list");
+
+        // Permission check for Admin actions
+        if ("admin-list".equals(action) || "add".equals(action) || "update".equals(action) || "delete".equals(action)) {
+            UserDTO user = (UserDTO) req.getSession().getAttribute("user");
+            if (user == null || !"Admin".equalsIgnoreCase(user.getRoleId())) {
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+                return;
+            }
+        }
 
         switch (action) {
             // Admin actions
@@ -86,8 +97,8 @@ public class MovieServlet extends BaseServlet {
 
     private void listMoviesForAdmin(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<Movie> movies = movieDAO.getAllMovies();
-        req.setAttribute("movieList", movies);
+        List<MovieDetailDTO> movieDetails = movieDetailDAO.getAllMovieDetails();
+        req.setAttribute("movieDetails", movieDetails);
         forward(req, resp, "/views/admin/movies/list.jsp");
     }
 
@@ -230,7 +241,7 @@ public class MovieServlet extends BaseServlet {
         req.setAttribute("listCommingShowing", comingSoon);
         req.setAttribute("listImax", imaxMovies);
 
-        forward(req, resp, "/view_film.jsp");
+        forward(req, resp, "/views/user/view_film.jsp");
     }
 
     // ==================== Utility Methods ====================

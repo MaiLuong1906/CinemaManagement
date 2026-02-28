@@ -1,174 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>controller.LoginServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>controller.RegisterServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>controller.LogoutServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ViewFilmServlet</servlet-name>
         <servlet-class>controller.ViewFilmServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>AddMovieServlet</servlet-name>
-        <servlet-class>controller.AddMovieServlet</servlet-class>
-        <multipart-config>
-            <file-size-threshold>1048576</file-size-threshold>
-            <max-file-size>5242880</max-file-size>
-            <max-request-size>10485760</max-request-size>
-        </multipart-config>
-    </servlet>
-    <servlet>
-        <servlet-name>ImageServlet</servlet-name>
-        <servlet-class>controller.ImageServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>addShowTimeServlet</servlet-name>
-        <servlet-class>controller.addShowTimeServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateMovie</servlet-name>
-        <servlet-class>controller.UpdateMovieServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListMovieForAdmin</servlet-name>
-        <servlet-class>controller.ListMovieForAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteMovieServlet</servlet-name>
-        <servlet-class>controller.DeleteMovieServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteShowtimeServlet</servlet-name>
-        <servlet-class>controller.DeleteShowtimeServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateShowtimeServlet</servlet-name>
-        <servlet-class>controller.UpdateShowtimeServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminProductServlet</servlet-name>
-        <servlet-class>controller.AdminProductServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UserProductServlet</servlet-name>
-        <servlet-class>controller.UserProductServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CartServlet</servlet-name>
-        <servlet-class>controller.CartServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>hall</servlet-name>
-        <servlet-class>controller.AddCinemaHallServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminRevenueServlet</servlet-name>
-        <servlet-class>controller.AdminRevenueServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminStatisticServlet</servlet-name>
-        <servlet-class>controller.AdminStatisticServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminTicketServlet</servlet-name>
-        <servlet-class>controller.AdminTicketServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminShowtimeServlet</servlet-name>
-        <servlet-class>controller.AdminShowtimeServlet</servlet-class>
-    </servlet>
+
 
     <servlet>
         <servlet-name>ChatServlet</servlet-name>
         <servlet-class>controller.ChatServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/LoginServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/RegisterServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/LogoutServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ViewFilmServlet</servlet-name>
         <url-pattern>/ViewFilmServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddMovieServlet</servlet-name>
-        <url-pattern>/AddMovieServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ImageServlet</servlet-name>
-        <url-pattern>/ImageServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>addShowTimeServlet</servlet-name>
-        <url-pattern>/addShowTimeServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateMovie</servlet-name>
-        <url-pattern>/UpdateMovie</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListMovieForAdmin</servlet-name>
-        <url-pattern>/ListMovieForAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteMovieServlet</servlet-name>
-        <url-pattern>/DeleteMovieServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteShowtimeServlet</servlet-name>
-        <url-pattern>/DeleteShowtimeServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateShowtimeServlet</servlet-name>
-        <url-pattern>/UpdateShowtimeServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminProductServlet</servlet-name>
-        <url-pattern>/AdminProductServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UserProductServlet</servlet-name>
-        <url-pattern>/UserProductServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CartServlet</servlet-name>
-        <url-pattern>/CartServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>hall</servlet-name>
-        <url-pattern>/hall</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminRevenueServlet</servlet-name>
-        <url-pattern>/AdminRevenueServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminStatisticServlet</servlet-name>
-        <url-pattern>/AdminStatisticServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminTicketServlet</servlet-name>
-        <url-pattern>/AdminTicketServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminShowtimeServlet</servlet-name>
-        <url-pattern>/AdminShowtimeServlet</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

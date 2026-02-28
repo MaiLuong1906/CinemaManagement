@@ -26,7 +26,7 @@
             <h2 style="margin: 0; color: #1a202c; font-size: 1.75rem;">Danh sách phòng chiếu</h2>
             <p style="margin: 0.5rem 0 0; color: #718096;">Quản lý sơ đồ và trạng thái phòng chiếu</p>
           </div>
-          <a href="${pageContext.request.contextPath}/admin/halls/add" class="btn-primary-admin">
+          <a href="${pageContext.request.contextPath}/admin/halls?action=add" class="btn-primary-admin">
             <i class="fas fa-plus"></i> Thêm phòng mới
           </a>
         </div>
@@ -73,7 +73,7 @@
                       </span>
                     </td>
                     <td class="text-right">
-                      <form action="${pageContext.request.contextPath}/admin/halls/toggle-status" method="post"
+                      <form action="${pageContext.request.contextPath}/admin/halls?action=toggle-status" method="post"
                         style="display: inline-block; margin: 0;">
                         <input type="hidden" name="hallId" value="${h.hallId}">
                         <input type="hidden" name="status" value="${!h.status}">

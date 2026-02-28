@@ -23,6 +23,12 @@
 
                     <div class="header-section">
                         <div class="container">
+                            <div class="mb-3">
+                                <a href="${pageContext.request.contextPath}/views/user/home.jsp"
+                                    class="btn btn-success">
+                                    <i class="fas fa-home me-2"></i>Trang chủ
+                                </a>
+                            </div>
                             <div class="row align-items-center">
                                 <div class="col-md-6">
                                     <h1><i class="fas fa-user-shield me-2"></i>Quản Lý Combo - Admin</h1>

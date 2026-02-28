@@ -26,7 +26,7 @@
             </div>
 
             <div class="admin-card-body">
-              <form action="${pageContext.request.contextPath}/admin/halls/add" method="post">
+              <form action="${pageContext.request.contextPath}/admin/halls?action=add" method="post">
 
                 <div class="form-group">
                   <label class="form-label">Tên phòng chiếu</label>

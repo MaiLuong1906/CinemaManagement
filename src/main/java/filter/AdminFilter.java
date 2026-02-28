@@ -26,17 +26,8 @@ import model.UserDTO;
         "/admin/*",
         "/views/admin/*",
 
-        // Admin servlets - Movie management
-        "/UpdateMovieServlet",
-        "/AddMovieServlet",
-        "/DeleteMovieServlet",
-        "/ListMovieForAdmin",
-        "/ViewFilmServlet",
-
-        // Admin servlets - Showtime management
-        "/AddShowTimeServlet",
-        "/DeleteShowtimeServlet",
-        "/UpdateShowtimeServlet"
+        // Admin servlets - Statistics
+        "/admin/statistic"
 })
 public class AdminFilter implements Filter {
 
