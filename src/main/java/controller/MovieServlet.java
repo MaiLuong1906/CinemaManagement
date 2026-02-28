@@ -228,6 +228,11 @@ public class MovieServlet extends BaseServlet {
         req.setAttribute("movie", movie);
         req.setAttribute("showtimes", showtimes);
         req.setAttribute("movieGenres", genres);
+
+        // Lưu trang trước đó để nút Back quay về đúng nơi
+        String referer = req.getHeader("Referer");
+        req.setAttribute("backUrl", referer);
+
         forward(req, resp, "/views/user/movie-detail.jsp");
     }
 
