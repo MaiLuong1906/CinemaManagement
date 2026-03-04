@@ -10,7 +10,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import service.IncomeStatictisService;
 import service.SeatFillRate_ViewService;
+import service.TicketManagementService;
+import service.TimeSlotService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,6 +21,9 @@ import java.io.PrintWriter;
 public class ChatServlet extends HttpServlet {
 
     private LLM llm;
+    private IncomeStatictisService incomeService;
+    private TicketManagementService ticketService;
+    private TimeSlotService timeSlotService;
     private SeatFillRate_ViewService seatService;
     private ObjectMapper objectMapper;
 
@@ -25,9 +31,12 @@ public class ChatServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            llm          = new LLM();
-            seatService  = new SeatFillRate_ViewService();
-            objectMapper = new ObjectMapper();
+            llm            = new LLM();
+            incomeService  = new IncomeStatictisService();
+            ticketService  = new TicketManagementService();
+            timeSlotService = new TimeSlotService();
+            seatService    = new SeatFillRate_ViewService();
+            objectMapper   = new ObjectMapper();
             log("ChatServlet initialized successfully");
         } catch (Exception e) {
             log("Error initializing ChatServlet", e);
@@ -40,7 +49,8 @@ public class ChatServlet extends HttpServlet {
 
         if (agent == null) {
             Memory memory = new Memory();
-            agent = new Agent(memory, llm, seatService); // bỏ IntentClassifier và FillRateEnvironment
+            agent = new Agent(memory, llm,
+                    incomeService, ticketService, timeSlotService, seatService);
             session.setAttribute("agent", agent);
             log("Created new agent for session: " + session.getId());
         }

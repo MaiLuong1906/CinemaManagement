@@ -8,6 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -53,5 +56,27 @@ public class TicketsSoldDAO {
         return rs.next() ? rs.getInt(1) : 0;
     }
 }
-    
+
+    /**
+     * Get daily sold tickets history for the last N days
+     */
+    public Map<LocalDate, Integer> getDailyTicketHistory(int days) throws SQLException {
+        String sql = """
+                    SELECT CAST(booking_time AS DATE) as gap_date, COUNT(*) as daily_tickets
+                    FROM vw_sold_tickets
+                    WHERE booking_time >= DATEADD(DAY, -?, GETDATE())
+                    GROUP BY CAST(booking_time AS DATE)
+                    ORDER BY gap_date ASC
+                """;
+        Map<LocalDate, Integer> history = new LinkedHashMap<>();
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, days);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                history.put(rs.getDate("gap_date").toLocalDate(), rs.getInt("daily_tickets"));
+            }
+        }
+        return history;
+    }
 }

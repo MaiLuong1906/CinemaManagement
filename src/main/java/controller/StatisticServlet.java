@@ -4,9 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import service.*;
+import model.ForecastDTO;
+import model.ForecastResult;
 import model.Movie_Ticket_ViewDTO;
 import model.TicketSoldBySlot_ViewDTO;
-import service.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -27,6 +29,7 @@ public class StatisticServlet extends BaseServlet {
     private TicketManagementService ticketManagementService;
     private TimeSlotService timeSlotService;
     private SeatFillRate_ViewService seatFillRateService;
+    private ForecastService forecastService;
 
     @Override
     public void init() {
@@ -34,6 +37,7 @@ public class StatisticServlet extends BaseServlet {
         ticketManagementService = new TicketManagementService();
         timeSlotService = new TimeSlotService();
         seatFillRateService = new SeatFillRate_ViewService();
+        forecastService = new ForecastService();
     }
 
     @Override
@@ -86,6 +90,15 @@ public class StatisticServlet extends BaseServlet {
             req.setAttribute("numberOfShowtime", numberOfShowtime);
         } catch (RuntimeException ex) {
             req.setAttribute("msg", ex.getMessage());
+        }
+
+        // Forecast Data
+        try {
+            ForecastResult forecastResult = forecastService.get7DayForecast();
+            req.setAttribute("forecastData", forecastResult.getDailyData());
+            req.setAttribute("forecastAnalysis", forecastResult.getAnalysis());
+        } catch (Exception e) {
+            log("Error getting forecast data", e);
         }
 
         forward(req, resp, "/views/admin/users/admin-statictis.jsp");

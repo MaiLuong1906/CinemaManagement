@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import model.Invoice;
 
 public class InvoiceDAO {
@@ -324,7 +327,32 @@ public class InvoiceDAO {
             System.err.println("ERROR - InvoiceDAO.getBookingHistory() - SQLException: " + e.getMessage());
             e.printStackTrace();
         }
+        return history;
+    }
 
+    /**
+     * Get daily revenue history for the last N days
+     */
+    public Map<LocalDate, Double> getDailyRevenueHistory(int days) {
+        String sql = """
+                    SELECT CAST(booking_time AS DATE) as gap_date, SUM(total_amount) as daily_revenue
+                    FROM invoices
+                    WHERE status = 'Paid'
+                      AND booking_time >= DATEADD(DAY, -?, GETDATE())
+                    GROUP BY CAST(booking_time AS DATE)
+                    ORDER BY gap_date ASC
+                """;
+        Map<LocalDate, Double> history = new LinkedHashMap<>();
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, days);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                history.put(rs.getDate("gap_date").toLocalDate(), rs.getDouble("daily_revenue"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return history;
     }
 
