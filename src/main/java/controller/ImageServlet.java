@@ -67,7 +67,10 @@ public class ImageServlet extends HttpServlet {
             return;
         }
         File imageFile = new File(IMAGE_DIR, fileName);
+        System.out.println("ImageServlet: Requesting image: " + fileName);
+        System.out.println("ImageServlet: Full path: " + imageFile.getAbsolutePath());
         if (!imageFile.exists()) {
+            System.out.println("ImageServlet: ERROR - File NOT FOUND at: " + imageFile.getAbsolutePath());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
