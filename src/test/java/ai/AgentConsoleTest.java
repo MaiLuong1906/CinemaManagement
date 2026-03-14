@@ -32,7 +32,7 @@ public class AgentConsoleTest {
             }
 
             long start = System.currentTimeMillis();
-            String response = agent.chat(input);
+            String response = agent.chat("console-session", input);
             long end = System.currentTimeMillis();
 
             System.out.println("\nAI: " + response);
