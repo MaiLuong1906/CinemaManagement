@@ -3,6 +3,7 @@ package controller;
 import ai.CineAgentProvider;
 import model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -99,7 +100,24 @@ public class ChatServlet extends HttpServlet {
 
             ObjectNode jsonResponse = objectMapper.createObjectNode();
             jsonResponse.put("success", true);
-            jsonResponse.put("reply", reply);
+            
+            // Hỗ trợ Structured Response (JSON trong reply)
+            if (reply.trim().startsWith("{") && reply.trim().endsWith("}")) {
+                try {
+                    JsonNode structured = objectMapper.readTree(reply);
+                    if (structured.has("actionType")) {
+                        jsonResponse.set("action", structured);
+                        jsonResponse.put("reply", structured.has("message") ? structured.get("message").asText() : "Yêu cầu hành động từ hệ thống.");
+                    } else {
+                        jsonResponse.put("reply", reply);
+                    }
+                } catch (Exception e) {
+                    jsonResponse.put("reply", reply);
+                }
+            } else {
+                jsonResponse.put("reply", reply);
+            }
+
             jsonResponse.put("processingTime", endTime - startTime);
             jsonResponse.put("sessionId", session.getId());
 

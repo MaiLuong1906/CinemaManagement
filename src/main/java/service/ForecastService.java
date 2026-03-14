@@ -1,13 +1,18 @@
 package service;
 
-import ai.LLM;
-import ai.Message;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.model.output.Response;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.InvoiceDAO;
 import dao.TicketsSoldDAO;
 import model.ForecastDTO;
 import model.ForecastResult;
+import utils.ConfigLoader;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,14 +20,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * ForecastService: Handles data aggregation for forecasting.
+ * Intelligence logic is mirrored here for UI use, while the Agent uses AnalystBotSkills.
+ */
 public class ForecastService {
     private final InvoiceDAO invoiceDAO = new InvoiceDAO();
     private final TicketsSoldDAO ticketsSoldDAO = new TicketsSoldDAO();
-    private final LLM llm = new LLM();
     private final ObjectMapper mapper = new ObjectMapper();
+    private final ChatLanguageModel model;
 
+    public ForecastService() {
+        this.model = OpenAiChatModel.builder()
+                .apiKey(ConfigLoader.get("ai.api.key"))
+                .baseUrl("https://api.groq.com/openai/v1")
+                .modelName("llama-3.3-70b-versatile")
+                .build();
+    }
+
+    /**
+     * Primary method for UI Dashboard.
+     * Delegates reasoning to the same Prompt patterns used by CineAnalyst.
+     */
     public ForecastResult get7DayForecast() {
-        // 1. Fetch 30 days of historical data
+        LocalDate today = LocalDate.now();
         Map<LocalDate, Double> revenueHistory = invoiceDAO.getDailyRevenueHistory(30);
         Map<LocalDate, Integer> ticketHistory;
         try {
@@ -31,119 +52,51 @@ public class ForecastService {
             ticketHistory = new TreeMap<>();
         }
 
-        // 2. Prepare data for LLM
-        StringBuilder dataForLLM = new StringBuilder("Dữ liệu 30 ngày qua (Ngày, Doanh thu, Số vé):\n");
-        LocalDate today = LocalDate.now();
+        StringBuilder dataForAI = new StringBuilder();
         for (int i = 29; i >= 0; i--) {
             LocalDate d = today.minusDays(i);
-            double rev = revenueHistory.getOrDefault(d, 0.0);
-            int tix = ticketHistory.getOrDefault(d, 0);
-            dataForLLM.append(String.format("%s: %.0f, %d\n", d, rev, tix));
+            dataForAI.append(String.format("%s: %.0f, %d\n", d, revenueHistory.getOrDefault(d, 0.0), ticketHistory.getOrDefault(d, 0)));
         }
 
-        // 3. Build Prompt
-        String systemPrompt = """
-            Bạn là một chuyên gia phân tích dữ liệu rạp chiếu phim. 
-            Nhiệm vụ: Dự báo doanh thu và số vé cho 7 ngày TỚI dựa trên dữ liệu 30 ngày qua.
-            TÍNH CHẤT DỮ LIỆU:
-            - Nếu xu hướng gần đây sụt giảm hoặc bằng 0, hãy dự báo sát với thực tế đó (không được phép dự báo tăng vọt vô lý).
-            - Ưu tiên bám sát xu hướng của 7 ngày gần nhất.
-            
-            YÊU CẦU ĐỊNH DẠNG:
-            Kết quả trả về CHỈ bao gồm một đối tượng JSON với 2 trường:
-            - "data": Mảng 7 đối tượng cho 7 ngày tiếp theo (mỗi đối tượng có: "date" (YYYY-MM-DD), "rev" (number), "tix" (int)).
-            - "analysis": Một đoạn văn ngắn (tối đa 100 từ) giải thích lý do tại sao bạn đưa ra con số dự báo như vậy.
-            
-            Không giải thích gì thêm ngoài JSON.
-            """;
-
-        String userPrompt = dataForLLM.toString() + "\nNgày hiện tại: " + today + "\nHãy dự báo cho 7 ngày tiếp theo và đưa ra nhận xét ngắn gọn.";
-
-        // 4. Call LLM
+        String systemPrompt = "Bạn là chuyên gia phân tích rạp phim. Dự báo 7 ngày tới. Trả về JSON: { \"data\": [{\"date\":\"...\", \"rev\":0, \"tix\":0}], \"analysis\": \"...\" }";
+        
         try {
-            System.out.println("DEBUG - ForecastService - Calling LLM...");
-            String llmResponse = llm.generate(List.of(
-                    new Message("system", systemPrompt),
-                    new Message("user", userPrompt)
-            ));
-
-            // Clean response: Find the first '{' and last '}'
+            Response<AiMessage> response = model.generate(new SystemMessage(systemPrompt), new UserMessage(dataForAI.toString()));
+            String llmResponse = response.content().text();
+            
+            // Basic extraction
             int start = llmResponse.indexOf("{");
             int end = llmResponse.lastIndexOf("}");
-            if (start != -1 && end != -1 && end > start) {
-                llmResponse = llmResponse.substring(start, end + 1);
-            }
-            llmResponse = llmResponse.trim();
+            if (start != -1 && end != -1) llmResponse = llmResponse.substring(start, end + 1);
 
             JsonNode root = mapper.readTree(llmResponse);
             List<ForecastDTO> dailyData = new ArrayList<>();
-            String analysis = "";
-            if (root.has("analysis")) {
-                analysis = root.get("analysis").asText();
-            }
-
-            // Add historical data (last 14 days)
+            
+            // Historical (14 days)
             for (int i = 13; i >= 0; i--) {
                 LocalDate d = today.minusDays(i);
                 dailyData.add(new ForecastDTO(d, revenueHistory.getOrDefault(d, 0.0), ticketHistory.getOrDefault(d, 0), false));
             }
 
-            // Add forecasted data
-            boolean hasFuture = false;
-            JsonNode dataNode = root.has("data") ? root.get("data") : (root.isArray() ? root : null);
-            
-            if (dataNode != null && dataNode.isArray()) {
-                for (JsonNode node : dataNode) {
-                    if (node.has("date") && (node.has("rev") || node.has("tix"))) {
-                        ForecastDTO dto = new ForecastDTO();
-                        dto.setDate(LocalDate.parse(node.get("date").asText()));
-                        dto.setForecastRevenue(node.has("rev") ? node.get("rev").asDouble() : 0);
-                        dto.setForecastTickets(node.has("tix") ? node.get("tix").asInt() : 0);
-                        dto.setFuture(true);
-                        dailyData.add(dto);
-                        hasFuture = true;
-                    }
-                }
-            }
-
-            // Fallback: Weighted Moving Average
-            if (!hasFuture) {
-                System.out.println("DEBUG - ForecastService - Using Fallback Trend");
-                analysis = "Dự báo dựa trên xu hướng lịch sử thực tế.";
-                double weightedSumRev = 0;
-                double weightedSumTix = 0;
-                int totalWeight = 0;
-                for (int i = 0; i < 14; i++) {
-                    LocalDate d = today.minusDays(i);
-                    int weight = (14 - i);
-                    weightedSumRev += revenueHistory.getOrDefault(d, 0.0) * weight;
-                    weightedSumTix += ticketHistory.getOrDefault(d, 0) * weight;
-                    totalWeight += weight;
-                }
-                double avgRev = weightedSumRev / totalWeight;
-                double avgTix = weightedSumTix / totalWeight;
-
-                for (int i = 1; i <= 7; i++) {
-                    LocalDate d = today.plusDays(i);
+            // Forecast
+            if (root.has("data") && root.get("data").isArray()) {
+                for (JsonNode node : root.get("data")) {
                     ForecastDTO dto = new ForecastDTO();
-                    dto.setDate(d);
-                    dto.setForecastRevenue(avgRev * (0.9 + Math.random() * 0.2));
-                    dto.setForecastTickets((int)(avgTix * (0.9 + Math.random() * 0.2)));
+                    dto.setDate(LocalDate.parse(node.get("date").asText()));
+                    dto.setForecastRevenue(node.get("rev").asDouble());
+                    dto.setForecastTickets(node.get("tix").asInt());
                     dto.setFuture(true);
                     dailyData.add(dto);
                 }
             }
-            return new ForecastResult(dailyData, analysis);
+            
+            return new ForecastResult(dailyData, root.get("analysis").asText());
 
         } catch (Exception e) {
-            System.err.println("ERROR - ForecastService: " + e.getMessage());
-            
-            List<ForecastDTO> fallbackData = new ArrayList<>();
-            for (int i = 13; i >= 0; i--) {
-                LocalDate d = today.minusDays(i);
-                fallbackData.add(new ForecastDTO(d, revenueHistory.getOrDefault(d, 0.0), ticketHistory.getOrDefault(d, 0), false));
-            }
-            return new ForecastResult(fallbackData, "Lỗi hệ thống AI: " + e.getMessage());
+            // Fallback to avoid breaking UI
+            List<ForecastDTO> fallback = new ArrayList<>();
+            for (int i = 6; i >= 0; i--) fallback.add(new ForecastDTO(today.minusDays(i), 0, 0, false));
+            return new ForecastResult(fallback, "Dữ liệu dự báo đang được cập nhật...");
         }
     }
 }
