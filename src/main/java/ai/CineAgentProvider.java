@@ -5,9 +5,13 @@ import ai.skills.admin.MarketingBotSkills;
 import ai.skills.admin.ModerateBotSkills;
 import ai.skills.user.BookBotSkills;
 import ai.skills.user.InfoBotSkills;
+import dao.ChatMessageDAO;
+import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.MemoryId;
+import dev.langchain4j.service.UserMessage;
 import utils.ConfigLoader;
 
 /**
@@ -23,14 +27,14 @@ public class CineAgentProvider {
      * Giao diện chung cho các AI Agent.
      */
     public interface CineAgent {
-        String chat(String userMessage);
+        String chat(@MemoryId String memoryId, @UserMessage String userMessage);
     }
 
     /**
      * Giao diện cho Streaming AI Agent.
      */
     public interface StreamingCineAgent {
-        void chat(String userMessage, dev.langchain4j.service.TokenStream tokenStream);
+        dev.langchain4j.service.TokenStream chat(@MemoryId String memoryId, @UserMessage String userMessage);
     }
 
     /**
@@ -45,7 +49,11 @@ public class CineAgentProvider {
 
         return AiServices.builder(CineAgent.class)
                 .chatLanguageModel(model)
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.builder()
+                        .id(memoryId)
+                        .maxMessages(30)
+                        .chatMemoryStore(new ChatMessageDAO())
+                        .build())
                 .tools(new InfoBotSkills(), new BookBotSkills())
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. " +
@@ -69,7 +77,11 @@ public class CineAgentProvider {
 
         return AiServices.builder(CineAgent.class)
                 .chatLanguageModel(model)
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.builder()
+                        .id(memoryId)
+                        .maxMessages(30)
+                        .chatMemoryStore(new ChatMessageDAO())
+                        .build())
                 .tools(new AnalystBotSkills(), new MarketingBotSkills(), new ModerateBotSkills())
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineAnalyst, trợ lý quản trị cấp cao. " +
@@ -80,6 +92,8 @@ public class CineAgentProvider {
                     "Hãy cung cấp báo cáo chuyên sâu và chuyên nghiệp."
                 )
                 .build();
+    }
+
     /**
      * Khởi tạo Streaming Agent cho người dùng cuối.
      */
@@ -92,7 +106,11 @@ public class CineAgentProvider {
 
         return AiServices.builder(StreamingCineAgent.class)
                 .streamingChatLanguageModel(model)
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.builder()
+                        .id(memoryId)
+                        .maxMessages(30)
+                        .chatMemoryStore(new ChatMessageDAO())
+                        .build())
                 .tools(new InfoBotSkills(), new BookBotSkills())
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. Giúp người dùng tra cứu phim, lịch chiếu và đặt vé qua InfoBot và BookBot."
@@ -112,7 +130,11 @@ public class CineAgentProvider {
 
         return AiServices.builder(StreamingCineAgent.class)
                 .streamingChatLanguageModel(model)
-                .chatMemory(MessageWindowChatMemory.withMaxMessages(20))
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.builder()
+                        .id(memoryId)
+                        .maxMessages(30)
+                        .chatMemoryStore(new ChatMessageDAO())
+                        .build())
                 .tools(new AnalystBotSkills(), new MarketingBotSkills(), new ModerateBotSkills())
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineAnalyst, trợ lý quản trị cấp cao. Hỗ trợ thống kê, marketing và điều hành hệ thống rạp phim."

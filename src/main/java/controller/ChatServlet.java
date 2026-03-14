@@ -64,6 +64,8 @@ public class ChatServlet extends HttpServlet {
 
         if ("/reset".equals(pathWithinServlet)) {
             handleReset(request, response);
+        } else if ("/stream".equals(pathWithinServlet)) {
+            handleStreamChat(request, response);
         } else {
             handleChat(request, response);
         }
@@ -95,7 +97,7 @@ public class ChatServlet extends HttpServlet {
 
             long startTime = System.currentTimeMillis();
             // Gọi AI Agent xử lý (AI sẽ tự động gọi Tool nếu cần)
-            String reply = agent.chat(userMessage);
+            String reply = agent.chat(session.getId(), userMessage);
             long endTime = System.currentTimeMillis();
 
             ObjectNode jsonResponse = objectMapper.createObjectNode();
@@ -132,6 +134,86 @@ public class ChatServlet extends HttpServlet {
         }
     }
 
+    private CineAgentProvider.StreamingCineAgent getOrCreateStreamingAgent(HttpSession session) {
+        CineAgentProvider.StreamingCineAgent agent = (CineAgentProvider.StreamingCineAgent) session.getAttribute("aiStreamingAgent");
+
+        if (agent == null) {
+            UserDTO user = (UserDTO) session.getAttribute("user");
+            if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
+                agent = CineAgentProvider.createStreamingAdminAgent();
+            } else {
+                agent = CineAgentProvider.createStreamingUserAgent();
+            }
+            session.setAttribute("aiStreamingAgent", agent);
+            log("Created new Streaming AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
+        }
+
+        return agent;
+    }
+
+    private void handleStreamChat(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Connection", "keep-alive");
+
+        PrintWriter out = response.getWriter();
+        String userMessage = request.getParameter("message");
+
+        if (userMessage == null || userMessage.trim().isEmpty()) {
+            out.print("event: error\ndata: Message cannot be empty\n\n");
+            out.flush();
+            return;
+        }
+
+        HttpSession session = request.getSession(true);
+        CineAgentProvider.StreamingCineAgent agent = getOrCreateStreamingAgent(session);
+
+        // Bật AsyncContext để không block thread của Tomcat/Servlet
+        jakarta.servlet.AsyncContext asyncContext = request.startAsync();
+        asyncContext.setTimeout(0); // Không timeout cho stream
+
+        try {
+            dev.langchain4j.service.TokenStream tokenStream = agent.chat(session.getId(), userMessage);
+
+            tokenStream
+                .onNext(token -> {
+                    try {
+                        // Escape newline and quotes for JSON safety
+                        String cleanToken = token.replace("\\", "\\\\").replace("\n", "\\n").replace("\"", "\\\"");
+                        out.print("data: {\"token\": \"" + cleanToken + "\"}\n\n");
+                        out.flush();
+                    } catch (Exception e) {
+                        log("Error sending token", e);
+                    }
+                })
+                .onComplete(responseMsg -> {
+                    try {
+                        out.print("event: end\ndata: {\"status\": \"complete\"}\n\n");
+                        out.flush();
+                        asyncContext.complete();
+                    } catch (Exception e) {
+                        log("Error completing stream", e);
+                    }
+                })
+                .onError(error -> {
+                    try {
+                        out.print("event: error\ndata: " + error.getMessage().replace("\n", " ") + "\n\n");
+                        out.flush();
+                        asyncContext.complete();
+                    } catch (Exception e) {
+                        log("Error sending error stream", e);
+                    }
+                })
+                .start();
+        } catch (Exception e) {
+            log("Error starting stream", e);
+            out.print("event: error\ndata: System Error\n\n");
+            out.flush();
+            asyncContext.complete();
+        }
+    }
+
     private void handleReset(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
@@ -144,6 +226,7 @@ public class ChatServlet extends HttpServlet {
 
             if (session != null) {
                 session.removeAttribute("aiAgent");
+                session.removeAttribute("aiStreamingAgent");
                 log("Reset AI Agent for session: " + session.getId());
             }
 
