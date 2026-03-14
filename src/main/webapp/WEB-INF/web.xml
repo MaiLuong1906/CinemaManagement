@@ -17,7 +17,7 @@
 
     <servlet-mapping>
         <servlet-name>ChatServlet</servlet-name>
-        <url-pattern>/ChatServlet</url-pattern>
+        <url-pattern>/ChatServlet/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
