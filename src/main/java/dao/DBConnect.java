@@ -12,12 +12,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBConnect {
-    static String user = "sa";
+import utils.ConfigLoader;
 
-    static String pass = "30042005";
-    static String url = "jdbc:sqlserver://localhost:1433;databaseName=CinemaManagement;encrypt=true;trustServerCertificate=true";
-    static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+public class DBConnect {
+    static String user = ConfigLoader.get("db.username");
+    static String pass = ConfigLoader.get("db.password");
+    static String url = ConfigLoader.get("db.url");
+    static String driver = ConfigLoader.get("db.driver-class-name");
 
     public static Connection getConnection() {
         try {

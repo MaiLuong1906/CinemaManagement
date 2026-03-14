@@ -12,9 +12,11 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 
+import utils.ConfigLoader;
+
 public class LLM {
 
-    private static final String API_KEY = "nhap key vao day";
+    private static final String API_KEY = ConfigLoader.get("ai.api.key");
     private static final String MODEL = "llama-3.3-70b-versatile";
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
