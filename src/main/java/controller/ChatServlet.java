@@ -1,58 +1,55 @@
 package controller;
 
-import ai.Agent;
-import ai.LLM;
-import ai.memory.Memory;
+import ai.CineAgentProvider;
+import model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import service.IncomeStatictisService;
-import service.SeatFillRate_ViewService;
-import service.TicketManagementService;
-import service.TimeSlotService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * Servlet xử lý Chatbot sử dụng kiến trúc AI Agent mới.
+ */
 public class ChatServlet extends HttpServlet {
 
-    private LLM llm;
-    private IncomeStatictisService incomeService;
-    private TicketManagementService ticketService;
-    private TimeSlotService timeSlotService;
-    private SeatFillRate_ViewService seatService;
     private ObjectMapper objectMapper;
 
     @Override
     public void init() throws ServletException {
         super.init();
         try {
-            llm            = new LLM();
-            incomeService  = new IncomeStatictisService();
-            ticketService  = new TicketManagementService();
-            timeSlotService = new TimeSlotService();
-            seatService    = new SeatFillRate_ViewService();
-            objectMapper   = new ObjectMapper();
-            log("ChatServlet initialized successfully");
+            objectMapper = new ObjectMapper();
+            log("ChatServlet (Agentic) initialized successfully");
         } catch (Exception e) {
             log("Error initializing ChatServlet", e);
             throw new ServletException("Failed to initialize ChatServlet", e);
         }
     }
 
-    private Agent getOrCreateAgent(HttpSession session) {
-        Agent agent = (Agent) session.getAttribute("agent");
+    /**
+     * Lấy hoặc tạo AI Agent cho session hiện tại.
+     * Phân biệt AdminAgent và UserAgent dựa trên role của user.
+     */
+    private CineAgentProvider.CineAgent getOrCreateAgent(HttpSession session) {
+        CineAgentProvider.CineAgent agent = (CineAgentProvider.CineAgent) session.getAttribute("aiAgent");
 
         if (agent == null) {
-            Memory memory = new Memory();
-            agent = new Agent(memory, llm,
-                    incomeService, ticketService, timeSlotService, seatService);
-            session.setAttribute("agent", agent);
-            log("Created new agent for session: " + session.getId());
+            UserDTO user = (UserDTO) session.getAttribute("user");
+            // Mặc định là UserAgent, nếu role là Admin thì dùng AdminAgent
+            if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
+                agent = CineAgentProvider.createAdminAgent();
+            } else {
+                agent = CineAgentProvider.createUserAgent();
+            }
+            session.setAttribute("aiAgent", agent);
+            log("Created new AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
         }
 
         return agent;
@@ -63,12 +60,21 @@ public class ChatServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String pathInfo = request.getServletPath();
+        String pathWithinServlet = request.getPathInfo();
 
-        if ("/ChatServlet/reset".equals(pathInfo)) {
+        if ("/reset".equals(pathWithinServlet)) {
             handleReset(request, response);
+        } else if ("/stream".equals(pathWithinServlet)) {
+            handleStreamChat(request, response);
         } else {
             handleChat(request, response);
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
     }
 
     private void handleChat(HttpServletRequest request, HttpServletResponse response)
@@ -87,26 +93,124 @@ public class ChatServlet extends HttpServlet {
             }
 
             HttpSession session = request.getSession(true);
-            Agent agent = getOrCreateAgent(session);
+            CineAgentProvider.CineAgent agent = getOrCreateAgent(session);
 
             long startTime = System.currentTimeMillis();
-            String reply = agent.handle(userMessage);
+            // Gọi AI Agent xử lý (AI sẽ tự động gọi Tool nếu cần)
+            String reply = agent.chat(session.getId(), userMessage);
             long endTime = System.currentTimeMillis();
 
             ObjectNode jsonResponse = objectMapper.createObjectNode();
             jsonResponse.put("success", true);
-            jsonResponse.put("reply", reply);
+            
+            // Hỗ trợ Structured Response (JSON trong reply)
+            if (reply.trim().startsWith("{") && reply.trim().endsWith("}")) {
+                try {
+                    JsonNode structured = objectMapper.readTree(reply);
+                    if (structured.has("actionType")) {
+                        jsonResponse.set("action", structured);
+                        jsonResponse.put("reply", structured.has("message") ? structured.get("message").asText() : "Yêu cầu hành động từ hệ thống.");
+                    } else {
+                        jsonResponse.put("reply", reply);
+                    }
+                } catch (Exception e) {
+                    jsonResponse.put("reply", reply);
+                }
+            } else {
+                jsonResponse.put("reply", reply);
+            }
+
             jsonResponse.put("processingTime", endTime - startTime);
             jsonResponse.put("sessionId", session.getId());
 
             out.print(objectMapper.writeValueAsString(jsonResponse));
             out.flush();
 
-            log("Processed message in " + (endTime - startTime) + "ms");
+            log("Processed Agent message in " + (endTime - startTime) + "ms");
 
         } catch (Exception e) {
             log("Error processing chat message", e);
-            sendErrorResponse(out, "Đã xảy ra lỗi: " + e.getMessage());
+            sendErrorResponse(out, "Đã xảy ra lỗi hệ thống AI: " + e.getMessage());
+        }
+    }
+
+    private CineAgentProvider.StreamingCineAgent getOrCreateStreamingAgent(HttpSession session) {
+        CineAgentProvider.StreamingCineAgent agent = (CineAgentProvider.StreamingCineAgent) session.getAttribute("aiStreamingAgent");
+
+        if (agent == null) {
+            UserDTO user = (UserDTO) session.getAttribute("user");
+            if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
+                agent = CineAgentProvider.createStreamingAdminAgent();
+            } else {
+                agent = CineAgentProvider.createStreamingUserAgent();
+            }
+            session.setAttribute("aiStreamingAgent", agent);
+            log("Created new Streaming AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
+        }
+
+        return agent;
+    }
+
+    private void handleStreamChat(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Connection", "keep-alive");
+
+        PrintWriter out = response.getWriter();
+        String userMessage = request.getParameter("message");
+
+        if (userMessage == null || userMessage.trim().isEmpty()) {
+            out.print("event: error\ndata: Message cannot be empty\n\n");
+            out.flush();
+            return;
+        }
+
+        HttpSession session = request.getSession(true);
+        CineAgentProvider.StreamingCineAgent agent = getOrCreateStreamingAgent(session);
+
+        // Bật AsyncContext để không block thread của Tomcat/Servlet
+        jakarta.servlet.AsyncContext asyncContext = request.startAsync();
+        asyncContext.setTimeout(0); // Không timeout cho stream
+
+        try {
+            dev.langchain4j.service.TokenStream tokenStream = agent.chat(session.getId(), userMessage);
+
+            tokenStream
+                .onNext(token -> {
+                    try {
+                        // Escape newline and quotes for JSON safety
+                        String cleanToken = token.replace("\\", "\\\\").replace("\n", "\\n").replace("\"", "\\\"");
+                        out.print("data: {\"token\": \"" + cleanToken + "\"}\n\n");
+                        out.flush();
+                    } catch (Exception e) {
+                        log("Error sending token", e);
+                    }
+                })
+                .onComplete(responseMsg -> {
+                    try {
+                        out.print("event: end\ndata: {\"status\": \"complete\"}\n\n");
+                        out.flush();
+                        asyncContext.complete();
+                    } catch (Exception e) {
+                        log("Error completing stream", e);
+                    }
+                })
+                .onError(error -> {
+                    try {
+                        out.print("event: error\ndata: " + error.getMessage().replace("\n", " ") + "\n\n");
+                        out.flush();
+                        asyncContext.complete();
+                    } catch (Exception e) {
+                        log("Error sending error stream", e);
+                    }
+                })
+                .start();
+        } catch (Exception e) {
+            log("Error starting stream", e);
+            out.print("event: error\ndata: System Error\n\n");
+            out.flush();
+            asyncContext.complete();
         }
     }
 
@@ -121,17 +225,14 @@ public class ChatServlet extends HttpServlet {
             HttpSession session = request.getSession(false);
 
             if (session != null) {
-                Agent agent = (Agent) session.getAttribute("agent");
-                if (agent != null) {
-                    agent.clearMemory();
-                }
-                session.removeAttribute("agent");
-                log("Reset agent for session: " + session.getId());
+                session.removeAttribute("aiAgent");
+                session.removeAttribute("aiStreamingAgent");
+                log("Reset AI Agent for session: " + session.getId());
             }
 
             ObjectNode jsonResponse = objectMapper.createObjectNode();
             jsonResponse.put("success", true);
-            jsonResponse.put("message", "Memory đã được reset");
+            jsonResponse.put("message", "Phiên thảo luận AI đã được làm mới");
 
             out.print(objectMapper.writeValueAsString(jsonResponse));
             out.flush();
