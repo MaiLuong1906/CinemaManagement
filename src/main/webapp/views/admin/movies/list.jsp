@@ -24,7 +24,19 @@
                 </div>
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h4 class="mb-3 fw-bold">Movie Showtimes</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="fw-bold m-0">Movie Showtimes</h4>
+                            <form action="${pageContext.request.contextPath}/movie" method="get" class="d-flex gap-2">
+                                <input type="hidden" name="action" value="admin-list">
+                                <input type="text" name="search" class="form-control form-control-sm"
+                                    placeholder="Tìm tên phim..." value="${searchKeyword}" style="width: 200px;">
+                                <button type="submit" class="btn btn-sm btn-primary">Tìm</button>
+                                <c:if test="${not empty searchKeyword}">
+                                    <a href="${pageContext.request.contextPath}/movie?action=admin-list"
+                                        class="btn btn-sm btn-secondary">Xóa</a>
+                                </c:if>
+                            </form>
+                        </div>
                         <table class="table table-bordered table-hover align-middle text-center"
                             style="table-layout: fixed; width: 100%;">
                             <thead class="table-dark">

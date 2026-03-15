@@ -32,6 +32,26 @@ public class MovieDetailDAO extends DBConnect {
         return list;
     }
 
+    /* ===================== SEARCH BY MOVIE TITLE ===================== */
+    public List<MovieDetailDTO> searchMovieDetails(String keyword) {
+        List<MovieDetailDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM vw_movie_showtime_detail WHERE movie_title LIKE ?";
+        try (Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, "%" + keyword + "%");
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     /* ===================== GET BY SHOWTIME ID ===================== */
     public MovieDetailDTO getByShowtimeId(int showtimeId) {
         try (Connection con = getConnection();

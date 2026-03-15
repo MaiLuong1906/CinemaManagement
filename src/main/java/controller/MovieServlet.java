@@ -97,7 +97,16 @@ public class MovieServlet extends BaseServlet {
 
     private void listMoviesForAdmin(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<MovieDetailDTO> movieDetails = movieDetailDAO.getAllMovieDetails();
+        String keyword = req.getParameter("search");
+        List<MovieDetailDTO> movieDetails;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            movieDetails = movieDetailDAO.searchMovieDetails(keyword.trim());
+            req.setAttribute("searchKeyword", keyword.trim());
+        } else {
+            movieDetails = movieDetailDAO.getAllMovieDetails();
+        }
+
         req.setAttribute("movieDetails", movieDetails);
         forward(req, resp, "/views/admin/movies/list.jsp");
     }
