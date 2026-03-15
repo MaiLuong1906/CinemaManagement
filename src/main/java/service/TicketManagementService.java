@@ -61,4 +61,12 @@ public class TicketManagementService {
             );
         }
     }
+
+    public List<Movie_Ticket_ViewDTO> getAllMovieStats() {
+        try {
+            return ticket_Movie_ViewDAO.getAll();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Lỗi truy suất dữ liệu thống kê!!!", ex);
+        }
+    }
 }

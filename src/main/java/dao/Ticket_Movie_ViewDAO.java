@@ -49,6 +49,33 @@ public class Ticket_Movie_ViewDAO {
     }
 
     /**
+     * Lấy toàn bộ danh sách thống kê phim (không phân trang)
+     */
+    public List<Movie_Ticket_ViewDTO> getAll() throws SQLException {
+        List<Movie_Ticket_ViewDTO> list = new ArrayList<>();
+        String sql = BASE_SELECT + " ORDER BY row_num";
+
+        try (
+            Connection conn = DBConnect.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()
+        ) {
+            while (rs.next()) {
+                Movie_Ticket_ViewDTO dto = new Movie_Ticket_ViewDTO(
+                    rs.getInt("movie_id"),
+                    rs.getString("movie_title"),
+                    rs.getInt("tickets_sold"),
+                    rs.getDouble("movie_revenue"),
+                    rs.getInt("row_num"),
+                    rs.getInt("page_number")
+                );
+                list.add(dto);
+            }
+        }
+        return list;
+    }
+
+    /**
      * Tổng số page
      */
     public int getTotalPages() throws SQLException {

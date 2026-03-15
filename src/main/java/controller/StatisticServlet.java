@@ -11,10 +11,14 @@ import model.Movie_Ticket_ViewDTO;
 import model.TicketSoldBySlot_ViewDTO;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Unified Statistic Servlet handling:
@@ -51,6 +55,9 @@ public class StatisticServlet extends BaseServlet {
             case "tickets":
                 showTickets(req, resp);
                 break;
+            case "export-excel":
+                exportExcel(req, resp);
+                break;
             case "overview":
             default:
                 showOverview(req, resp);
@@ -60,10 +67,10 @@ public class StatisticServlet extends BaseServlet {
 
     private void showOverview(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         NumberFormat vndFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
-        
+
         double totalIncome = incomeStatictisService.calculateTotalRevenue();
         req.setAttribute("totalIncome", vndFormat.format(totalIncome));
-        
+
         try {
             int monthlyTicketsSold = ticketManagementService.getMothlyTicketsSold();
             req.setAttribute("monthlyTicketsSold", monthlyTicketsSold);
@@ -106,7 +113,7 @@ public class StatisticServlet extends BaseServlet {
 
     private void showRevenue(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         NumberFormat vndFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
-        
+
         double percentProduct = incomeStatictisService.calculatePercentProduct();
         double percentTicket = incomeStatictisService.calculatePercentTicket();
         req.setAttribute("percentProduct", percentProduct);
@@ -115,7 +122,7 @@ public class StatisticServlet extends BaseServlet {
         double monthlyRevenue = incomeStatictisService.calculateTotalRevenue();
         double dailyRevenue = incomeStatictisService.getDaylyRevenue();
         double yearlyRevenue = incomeStatictisService.getYearlyRevenue();
-        
+
         req.setAttribute("monthlyRevenue", vndFormat.format(monthlyRevenue));
         req.setAttribute("dailyRevenue", vndFormat.format(dailyRevenue));
         req.setAttribute("yearlyRevenue", vndFormat.format(yearlyRevenue));
@@ -132,10 +139,10 @@ public class StatisticServlet extends BaseServlet {
         try {
             int monthlyTicketsSold = ticketManagementService.getMothlyTicketsSold();
             req.setAttribute("monthlyTicketsSold", monthlyTicketsSold);
-            
+
             int dailyTicketsSold = ticketManagementService.getDailyTicketsSold();
             req.setAttribute("dailyTicketsSold", dailyTicketsSold);
-            
+
             int yearlyTicketsSold = ticketManagementService.getYearlyTicketsSold();
             req.setAttribute("yearlyTicketsSold", yearlyTicketsSold);
         } catch (SQLException ex) {
@@ -168,5 +175,60 @@ public class StatisticServlet extends BaseServlet {
         }
 
         forward(req, resp, "/views/admin/statistic/ticket-management.jsp");
+    }
+
+    private void exportExcel(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        resp.setHeader("Content-Disposition", "attachment; filename=bao_cao_thong_ke_phim.xlsx");
+
+        try (Workbook workbook = new XSSFWorkbook(); OutputStream out = resp.getOutputStream()) {
+            Sheet sheet = workbook.createSheet("Thống kê Phim");
+
+            // Header row
+            Row headerRow = sheet.createRow(0);
+            String[] headers = { "#", "Tên Phim", "Vé đã bán", "Doanh thu (VNĐ)" };
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.WHITE.getIndex());
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // Data rows - get Movie Stats data
+            List<Movie_Ticket_ViewDTO> movieStats;
+            try {
+                movieStats = ticketManagementService.getAllMovieStats();
+            } catch (Exception e) {
+                movieStats = java.util.Collections.emptyList();
+            }
+
+            int rowNum = 1;
+            for (Movie_Ticket_ViewDTO movie : movieStats) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(movie.getRowNum());
+                row.createCell(1).setCellValue(movie.getTitle());
+                row.createCell(2).setCellValue(movie.getTicketsSold());
+                row.createCell(3).setCellValue(movie.getRevenue());
+            }
+
+            // Auto-size columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi xuất file Excel: " + e.getMessage());
+        }
     }
 }
