@@ -22,9 +22,9 @@ public class ChatMessageDAO implements ChatMemoryStore {
         List<ChatMessage> history = new ArrayList<>();
         
         String sql = "SELECT role, content FROM (" +
-                     "   SELECT TOP 30 role, content, created_at FROM chat_messages " +
-                     "   WHERE session_id = ? ORDER BY created_at DESC" +
-                     ") AS recent_msgs ORDER BY created_at ASC";
+                     "   SELECT TOP 30 role, content, id FROM chat_messages " +
+                     "   WHERE session_id = ? ORDER BY id DESC" +
+                     ") AS recent_msgs ORDER BY id ASC";
         
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -42,6 +42,10 @@ public class ChatMessageDAO implements ChatMemoryStore {
                             history.add(message);
                         }
                     } catch (Exception e) {
+                        System.err.println("Error deserializing message: " + e.getMessage());
+                    }
+                }
+            }
         } catch (SQLException e) {
             System.err.println("Error loading chat memory from DB: " + e.getMessage());
         }
@@ -50,25 +54,28 @@ public class ChatMessageDAO implements ChatMemoryStore {
     }
 
     private ChatMessage deserialize(String role, String content) throws JsonProcessingException {
-        if (content == null || content.isEmpty()) return null;
-        
+        if (content == null || content.isEmpty())
+            return null;
+
         if (content.trim().startsWith("{")) {
-            Map<String, Object> map = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> map = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {
+            });
             String text = (String) map.get("text");
-            
+
             return switch (role.toLowerCase()) {
                 case "user" -> new UserMessage(text);
                 case "system" -> new SystemMessage(text);
                 case "assistant" -> {
                     List<ToolExecutionRequest> toolRequests = new ArrayList<>();
                     if (map.containsKey("toolExecutionRequests")) {
-                        List<Map<String, Object>> requests = (List<Map<String, Object>>) map.get("toolExecutionRequests");
+                        List<Map<String, Object>> requests = (List<Map<String, Object>>) map
+                                .get("toolExecutionRequests");
                         for (Map<String, Object> req : requests) {
                             toolRequests.add(ToolExecutionRequest.builder()
-                                .id((String) req.get("id"))
-                                .name((String) req.get("name"))
-                                .arguments((String) req.get("arguments"))
-                                .build());
+                                    .id((String) req.get("id"))
+                                    .name((String) req.get("name"))
+                                    .arguments((String) req.get("arguments"))
+                                    .build());
                         }
                     }
                     if (!toolRequests.isEmpty()) {
@@ -85,7 +92,7 @@ public class ChatMessageDAO implements ChatMemoryStore {
                 default -> null;
             };
         }
-        
+
         // Fallback for legacy plain text messages
         return switch (role.toLowerCase()) {
             case "user" -> new UserMessage(content);
@@ -99,20 +106,21 @@ public class ChatMessageDAO implements ChatMemoryStore {
     public void updateMessages(Object memoryId, List<ChatMessage> messages) {
         String sessionId = memoryId.toString();
         Integer userId = extractUserIdFromSessionId(sessionId);
-        
+
         String deleteSql = "DELETE FROM chat_messages WHERE session_id = ?";
         String insertSql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
-        
+
         try (Connection conn = DBConnect.getConnection()) {
-            if (conn == null) return;
+            if (conn == null)
+                return;
             conn.setAutoCommit(false);
-            
+
             try {
                 try (PreparedStatement psDel = conn.prepareStatement(deleteSql)) {
                     psDel.setString(1, sessionId);
                     psDel.executeUpdate();
                 }
-                
+
                 try (PreparedStatement psIns = conn.prepareStatement(insertSql)) {
                     for (ChatMessage msg : messages) {
                         psIns.setString(1, sessionId);
@@ -121,9 +129,9 @@ public class ChatMessageDAO implements ChatMemoryStore {
                         } else {
                             psIns.setNull(2, java.sql.Types.INTEGER);
                         }
-                        
+
                         psIns.setString(3, toRoleString(msg));
-                        
+
                         try {
                             String json = serialize(msg);
                             psIns.setNString(4, json);
@@ -131,12 +139,12 @@ public class ChatMessageDAO implements ChatMemoryStore {
                             String text = (msg.text() != null) ? msg.text() : "";
                             psIns.setNString(4, text);
                         }
-                        
+
                         psIns.addBatch();
                     }
                     psIns.executeBatch();
                 }
-                
+
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
@@ -154,20 +162,20 @@ public class ChatMessageDAO implements ChatMemoryStore {
     public void appendMessage(String sessionId, ChatMessage msg) {
         Integer userId = extractUserIdFromSessionId(sessionId);
         String sql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
-        
+
         try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, sessionId);
             if (userId != null && userId > 0) {
                 ps.setInt(2, userId);
             } else {
                 ps.setNull(2, java.sql.Types.INTEGER);
             }
-            
+
             ps.setString(3, toRoleString(msg));
             ps.setNString(4, (msg.text() != null) ? msg.text() : "");
-            
+
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error appending chat message to DB: " + e.getMessage());

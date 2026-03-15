@@ -12,7 +12,7 @@ BEGIN
         id INT IDENTITY(1,1) PRIMARY KEY,
         session_id VARCHAR(100) NOT NULL,
         user_id INT NULL, -- NULL if guest
-        role VARCHAR(20) NOT NULL, -- 'user', 'assistant', 'system'
+        role VARCHAR(50) NOT NULL, -- 'user', 'assistant', 'system', 'tool_execution_result'
         content NVARCHAR(MAX) NOT NULL,
         created_at DATETIME DEFAULT GETDATE(),
         
