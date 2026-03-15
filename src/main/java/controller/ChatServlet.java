@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import java.io.PrintWriter;
 /**
  * Servlet xử lý Chatbot sử dụng kiến trúc AI Agent mới.
  */
+@WebServlet(urlPatterns = "/ChatServlet/*", asyncSupported = true)
 public class ChatServlet extends HttpServlet {
 
     private ObjectMapper objectMapper;

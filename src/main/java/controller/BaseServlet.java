@@ -62,15 +62,19 @@ public abstract class BaseServlet extends HttpServlet {
             handleRequest(req, resp);
 
         } catch (ValidationException e) {
-            log("Validation error: " + e.getMessage(), e);
+            log("Validation error at " + req.getRequestURI() + ": " + e.getMessage() + " | Params: " + req.getParameterMap(), e);
             handleValidationError(req, resp, e);
         } catch (BusinessException e) {
-            log("Business error: " + e.getMessage(), e);
+            log("Business error at " + req.getRequestURI() + ": " + e.getMessage(), e);
             handleBusinessError(req, resp, e);
         } catch (Exception e) {
-            log("Unexpected error processing request", e);
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                          "An unexpected error occurred. Please try again later.");
+            log("Unexpected error at " + req.getRequestURI() + ": " + e.getMessage(), e);
+            if (!resp.isCommitted()) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                              "An unexpected error occurred: " + e.getMessage());
+            } else {
+                log("Response already committed, cannot send 500. Message: " + e.getMessage());
+            }
         }
     }
 

@@ -29,28 +29,31 @@ public class UserDAO {
                 + "INNER JOIN user_profiles u ON a.account_id = u.user_id "
                 + "WHERE a.phone_number = ? AND a.password_hash = ?";
         try (Connection con = DBConnect.getConnection()) {
-            PreparedStatement pst = con.prepareStatement(sql);
-            pst.setString(1, phoneNumber);
-            pst.setString(2, Encoding.toSHA1(password));
+            if (con == null) return null;
+            try (PreparedStatement pst = con.prepareStatement(sql)) {
+                pst.setString(1, phoneNumber);
+                pst.setString(2, Encoding.toSHA1(password));
 
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                UserDTO user = new UserDTO();
-                // Account fields
-                user.setAccountId(rs.getInt("user_id"));
-                user.setPhoneNumber(rs.getString("phone_number"));
-                user.setRoleId(rs.getString("role_id"));
-                user.setStatus(rs.getBoolean("status"));
-                user.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+                try (ResultSet rs = pst.executeQuery()) {
+                    while (rs.next()) {
+                        UserDTO user = new UserDTO();
+                        // Account fields
+                        user.setAccountId(rs.getInt("user_id"));
+                        user.setPhoneNumber(rs.getString("phone_number"));
+                        user.setRoleId(rs.getString("role_id"));
+                        user.setStatus(rs.getBoolean("status"));
+                        user.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
 
-                // UserProfile fields
-                user.setProfileId(rs.getInt("user_id")); // CRITICAL FIX: Set profileId for update operations
-                user.setFullName(rs.getString("full_name"));
-                user.setEmail(rs.getString("email"));
-                user.setGender(rs.getBoolean("gender"));
-                user.setAddress(rs.getString("address"));
-                user.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
-                return user;
+                        // UserProfile fields
+                        user.setProfileId(rs.getInt("user_id"));
+                        user.setFullName(rs.getString("full_name"));
+                        user.setEmail(rs.getString("email"));
+                        user.setGender(rs.getBoolean("gender"));
+                        user.setAddress(rs.getString("address"));
+                        user.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
+                        return user;
+                    }
+                }
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -61,59 +64,53 @@ public class UserDAO {
     // Register new account
     public static boolean register(String phoneNumber, String email, String password,
             String fullName, boolean gender, String address, LocalDate dateOfBirth) {
-        Connection con = null;
-        PreparedStatement psAccount = null;
-        PreparedStatement psProfile = null;
 
-        try {
-            con = DBConnect.getConnection();
+        try (Connection con = DBConnect.getConnection()) {
+            if (con == null) return false;
             con.setAutoCommit(false); // Start transaction
 
             // Insert Accounts
             String sqlAccounts = "insert into accounts (phone_number, password_hash, role_id, created_at)"
                     + "values(?, ?, ?, ?)";
-            // To get primary key after excute
-            psAccount = con.prepareStatement(sqlAccounts, Statement.RETURN_GENERATED_KEYS);
-            psAccount.setString(1, phoneNumber);
-            psAccount.setString(2, Encoding.toSHA1(password));
-            psAccount.setString(3, "User");
-            psAccount.setObject(4, LocalDateTime.now());
+            
+            try (PreparedStatement psAccount = con.prepareStatement(sqlAccounts, Statement.RETURN_GENERATED_KEYS)) {
+                psAccount.setString(1, phoneNumber);
+                psAccount.setString(2, Encoding.toSHA1(password));
+                psAccount.setString(3, "User");
+                psAccount.setObject(4, LocalDateTime.now());
 
-            psAccount.executeUpdate();
-            // Collect ID
-            ResultSet rs = psAccount.getGeneratedKeys();
-            int accountId = 0;
-            if (rs.next()) {
-                accountId = rs.getInt(1);
-            } else {
-                con.rollback();
-                return false;
-            }
+                psAccount.executeUpdate();
+                // Collect ID
+                try (ResultSet rs = psAccount.getGeneratedKeys()) {
+                    int accountId = 0;
+                    if (rs.next()) {
+                        accountId = rs.getInt(1);
+                    } else {
+                        con.rollback();
+                        return false;
+                    }
 
-            String sqlProfile = "insert into user_profiles (user_id, full_name, email, gender, address, date_of_birth)"
-                    + "values(?, ?, ?, ?, ?, ?)";
-            psProfile = con.prepareStatement(sqlProfile);
+                    String sqlProfile = "insert into user_profiles (user_id, full_name, email, gender, address, date_of_birth)"
+                            + "values(?, ?, ?, ?, ?, ?)";
+                    try (PreparedStatement psProfile = con.prepareStatement(sqlProfile)) {
+                        psProfile.setInt(1, accountId);
+                        psProfile.setString(2, fullName);
+                        psProfile.setString(3, email);
+                        psProfile.setBoolean(4, gender);
+                        psProfile.setString(5, address);
+                        psProfile.setObject(6, dateOfBirth);
 
-            psProfile.setInt(1, accountId);
-            psProfile.setString(2, fullName);
-            psProfile.setString(3, email);
-            psProfile.setBoolean(4, gender);
-            psProfile.setString(5, address);
-            psProfile.setObject(6, dateOfBirth);
-
-            psProfile.executeUpdate();
-
-            con.commit();
-            return true;
-
-        } catch (Exception e) {
-            if (con != null) {
-                try {
-                    con.rollback();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+                        psProfile.executeUpdate();
+                        con.commit();
+                        return true;
+                    }
                 }
+            } catch (Exception e) {
+                con.rollback();
+                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }

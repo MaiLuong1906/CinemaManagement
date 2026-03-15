@@ -70,30 +70,36 @@ public class ChatMessageDAO implements ChatMemoryStore {
         String insertSql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
         
         try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) return;
             conn.setAutoCommit(false); // Transaction
             
-            try (PreparedStatement psDel = conn.prepareStatement(deleteSql)) {
-                psDel.setString(1, sessionId);
-                psDel.executeUpdate();
-            }
-            
-            try (PreparedStatement psIns = conn.prepareStatement(insertSql)) {
-                for (ChatMessage msg : messages) {
-                    psIns.setString(1, sessionId);
-                    if (userId != null && userId > 0) {
-                        psIns.setInt(2, userId);
-                    } else {
-                        psIns.setNull(2, java.sql.Types.INTEGER);
-                    }
-                    
-                    psIns.setString(3, msg.type().name().toLowerCase());
-                    psIns.setNString(4, msg.text());
-                    psIns.addBatch();
+            try {
+                try (PreparedStatement psDel = conn.prepareStatement(deleteSql)) {
+                    psDel.setString(1, sessionId);
+                    psDel.executeUpdate();
                 }
-                psIns.executeBatch();
+                
+                try (PreparedStatement psIns = conn.prepareStatement(insertSql)) {
+                    for (ChatMessage msg : messages) {
+                        psIns.setString(1, sessionId);
+                        if (userId != null && userId > 0) {
+                            psIns.setInt(2, userId);
+                        } else {
+                            psIns.setNull(2, java.sql.Types.INTEGER);
+                        }
+                        
+                        psIns.setString(3, msg.type().name().toLowerCase());
+                        psIns.setNString(4, msg.text());
+                        psIns.addBatch();
+                    }
+                    psIns.executeBatch();
+                }
+                
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
             }
-            
-            conn.commit();
         } catch (SQLException e) {
             System.err.println("Error syncing chat memory to DB: " + e.getMessage());
         }

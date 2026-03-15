@@ -9,7 +9,7 @@
             <title>Movie Booking - Trang chủ</title>
 
             <!-- Bootstrap CSS -->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
             <!-- Font Awesome -->
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -22,8 +22,7 @@
             </c:if>
         </head>
 
-        <body class="bg-dark text-white <c:if test='${sessionScope.user != null && sessionScope.user.roleId == "
-            Admin"}'>admin-layout</c:if>"
+            <body class="bg-dark text-white ${sessionScope.user != null && sessionScope.user.roleId eq 'Admin' ? 'admin-layout' : ''}"
             style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0a0a0a !important;">
 
             <!-- Header -->
@@ -189,7 +188,7 @@
             <jsp:include page="../../layout/footer.jsp"></jsp:include>
 
             <!-- Bootstrap JS -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
             <!-- Custom JS -->
             <script src="${pageContext.request.contextPath}/js/home.js"></script>

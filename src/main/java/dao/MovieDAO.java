@@ -15,9 +15,10 @@ public class MovieDAO {
         String sql = "SELECT * FROM movies WHERE movie_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapRow(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
             }
         }
         return null;
@@ -25,12 +26,15 @@ public class MovieDAO {
 
     public Movie findById(int id) throws SQLException {
         String sql = "SELECT * FROM movies WHERE movie_id = ?";
-        Connection con = DBConnect.getConnection();
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapRow(rs);
+        try (Connection con = DBConnect.getConnection()) {
+            if (con == null) return null;
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return mapRow(rs);
+                    }
+                }
             }
         }
         return null;
@@ -43,8 +47,8 @@ public class MovieDAO {
         String sql = "SELECT * FROM movies ORDER BY release_date DESC";
         List<Movie> list = new ArrayList<>();
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(mapRow(rs));
             }
@@ -61,9 +65,10 @@ public class MovieDAO {
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(mapRow(rs));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         }
         return list;
@@ -147,11 +152,23 @@ public class MovieDAO {
         List<Movie> list = new ArrayList<>();
         String sql = "SELECT * FROM movies ORDER BY release_date DESC";
 
-        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs));
+        System.out.println("MovieDAO: getAllMovies() connecting...");
+        try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) {
+                System.out.println("MovieDAO: Connection failed (null)");
+                return list;
+            }
+            System.out.println("MovieDAO: Connection established. Executing query...");
+            try (PreparedStatement ps = conn.prepareStatement(sql); 
+                 ResultSet rs = ps.executeQuery()) {
+                System.out.println("MovieDAO: Query executed. Mapping rows...");
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+                System.out.println("MovieDAO: Done. Found " + list.size() + " movies.");
             }
         } catch (Exception e) {
+            System.out.println("MovieDAO Error: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
@@ -168,7 +185,6 @@ public class MovieDAO {
             return list;
         }
 
-        // Tạo SQL động với IN clause
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT DISTINCT m.* ")
                 .append("FROM movie_genre_rel mgl ")
@@ -176,7 +192,6 @@ public class MovieDAO {
                 .append("JOIN movie_genres mg ON mg.genre_id = mgl.genre_id ")
                 .append("WHERE mg.genre_name IN (");
 
-        // Thêm placeholders cho từng genre
         for (int i = 0; i < genres.length; i++) {
             sql.append("?");
             if (i < genres.length - 1) {
@@ -185,16 +200,18 @@ public class MovieDAO {
         }
         sql.append(") ORDER BY m.release_date DESC");
 
-        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+        try (Connection con = DBConnect.getConnection()) {
+            if (con == null) return list;
+            try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+                for (int i = 0; i < genres.length; i++) {
+                    ps.setString(i + 1, genres[i]);
+                }
 
-            // Set tất cả genre parameters
-            for (int i = 0; i < genres.length; i++) {
-                ps.setString(i + 1, genres[i]);
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(mapRow(rs));
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(mapRow(rs));
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -248,9 +265,10 @@ public class MovieDAO {
 
             ps.executeUpdate();
 
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1); // movie_id vừa insert
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // movie_id vừa insert
+                }
             }
         }
 

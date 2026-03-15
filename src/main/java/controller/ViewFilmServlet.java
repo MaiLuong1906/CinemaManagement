@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import model.MovieShowtimeDTO;
  *
  * @author nguye
  */
+@WebServlet("/ViewFilmServlet")
 public class ViewFilmServlet extends HttpServlet {
 
     /**

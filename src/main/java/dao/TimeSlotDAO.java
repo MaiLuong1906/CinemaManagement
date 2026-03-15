@@ -131,9 +131,10 @@ public class TimeSlotDAO {
             ps.setDate(2, Date.valueOf(showDate));
             ps.setInt(3, excludeShowtimeId);
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(mapRow(rs));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         }
         return list;

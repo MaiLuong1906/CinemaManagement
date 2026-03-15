@@ -20,8 +20,9 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, seatId);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
 
         } catch (SQLException e) {
             return false;
@@ -43,10 +44,10 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, seatId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return mapRow(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
             }
             return null;
         }
@@ -70,10 +71,10 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(mapRow(rs));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         }
         return list;
@@ -163,9 +164,10 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         }
         return 0;
@@ -180,9 +182,10 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, hallId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         }
         return 0;
@@ -198,8 +201,9 @@ public class SeatDAO {
 
             ps.setInt(1, hallId);
             ps.setString(2, seatCode);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
@@ -214,8 +218,9 @@ public class SeatDAO {
             ps.setInt(1, hallId);
             ps.setInt(2, rowIndex);
             ps.setInt(3, colIndex);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
@@ -249,10 +254,10 @@ public class SeatDAO {
             ps.setInt(1, hallId);
             ps.setInt(2, rowIndex);
             ps.setInt(3, colIndex);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return mapRow(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
             }
             return null;
         }
@@ -268,18 +273,21 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             con.setAutoCommit(false);
+            try {
+                for (Integer seatId : seatIds) {
+                    ps.setInt(1, seatTypeId);
+                    ps.setInt(2, seatId);
+                    ps.addBatch();
+                }
 
-            for (Integer seatId : seatIds) {
-                ps.setInt(1, seatTypeId);
-                ps.setInt(2, seatId);
-                ps.addBatch();
+                ps.executeBatch();
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(true);
             }
-
-            ps.executeBatch();
-            con.commit();
-
-        } catch (SQLException e) {
-            throw e;
         }
     }
 
@@ -302,10 +310,10 @@ public class SeatDAO {
 
             ps.setInt(1, hallId);
             ps.setInt(2, seatTypeId);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(mapRow(rs));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         }
         return list;
@@ -320,16 +328,21 @@ public class SeatDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             con.setAutoCommit(false);
+            try {
+                for (Integer seatId : seatIds) {
+                    ps.setBoolean(1, active);
+                    ps.setInt(2, seatId);
+                    ps.addBatch();
+                }
 
-            for (Integer seatId : seatIds) {
-                ps.setBoolean(1, active);
-                ps.setInt(2, seatId);
-                ps.addBatch();
+                ps.executeBatch();
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(true);
             }
-
-            ps.executeBatch();
-            con.commit();
-            con.setAutoCommit(true);
 
         } catch (SQLException e) {
             throw e;
@@ -367,18 +380,18 @@ public class SeatDAO {
          PreparedStatement ps = con.prepareStatement(sql)) {
 
         ps.setInt(1, showtimeId);
-        ResultSet rs = ps.executeQuery();
-
-        while (rs.next()) {
-            list.add(new SeatSelectionDTO(
-                rs.getInt("seat_id"),
-                rs.getString("seat_code"),
-                rs.getInt("row_index"),
-                rs.getInt("column_index"),
-                rs.getInt("seat_type_id"), 
-                rs.getDouble("price"),
-                rs.getString("seat_status")
-            ));
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new SeatSelectionDTO(
+                    rs.getInt("seat_id"),
+                    rs.getString("seat_code"),
+                    rs.getInt("row_index"),
+                    rs.getInt("column_index"),
+                    rs.getInt("seat_type_id"), 
+                    rs.getDouble("price"),
+                    rs.getString("seat_status")
+                ));
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();

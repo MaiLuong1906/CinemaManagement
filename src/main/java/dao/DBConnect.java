@@ -23,6 +23,8 @@ public class DBConnect {
     public static Connection getConnection() {
         try {
             Class.forName(driver);
+            // Set login timeout to 5 seconds to prevent indefinite hangs
+            DriverManager.setLoginTimeout(5);
             return DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("loi connect : " + e.getMessage());

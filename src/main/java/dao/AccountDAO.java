@@ -12,18 +12,19 @@ public class AccountDAO {
             WHERE phone_number = ?
         """;
 
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, phone);
-
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            Account acc = new Account();
-            acc.setId(rs.getInt("account_id"));
-            acc.setPhoneNumber(rs.getString("phone_number"));
-            acc.setPasswordHash(rs.getString("password_hash"));
-            acc.setRoleId(rs.getString("role_id"));
-            acc.setStatus(rs.getBoolean("status"));
-            return acc;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Account acc = new Account();
+                    acc.setId(rs.getInt("account_id"));
+                    acc.setPhoneNumber(rs.getString("phone_number"));
+                    acc.setPasswordHash(rs.getString("password_hash"));
+                    acc.setRoleId(rs.getString("role_id"));
+                    acc.setStatus(rs.getBoolean("status"));
+                    return acc;
+                }
+            }
         }
         return null;
     }
@@ -51,10 +52,12 @@ public class AccountDAO {
 
     public boolean existsByPhone(Connection conn, String phone) throws SQLException {
         String sql = "SELECT 1 FROM accounts WHERE phone_number = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, phone);
-        ResultSet rs = ps.executeQuery();
-        return rs.next();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
     }
 
     public int insert(Connection conn, String phone, String passwordHash) throws SQLException {
@@ -63,14 +66,16 @@ public class AccountDAO {
             VALUES (?, ?)
         """;
 
-        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        ps.setString(1, phone);
-        ps.setString(2, passwordHash);
-        ps.executeUpdate();
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, phone);
+            ps.setString(2, passwordHash);
+            ps.executeUpdate();
 
-        ResultSet rs = ps.getGeneratedKeys();
-        if (rs.next()) {
-            return rs.getInt(1); // account_id
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // account_id
+                }
+            }
         }
         throw new SQLException("Cannot get account_id");
     }
