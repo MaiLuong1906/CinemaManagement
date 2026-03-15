@@ -35,18 +35,23 @@ public class MovieDetailDAO extends DBConnect {
     /* ===================== SEARCH BY MOVIE TITLE ===================== */
     public List<MovieDetailDTO> searchMovieDetails(String keyword) {
         List<MovieDetailDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM vw_movie_showtime_detail WHERE movie_title LIKE ?";
+        // Sử dụng LOWER và COLLATE để tìm kiếm không phân biệt hoa thường và hỗ trợ Unicode tiếng Việt
+        String sql = "SELECT * FROM vw_movie_showtime_detail WHERE LOWER(movie_title) LIKE LOWER(?)";
+        
+        System.out.println("MovieDetailDAO DEBUG: searching with keyword: [" + keyword + "]");
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             
-            ps.setString(1, "%" + keyword + "%");
+            ps.setNString(1, "%" + keyword + "%");
             
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapRow(rs));
                 }
             }
+            System.out.println("MovieDetailDAO DEBUG: found " + list.size() + " records.");
         } catch (Exception e) {
+            System.err.println("MovieDetailDAO DEBUG ERROR: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
@@ -70,47 +75,47 @@ public class MovieDetailDAO extends DBConnect {
         }
         return null;
     }
+
     public static List<MovieDetailDTO> findMovieDetailByMovieId(Connection conn, int movieId)
         throws SQLException {
 
-    List<MovieDetailDTO> list = new ArrayList<>();
+        List<MovieDetailDTO> list = new ArrayList<>();
 
-    String sql = """
-        SELECT
-            showtime_id,
-            movie_title,
-            slot_name,
-            show_date,
-            start_time,
-            end_time,
-            hall_name,
-            genres
-        FROM vw_movie_showtime_detail
-        WHERE movie_id = ?
-        ORDER BY hall_name, start_time
-    """;
+        String sql = """
+            SELECT
+                showtime_id,
+                movie_title,
+                slot_name,
+                show_date,
+                start_time,
+                end_time,
+                hall_name,
+                genres
+            FROM vw_movie_showtime_detail
+            WHERE movie_id = ?
+            ORDER BY hall_name, start_time
+        """;
 
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, movieId);
-        ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, movieId);
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            MovieDetailDTO dto = new MovieDetailDTO(
-                rs.getInt("showtime_id"),
-                rs.getString("movie_title"),
-                rs.getString("slot_name"),
-                rs.getDate("show_date").toLocalDate(),
-                rs.getTime("start_time").toLocalTime(),
-                rs.getTime("end_time").toLocalTime(),
-                rs.getString("hall_name"),
-                rs.getString("genres")
-            );
-            list.add(dto);
+            while (rs.next()) {
+                MovieDetailDTO dto = new MovieDetailDTO(
+                    rs.getInt("showtime_id"),
+                    rs.getString("movie_title"),
+                    rs.getString("slot_name"),
+                    rs.getDate("show_date").toLocalDate(),
+                    rs.getTime("start_time").toLocalTime(),
+                    rs.getTime("end_time").toLocalTime(),
+                    rs.getString("hall_name"),
+                    rs.getString("genres")
+                );
+                list.add(dto);
+            }
         }
+        return list;
     }
-    return list;
-}
-
 
     /* ===================== MAP RESULT ===================== */
     private MovieDetailDTO mapRow(ResultSet rs) throws Exception {

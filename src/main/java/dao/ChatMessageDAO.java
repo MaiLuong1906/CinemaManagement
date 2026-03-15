@@ -20,22 +20,22 @@ public class ChatMessageDAO implements ChatMemoryStore {
     public List<ChatMessage> getMessages(Object memoryId) {
         String sessionId = memoryId.toString();
         List<ChatMessage> history = new ArrayList<>();
-        
+
         String sql = "SELECT role, content FROM (" +
-                     "   SELECT TOP 30 role, content, id FROM chat_messages " +
-                     "   WHERE session_id = ? ORDER BY id DESC" +
-                     ") AS recent_msgs ORDER BY id ASC";
-        
+                "   SELECT TOP 30 role, content, id FROM chat_messages " +
+                "   WHERE session_id = ? ORDER BY id DESC" +
+                ") AS recent_msgs ORDER BY id ASC";
+
         try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, sessionId);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String role = rs.getString("role");
                     String content = rs.getString("content");
-                    
+
                     try {
                         ChatMessage message = deserialize(role, content);
                         if (message != null) {
@@ -49,7 +49,7 @@ public class ChatMessageDAO implements ChatMemoryStore {
         } catch (SQLException e) {
             System.err.println("Error loading chat memory from DB: " + e.getMessage());
         }
-        
+
         return history;
     }
 
@@ -213,10 +213,10 @@ public class ChatMessageDAO implements ChatMemoryStore {
 
     private String toRoleString(ChatMessage msg) {
         return switch (msg.type()) {
-            case USER   -> "user";
-            case AI     -> "assistant";
+            case USER -> "user";
+            case AI -> "assistant";
             case SYSTEM -> "system";
-            default     -> msg.type().name().toLowerCase();
+            default -> msg.type().name().toLowerCase();
         };
     }
 
@@ -225,20 +225,22 @@ public class ChatMessageDAO implements ChatMemoryStore {
         String sessionId = memoryId.toString();
         String sql = "DELETE FROM chat_messages WHERE session_id = ?";
         try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sessionId);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error deleting chat memory from DB: " + e.getMessage());
         }
     }
-    
-    // Utility to map a session pattern to a user ID if needed, though typically session_id alone is fine
+
+    // Utility to map a session pattern to a user ID if needed, though typically
+    // session_id alone is fine
     private Integer extractUserIdFromSessionId(String sessionId) {
         if (sessionId.contains("_User_")) {
             try {
                 return Integer.parseInt(sessionId.split("_User_")[1]);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         return null;
     }

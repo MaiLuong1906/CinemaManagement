@@ -57,7 +57,7 @@ public class MovieDAO {
     }
 
     /* =========================
-       SEARCH BY TITLE
+       SEARCH BY TITLE (SQL)
        ========================= */
     public List<Movie> searchByTitle(Connection conn, String keyword) throws SQLException {
         String sql = "SELECT * FROM movies WHERE title LIKE ?";

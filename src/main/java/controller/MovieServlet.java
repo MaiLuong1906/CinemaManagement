@@ -98,6 +98,7 @@ public class MovieServlet extends BaseServlet {
     private void listMoviesForAdmin(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String keyword = req.getParameter("search");
+        System.out.println("MovieServlet DEBUG: keyword=[" + keyword + "]");
         List<MovieDetailDTO> movieDetails;
 
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -107,6 +108,7 @@ public class MovieServlet extends BaseServlet {
             movieDetails = movieDetailDAO.getAllMovieDetails();
         }
 
+        System.out.println("MovieServlet DEBUG: results size=" + (movieDetails != null ? movieDetails.size() : 0));
         req.setAttribute("movieDetails", movieDetails);
         forward(req, resp, "/views/admin/movies/list.jsp");
     }
@@ -203,7 +205,6 @@ public class MovieServlet extends BaseServlet {
     private void listMovies(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String[] selectedGenres = req.getParameterValues("genres");
-        String keyword = req.getParameter("search");
 
         List<Movie> movies;
         if (selectedGenres != null && selectedGenres.length > 0) {
@@ -212,11 +213,7 @@ public class MovieServlet extends BaseServlet {
             movies = movieDAO.getAllMovies();
         }
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            movies = movieDAO.searchMovies(movies, keyword.trim());
-        }
-
-        String pageTitle = buildPageTitle(selectedGenres, keyword);
+        String pageTitle = buildPageTitle(selectedGenres, null);
         req.setAttribute("pageTitle", pageTitle);
         req.setAttribute("movies", movies);
         req.setAttribute("totalMovies", movies.size());
