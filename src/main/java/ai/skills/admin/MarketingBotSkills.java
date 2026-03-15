@@ -3,6 +3,7 @@ package ai.skills.admin;
 import dao.DBConnect;
 import dao.MovieDAO;
 import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.agent.tool.P;
 import model.Movie;
 import service.TicketManagementService;
 import java.sql.Connection;
@@ -17,7 +18,7 @@ public class MarketingBotSkills {
     private final MovieDAO movieDAO = new MovieDAO();
 
     @Tool("Lấy thông tin chi tiết phim để viết bài quảng cáo (ID phim)")
-    public String getMovieDetailsForMarketing(int movieId) {
+    public String getMovieDetailsForMarketing(@P("ID phim") int movieId) {
         try (Connection conn = DBConnect.getConnection()) {
             Movie movie = movieDAO.findById(conn, movieId);
             if (movie == null) return "Không tìm thấy phim.";

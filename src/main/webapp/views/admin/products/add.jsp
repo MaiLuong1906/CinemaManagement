@@ -58,7 +58,7 @@
                     <!-- preview -->
                     <div class="mb-2 text-center">
                         <img id="imagePreview"
-                             src="https://via.placeholder.com/200x150?text=Preview"
+                             src="${pageContext.request.contextPath}/images/products/combo.png"
                              style="max-width:100%;
                              height:150px;
                              object-fit:cover;

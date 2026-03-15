@@ -12,7 +12,7 @@
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
             <!-- Font Awesome -->
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
             <!-- Custom CSS (minimal) -->
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css">
@@ -113,7 +113,7 @@
                                     onclick="location.href = '${pageContext.request.contextPath}/movie?action=detail&movieId=${movie.movieId}'">
                                     <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}"
                                         alt="${movie.title}" class="movie-poster"
-                                        onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
+                                        onerror="this.src='${pageContext.request.contextPath}/images/teaser-poster/avengers.jpg'">
                                     <div class="movie-overlay">
                                         <div class="fw-bold fs-6 mb-2">${movie.title}</div>
                                         <div class="d-flex gap-2 text-secondary small">
@@ -158,7 +158,7 @@
                                             onclick="location.href = '${pageContext.request.contextPath}/movie?action=detail&movieId=${movie.movieId}'">
                                             <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}"
                                                 alt="${movie.title}" class="movie-poster"
-                                                onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
+                                                onerror="this.src='${pageContext.request.contextPath}/images/teaser-poster/avengers.jpg'">
                                             <div class="movie-overlay">
                                                 <div class="fw-bold fs-6 mb-2">${movie.title}</div>
                                                 <div class="d-flex gap-2 text-secondary small">

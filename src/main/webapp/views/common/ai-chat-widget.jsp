@@ -2,7 +2,7 @@
 <div class="chat-widget-container" id="chatWidgetContainer">
     <!-- Chat Toggle Button -->
     <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
-        <i class="fas fa-robot"></i>
+        <i class="fa-solid fa-robot forced-fa6"></i>
         <span class="chat-badge" id="chatBadge" style="display: none;">1</span>
     </button>
 
@@ -11,7 +11,7 @@
         <div class="chat-header">
             <div class="d-flex align-items-center gap-2">
                 <div class="bot-avatar">
-                    <i class="fas fa-robot text-white"></i>
+                    <i class="fa-solid fa-robot text-white forced-fa6"></i>
                 </div>
                 <div>
                     <h6 class="mb-0 fw-bold text-white">Cine AI Assistant</h6>
@@ -20,16 +20,19 @@
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-sm text-white-50 hover-white" onclick="resetChat()" title="Reset session">
-                    <i class="fas fa-sync-alt"></i>
+                    <i class="fa-solid fa-rotate-right"></i>
                 </button>
                 <button class="btn btn-sm text-white-50 hover-white" onclick="toggleChat()">
-                    <i class="fas fa-times"></i>
+                    <i class="fa-solid fa-times"></i>
                 </button>
             </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <div class="message bot-message">
+                <div class="message-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
                 <div class="message-content">
                     Xin chào! Tôi là trợ lý AI của rạp chiếu phim. Bạn cần hỗ trợ gì hôm nay (tìm phim, lịch chiếu, đặt vé...)?
                 </div>
@@ -41,7 +44,7 @@
                 <div class="input-group">
                     <input type="text" id="chatInput" class="form-control" placeholder="Nhập tin nhắn..." autocomplete="off">
                     <button class="btn btn-primary" type="submit" id="sendBtn">
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
             </form>
@@ -55,7 +58,7 @@
     position: fixed;
     bottom: 30px;
     right: 30px;
-    z-index: 1050;
+    z-index: 9999;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -219,6 +222,41 @@
     40% { transform: scale(1); }
 }
 
+/* Message Avatar */
+.message-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+/* Force FA6 rendering */
+.forced-fa6 {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    display: inline-block !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+.bot-message {
+    flex-direction: row !important;
+    gap: 8px;
+}
+
+.user-message {
+    align-items: flex-end;
+}
+
 /* Interactive Actions (JSON payload) */
 .action-card {
     background: rgba(102, 126, 234, 0.1);
@@ -284,6 +322,7 @@
 <script>
     // Context Path from global or default logic
     const chatContextPath = '${pageContext.request.contextPath}';
+    console.log("Cine AI Widget initialized with context path:", chatContextPath);
 
     function toggleChat() {
         const chatBox = document.getElementById('chatBox');
@@ -299,19 +338,26 @@
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
         
+        if (sender === 'bot') {
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            avatarDiv.innerHTML = '<i class="fa-solid fa-robot forced-fa6"></i>';
+            msgDiv.appendChild(avatarDiv);
+        }
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         
         if (isHtml) {
             contentDiv.innerHTML = content;
         } else {
-            contentDiv.textContent = content; // format using markdown optionally if library available
+            contentDiv.textContent = content;
         }
         
         msgDiv.appendChild(contentDiv);
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        return contentDiv; // Return reference for appending streaming text
+        return contentDiv; 
     }
 
     function showTyping() {
@@ -359,7 +405,8 @@
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const errorText = await response.text().catch(() => "Unknown error");
+                throw new Error(`Server returned status \${response.status}: \${errorText}`);
             }
 
             removeTyping();
@@ -372,43 +419,72 @@
             const reader = response.body.getReader();
             const decoder = new TextDecoder('utf-8');
             let done = false;
+            let buffer = ""; // Buffer for partial lines
 
             while (!done) {
                 const { value, done: readerDone } = await reader.read();
                 done = readerDone;
                 if (value) {
-                    const chunkInfo = decoder.decode(value, { stream: !done });
-                    // Parse SSE line by line
-                    const lines = chunkInfo.split('\n');
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const dataStr = line.substring(6);
-                            if(dataStr.trim() === '') continue;
+                    buffer += decoder.decode(value, { stream: !done });
+                    const lines = buffer.split('\n');
+                    
+                    // Keep the last partial line in the buffer
+                    buffer = lines.pop();
 
-                            try {
-                                const parsed = JSON.parse(dataStr);
-                                if (parsed.status === 'complete') {
-                                    // Handle complete, verify if it was JSON 
-                                    checkStructuredJson(accumulatedJson, botMessageContainer);
-                                    break;
-                                } else if (parsed.token) {
-                                    // Replace newline encoding
-                                    const rawToken = parsed.token.replace(/\\n/g, '\n');
-                                    accumulatedJson += rawToken;
-                                    
-                                    // Stream text directly to the UI (formatting basic newlines)
-                                    botMessageContainer.innerHTML += rawToken.replace(/\n/g, '<br>');
-                                    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+                        
+                        const dataStr = trimmedLine.substring(6);
+                        try {
+                            const parsed = JSON.parse(dataStr);
+                            if (parsed.status === 'complete') {
+                                checkStructuredJson(accumulatedJson, botMessageContainer);
+                            } else if (parsed.token) {
+                                accumulatedJson += parsed.token;
+                                // Fix Bug #5: Safe streaming render
+                                const rawToken = parsed.token;
+                                if (rawToken.includes('\n')) {
+                                    // Handle newlines safely
+                                    const parts = rawToken.split('\n');
+                                    for (let i = 0; i < parts.length; i++) {
+                                        botMessageContainer.appendChild(document.createTextNode(parts[i]));
+                                        if (i < parts.length - 1) {
+                                            botMessageContainer.appendChild(document.createElement('br'));
+                                        }
+                                    }
                                 } else {
-                                    // Error
-                                    botMessageContainer.innerHTML += `<br><span class="text-danger">${dataStr}</span>`;
+                                    botMessageContainer.appendChild(document.createTextNode(rawToken));
                                 }
-                            } catch (e) {
-                                console.log("SSE parsing issue", e, dataStr);
+                                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+                            } else if (parsed.error) {
+                                botMessageContainer.innerHTML += `<div class="alert alert-danger p-2 small mt-2">AI Error: ${parsed.error}</div>`;
                             }
+                        } catch (err) {
+                            console.warn("SSE JSON parse error", err, dataStr);
                         }
                     }
                 }
+            }
+            
+            // Process any remaining data in buffer
+            if (buffer.trim().startsWith('data: ')) {
+                 const dataStr = buffer.trim().substring(6);
+                 try {
+                     const parsed = JSON.parse(dataStr);
+                     if (parsed.token) {
+                         const rawToken = parsed.token.replace(/\\n/g, '\n');
+                         if (rawToken.includes('\n')) {
+                             const parts = rawToken.split('\n');
+                             for (let i = 0; i < parts.length; i++) {
+                                 botMessageContainer.appendChild(document.createTextNode(parts[i]));
+                                 if (i < parts.length - 1) botMessageContainer.appendChild(document.createElement('br'));
+                             }
+                         } else {
+                             botMessageContainer.appendChild(document.createTextNode(rawToken));
+                         }
+                     }
+                 } catch(e) {}
             }
             
         } catch (error) {
@@ -428,18 +504,17 @@
             try {
                 const data = JSON.parse(fullText);
                 if (data.actionType === 'BOOKING_CONFIRM') {
-                    // It's an interactive action, replace the raw JSON text with UI
-                    const details = data.details || {};
+                    // Fix Bug #4: Sync with backend payload keys
+                    const details = data.data || {}; 
                     const html = `
                         <div class="mb-2">Đây là thông tin xác nhận đặt vé của bạn:</div>
                         <div class="action-card">
                             <div class="small mb-1"><strong>Phim:</strong> \${details.movieName || 'N/A'}</div>
-                            <div class="small mb-1"><strong>Suất:</strong> \${details.showTime || 'N/A'} - \${details.showDate || 'N/A'}</div>
                             <div class="small mb-1"><strong>Ghế:</strong> \${details.seats || 'N/A'}</div>
-                            <div class="small mb-1"><strong>Tổng tiền:</strong> \${details.totalPrice || '0'} VNĐ</div>
+                            <div class="small mb-1"><strong>Tổng tiền:</strong> \${Number(details.total).toLocaleString()} VNĐ</div>
                             
-                            <button class="action-btn" onclick="executeSilentAction('Tôi xác nhận đặt vé cho phim \${details.movieName}')">
-                                Xác Nhận & Thanh Toán <i class="fas fa-check-circle ms-1"></i>
+                            <button class="action-btn" onclick="executeSilentAction('Tôi xác nhận đặt vé phim \${details.movieName.replace(/'/g, "\\'")} ghế \${details.seats}')">
+                                Xác Nhận & Thanh Toán <i class="fa-solid fa-check-circle forced-fa6 ms-1"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="executeSilentAction('Hủy quá trình đặt vé')">
                                 Hủy Bỏ

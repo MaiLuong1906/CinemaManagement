@@ -203,7 +203,7 @@
                                             onclick="location.href = 'movie?action=detail&movieId=${movie.movieId}'">
                                             <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}"
                                                 alt="${movie.title}" class="movie-poster"
-                                                onerror="this.src='https://via.placeholder.com/220x330?text=No+Image'">
+                                                onerror="this.src='${pageContext.request.contextPath}/images/teaser-poster/avengers.jpg'">
                                             <div class="movie-overlay">
                                                 <div class="fw-bold fs-6 mb-2">${movie.title}</div>
                                                 <div class="d-flex gap-2 text-secondary small">

@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.model.output.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,11 +46,12 @@ public class ChatServlet extends HttpServlet {
 
         if (agent == null) {
             UserDTO user = (UserDTO) session.getAttribute("user");
+            int uid = (user != null) ? user.getAccountId() : 0;
             // Mặc định là UserAgent, nếu role là Admin thì dùng AdminAgent
             if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
                 agent = CineAgentProvider.createAdminAgent();
             } else {
-                agent = CineAgentProvider.createUserAgent();
+                agent = CineAgentProvider.createUserAgent(uid);
             }
             session.setAttribute("aiAgent", agent);
             log("Created new AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
@@ -60,13 +63,19 @@ public class ChatServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        System.out.println("[AI-DEBUG] ChatServlet POST request received");
+        String requestURI = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String pathInfo = request.getPathInfo();
+        
+        System.out.println("[AI-DEBUG] RequestURI: " + requestURI + ", PathInfo: " + pathInfo);
+        log("ChatServlet POST: requestURI=" + requestURI + ", pathInfo=" + pathInfo);
 
-        String pathInfo = request.getServletPath();
-        String pathWithinServlet = request.getPathInfo();
-
-        if ("/reset".equals(pathWithinServlet)) {
+        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/chat")) {
+            handleChat(request, response);
+        } else if (pathInfo.startsWith("/reset")) {
             handleReset(request, response);
-        } else if ("/stream".equals(pathWithinServlet)) {
+        } else if (pathInfo.startsWith("/stream")) {
             handleStreamChat(request, response);
         } else {
             handleChat(request, response);
@@ -141,10 +150,11 @@ public class ChatServlet extends HttpServlet {
 
         if (agent == null) {
             UserDTO user = (UserDTO) session.getAttribute("user");
+            int uid = (user != null) ? user.getAccountId() : 0;
             if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
                 agent = CineAgentProvider.createStreamingAdminAgent();
             } else {
-                agent = CineAgentProvider.createStreamingUserAgent();
+                agent = CineAgentProvider.createStreamingUserAgent(uid);
             }
             session.setAttribute("aiStreamingAgent", agent);
             log("Created new Streaming AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
@@ -173,7 +183,18 @@ public class ChatServlet extends HttpServlet {
 
         // Bật AsyncContext để không block thread của Tomcat/Servlet
         jakarta.servlet.AsyncContext asyncContext = request.startAsync();
-        asyncContext.setTimeout(0); // Không timeout cho stream
+        asyncContext.setTimeout(120000); // 2 minutes timeout for slow AI
+        
+        // Fix Bug #8: Add AsyncListener
+        asyncContext.addListener(new jakarta.servlet.AsyncListener() {
+            @Override public void onComplete(jakarta.servlet.AsyncEvent e) {}
+            @Override public void onTimeout(jakarta.servlet.AsyncEvent e) { asyncContext.complete(); }
+            @Override public void onError(jakarta.servlet.AsyncEvent e) { asyncContext.complete(); }
+            @Override public void onStartAsync(jakarta.servlet.AsyncEvent e) {}
+        });
+
+        // Cần lấy writer từ asyncContext để đảm bảo an toàn trong môi trường async
+        PrintWriter asyncOut = asyncContext.getResponse().getWriter();
 
         try {
             dev.langchain4j.service.TokenStream tokenStream = agent.chat(session.getId(), userMessage);
@@ -181,18 +202,21 @@ public class ChatServlet extends HttpServlet {
             tokenStream
                 .onNext(token -> {
                     try {
-                        // Escape newline and quotes for JSON safety
-                        String cleanToken = token.replace("\\", "\\\\").replace("\n", "\\n").replace("\"", "\\\"");
-                        out.print("data: {\"token\": \"" + cleanToken + "\"}\n\n");
-                        out.flush();
+                        log("[STREAM] Received token: " + (token.length() > 20 ? token.substring(0, 20) + "..." : token));
+                        // Fix Bug #10: Use Jackson for JSON escaping
+                        String json = objectMapper.writeValueAsString(java.util.Map.of("token", token));
+                        asyncOut.print("data: " + json + "\n\n");
+                        asyncOut.flush();
                     } catch (Exception e) {
                         log("Error sending token", e);
                     }
                 })
-                .onComplete(responseMsg -> {
+                .onComplete(aiResponse -> {
                     try {
-                        out.print("event: end\ndata: {\"status\": \"complete\"}\n\n");
-                        out.flush();
+                        AiMessage aiMessage = aiResponse.content();
+                        log("[STREAM] Completed successfully. Response length: " + (aiMessage != null ? aiMessage.text().length() : 0));
+                        asyncOut.print("data: {\"status\": \"complete\"}\n\n");
+                        asyncOut.flush();
                         asyncContext.complete();
                     } catch (Exception e) {
                         log("Error completing stream", e);
@@ -200,8 +224,13 @@ public class ChatServlet extends HttpServlet {
                 })
                 .onError(error -> {
                     try {
-                        out.print("event: error\ndata: " + error.getMessage().replace("\n", " ") + "\n\n");
-                        out.flush();
+                        String errMsg = error.getMessage() != null ? error.getMessage() : "Unknown AI Error";
+                        log("[STREAM-ERROR] AI Stream Error: " + errMsg);
+                        error.printStackTrace(); // Log full stack trace to server console
+                        
+                        String cleanErr = errMsg.replace("\\", "\\\\").replace("\n", " ").replace("\"", "\\\"");
+                        asyncOut.print("data: {\"error\": \"" + cleanErr + "\"}\n\n");
+                        asyncOut.flush();
                         asyncContext.complete();
                     } catch (Exception e) {
                         log("Error sending error stream", e);
@@ -210,8 +239,8 @@ public class ChatServlet extends HttpServlet {
                 .start();
         } catch (Exception e) {
             log("Error starting stream", e);
-            out.print("event: error\ndata: System Error\n\n");
-            out.flush();
+            asyncOut.print("data: {\"error\": \"Internal Server Error: " + e.getMessage().replace("\"", "'") + "\"}\n\n");
+            asyncOut.flush();
             asyncContext.complete();
         }
     }

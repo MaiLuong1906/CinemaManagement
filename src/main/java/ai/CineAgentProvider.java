@@ -40,7 +40,7 @@ public class CineAgentProvider {
     /**
      * Khởi tạo Agent cho người dùng cuối (Customer).
      */
-    public static CineAgent createUserAgent() {
+    public static CineAgent createUserAgent(int userId) {
         OpenAiChatModel model = OpenAiChatModel.builder()
                 .apiKey(API_KEY)
                 .baseUrl(GROQ_URL)
@@ -54,7 +54,7 @@ public class CineAgentProvider {
                         .maxMessages(30)
                         .chatMemoryStore(new ChatMessageDAO())
                         .build())
-                .tools(new InfoBotSkills(), new BookBotSkills())
+                .tools(new InfoBotSkills(), new BookBotSkills(userId))
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. " +
                     "Bạn có 2 bộ phận hỗ trợ:\n" +
@@ -97,7 +97,7 @@ public class CineAgentProvider {
     /**
      * Khởi tạo Streaming Agent cho người dùng cuối.
      */
-    public static StreamingCineAgent createStreamingUserAgent() {
+    public static StreamingCineAgent createStreamingUserAgent(int userId) {
         dev.langchain4j.model.chat.StreamingChatLanguageModel model = dev.langchain4j.model.openai.OpenAiStreamingChatModel.builder()
                 .apiKey(API_KEY)
                 .baseUrl(GROQ_URL)
@@ -111,7 +111,7 @@ public class CineAgentProvider {
                         .maxMessages(30)
                         .chatMemoryStore(new ChatMessageDAO())
                         .build())
-                .tools(new InfoBotSkills(), new BookBotSkills())
+                .tools(new InfoBotSkills(), new BookBotSkills(userId))
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. Giúp người dùng tra cứu phim, lịch chiếu và đặt vé qua InfoBot và BookBot."
                 )

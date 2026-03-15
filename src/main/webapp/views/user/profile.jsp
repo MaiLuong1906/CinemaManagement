@@ -204,7 +204,7 @@
                                                                     <img src="${pageContext.request.contextPath}/image?name=${booking.posterUrl}"
                                                                         class="img-fluid rounded-2 w-100"
                                                                         alt="${booking.movieTitle}"
-                                                                        onerror="this.src='https://via.placeholder.com/120x180/667eea/ffffff?text=Movie'">
+                                                                        onerror="this.src='${pageContext.request.contextPath}/images/teaser-poster/avengers.jpg'">
                                                                 </div>
                                                                 <div class="col-md-7">
                                                                     <h5 class="fw-bold mb-2">${booking.movieTitle}</h5>

@@ -33,7 +33,7 @@
                                     <img src="${pageContext.request.contextPath}/image?name=${movie.posterUrl}"
                                         alt="${movie.title}" class="img-fluid rounded-3 hover-lift w-100"
                                         style="box-shadow: 0 10px 40px rgba(0,0,0,0.5)"
-                                        onerror="this.src='https://via.placeholder.com/320x480/0a0a0a/667eea?text=No+Image'">
+                                        onerror="this.src='${pageContext.request.contextPath}/images/teaser-poster/avengers.jpg'">
                                 </div>
 
                                 <div class="col-lg-9">
