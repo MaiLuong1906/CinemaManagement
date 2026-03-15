@@ -1,29 +1,28 @@
 package dao;
 
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.SystemMessage;
-import dev.langchain4j.data.message.UserMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.data.message.*;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Custom ChatMemoryStore that persists messages to SQL Server database.
  * Auto-called by LangChain4j when managing chat memory.
  */
 public class ChatMessageDAO implements ChatMemoryStore {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public List<ChatMessage> getMessages(Object memoryId) {
         String sessionId = memoryId.toString();
         List<ChatMessage> history = new ArrayList<>();
         
-        // Retrieve the last 20 messages, ordered oldest to newest for LangChain context window
         String sql = "SELECT role, content FROM (" +
-                     "   SELECT TOP 20 role, content, created_at FROM chat_messages " +
+                     "   SELECT TOP 30 role, content, created_at FROM chat_messages " +
                      "   WHERE session_id = ? ORDER BY created_at DESC" +
                      ") AS recent_msgs ORDER BY created_at ASC";
         
@@ -37,15 +36,12 @@ public class ChatMessageDAO implements ChatMemoryStore {
                     String role = rs.getString("role");
                     String content = rs.getString("content");
                     
-                    if ("user".equalsIgnoreCase(role)) {
-                        history.add(new UserMessage(content));
-                    } else if ("assistant".equalsIgnoreCase(role)) {
-                        history.add(new AiMessage(content));
-                    } else if ("system".equalsIgnoreCase(role)) {
-                        history.add(new SystemMessage(content));
-                    }
-                }
-            }
+                    try {
+                        ChatMessage message = deserialize(role, content);
+                        if (message != null) {
+                            history.add(message);
+                        }
+                    } catch (Exception e) {
         } catch (SQLException e) {
             System.err.println("Error loading chat memory from DB: " + e.getMessage());
         }
@@ -53,18 +49,56 @@ public class ChatMessageDAO implements ChatMemoryStore {
         return history;
     }
 
+    private ChatMessage deserialize(String role, String content) throws JsonProcessingException {
+        if (content == null || content.isEmpty()) return null;
+        
+        if (content.trim().startsWith("{")) {
+            Map<String, Object> map = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {});
+            String text = (String) map.get("text");
+            
+            return switch (role.toLowerCase()) {
+                case "user" -> new UserMessage(text);
+                case "system" -> new SystemMessage(text);
+                case "assistant" -> {
+                    List<ToolExecutionRequest> toolRequests = new ArrayList<>();
+                    if (map.containsKey("toolExecutionRequests")) {
+                        List<Map<String, Object>> requests = (List<Map<String, Object>>) map.get("toolExecutionRequests");
+                        for (Map<String, Object> req : requests) {
+                            toolRequests.add(ToolExecutionRequest.builder()
+                                .id((String) req.get("id"))
+                                .name((String) req.get("name"))
+                                .arguments((String) req.get("arguments"))
+                                .build());
+                        }
+                    }
+                    if (!toolRequests.isEmpty()) {
+                        yield AiMessage.from(toolRequests);
+                    } else {
+                        yield AiMessage.from(text);
+                    }
+                }
+                case "tool_execution_result" -> {
+                    String id = (String) map.get("toolExecutionRequestId");
+                    String toolName = (String) map.get("toolName");
+                    yield ToolExecutionResultMessage.from(id, toolName, text);
+                }
+                default -> null;
+            };
+        }
+        
+        // Fallback for legacy plain text messages
+        return switch (role.toLowerCase()) {
+            case "user" -> new UserMessage(content);
+            case "assistant" -> new AiMessage(content);
+            case "system" -> new SystemMessage(content);
+            default -> null;
+        };
+    }
+
     @Override
     public void updateMessages(Object memoryId, List<ChatMessage> messages) {
         String sessionId = memoryId.toString();
         Integer userId = extractUserIdFromSessionId(sessionId);
-        
-        // Optimization: If the update list is just the existing list + some new messages,
-        // we could append. But since LangChain4j manages the window, 
-        // full sync is often needed for "sliding window" effect.
-        
-        // HOWEVER, for performance, we can just clear and re-insert as a batch.
-        // The real problem reported was role mismatch (fixed) and possible truncation.
-        // We'll keep the full sync for window accuracy but optimize the DELETE+INSERT.
         
         String deleteSql = "DELETE FROM chat_messages WHERE session_id = ?";
         String insertSql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
@@ -88,11 +122,16 @@ public class ChatMessageDAO implements ChatMemoryStore {
                             psIns.setNull(2, java.sql.Types.INTEGER);
                         }
                         
-                        String role = toRoleString(msg);
-                        psIns.setString(3, role);
+                        psIns.setString(3, toRoleString(msg));
                         
-                        String text = (msg.text() != null) ? msg.text() : "";
-                        psIns.setNString(4, text);
+                        try {
+                            String json = serialize(msg);
+                            psIns.setNString(4, json);
+                        } catch (Exception e) {
+                            String text = (msg.text() != null) ? msg.text() : "";
+                            psIns.setNString(4, text);
+                        }
+                        
                         psIns.addBatch();
                     }
                     psIns.executeBatch();
@@ -133,6 +172,35 @@ public class ChatMessageDAO implements ChatMemoryStore {
         } catch (SQLException e) {
             System.err.println("Error appending chat message to DB: " + e.getMessage());
         }
+    }
+
+    private String serialize(ChatMessage msg) throws JsonProcessingException {
+        Map<String, Object> map = new HashMap<>();
+        if (msg instanceof UserMessage) {
+            map.put("text", ((UserMessage) msg).text());
+        } else if (msg instanceof AiMessage) {
+            AiMessage ai = (AiMessage) msg;
+            map.put("text", ai.text());
+            if (ai.hasToolExecutionRequests()) {
+                List<Map<String, String>> requests = new ArrayList<>();
+                for (ToolExecutionRequest req : ai.toolExecutionRequests()) {
+                    Map<String, String> reqMap = new HashMap<>();
+                    reqMap.put("id", req.id());
+                    reqMap.put("name", req.name());
+                    reqMap.put("arguments", req.arguments());
+                    requests.add(reqMap);
+                }
+                map.put("toolExecutionRequests", requests);
+            }
+        } else if (msg instanceof ToolExecutionResultMessage) {
+            ToolExecutionResultMessage tr = (ToolExecutionResultMessage) msg;
+            map.put("toolExecutionRequestId", tr.id());
+            map.put("toolName", tr.toolName());
+            map.put("text", tr.text());
+        } else if (msg instanceof SystemMessage) {
+            map.put("text", ((SystemMessage) msg).text());
+        }
+        return objectMapper.writeValueAsString(map);
     }
 
     private String toRoleString(ChatMessage msg) {
