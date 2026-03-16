@@ -5,6 +5,7 @@ import ai.skills.admin.MarketingBotSkills;
 import ai.skills.admin.ModerateBotSkills;
 import ai.skills.user.BookBotSkills;
 import ai.skills.user.InfoBotSkills;
+import ai.skills.user.AuthBotSkills;
 import dao.ChatMessageDAO;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -79,7 +80,7 @@ public class CineAgentProvider {
      * Khởi tạo Agent cho người dùng cuối (Customer).
      * Sử dụng VERSATILE_MODEL để đảm bảo chất lượng phản hồi.
      */
-    public static CineAgent createUserAgent(int userId) {
+    public static CineAgent createUserAgent(int userId, jakarta.servlet.http.HttpSession session) {
         OpenAiChatModel model = OpenAiChatModel.builder()
                 .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
@@ -93,13 +94,14 @@ public class CineAgentProvider {
                         .maxMessages(30)
                         .chatMemoryStore(new ChatMessageDAO())
                         .build())
-                .tools(new InfoBotSkills(), new BookBotSkills(userId))
+                .tools(new InfoBotSkills(userId), new BookBotSkills(userId, session), new AuthBotSkills(session))
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. " +
-                    "Bạn có 2 bộ phận hỗ trợ:\n" +
+                    "Bạn có 3 bộ phận hỗ trợ:\n" +
                     "1. InfoBot: Tra cứu phim, suất chiếu, giá combo.\n" +
                     "2. BookBot: Hỗ trợ đặt vé, xem lịch sử và chuẩn bị xác nhận đặt vé.\n" +
-                    "Khi khách hàng muốn đặt vé, hãy dùng BookBot để lấy sơ đồ ghế, sau đó dùng tool prepareBooking để hiển thị xác nhận."
+                    "3. AuthBot: Hỗ trợ đăng nhập và đăng ký ngay trong chat.\n" +
+                    "Khi khách hàng muốn đặt vé nhưng chưa đăng nhập, hãy gợi ý họ đăng nhập hoặc đăng ký."
                 )
                 .build();
     }
@@ -137,7 +139,7 @@ public class CineAgentProvider {
     /**
      * Khởi tạo Streaming Agent cho người dùng cuối.
      */
-    public static StreamingCineAgent createStreamingUserAgent(int userId) {
+    public static StreamingCineAgent createStreamingUserAgent(int userId, jakarta.servlet.http.HttpSession session) {
         dev.langchain4j.model.chat.StreamingChatLanguageModel model = OpenAiStreamingChatModel.builder()
                 .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
@@ -151,9 +153,9 @@ public class CineAgentProvider {
                         .maxMessages(30)
                         .chatMemoryStore(new ChatMessageDAO())
                         .build())
-                .tools(new InfoBotSkills(), new BookBotSkills(userId))
+                .tools(new InfoBotSkills(userId), new BookBotSkills(userId, session), new AuthBotSkills(session))
                 .systemMessageProvider(chatId -> 
-                    "Bạn là CineGuide, một trợ lý rạp phim thông minh. Giúp người dùng tra cứu phim, lịch chiếu và đặt vé qua InfoBot và BookBot."
+                    "Bạn là CineGuide, một trợ lý rạp phim thông minh. Giúp người dùng tra cứu phim, lịch chiếu, đăng nhập/đăng ký và đặt vé."
                 )
                 .build();
     }
@@ -190,6 +192,7 @@ public class CineAgentProvider {
                 .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
                 .modelName(FAST_MODEL)
+                .timeout(java.time.Duration.ofSeconds(30))
                 .build();
     }
     /**
@@ -200,6 +203,7 @@ public class CineAgentProvider {
                 .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
                 .modelName(THINKING_MODEL)
+                .timeout(java.time.Duration.ofSeconds(45))
                 .build();
     }
 }

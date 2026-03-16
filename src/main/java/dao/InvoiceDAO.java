@@ -72,16 +72,17 @@ public class InvoiceDAO {
         try (Connection conn = DBConnect.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, invoiceId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Invoice inv = new Invoice();
-                inv.setInvoiceId(rs.getInt("invoice_id"));
-                inv.setUserId(rs.getInt("user_id"));
-                inv.setShowtimeId(rs.getInt("showtime_id"));
-                inv.setTotalAmount(rs.getBigDecimal("total_amount"));
-                inv.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
-                inv.setStatus(rs.getString("status"));
-                return inv;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Invoice inv = new Invoice();
+                    inv.setInvoiceId(rs.getInt("invoice_id"));
+                    inv.setUserId(rs.getInt("user_id"));
+                    inv.setShowtimeId(rs.getInt("showtime_id"));
+                    inv.setTotalAmount(rs.getBigDecimal("total_amount"));
+                    inv.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
+                    inv.setStatus(rs.getString("status"));
+                    return inv;
+                }
             }
         }
         return null;
@@ -300,29 +301,28 @@ public class InvoiceDAO {
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
-            System.out.println("DEBUG - InvoiceDAO.getBookingHistory() - userId: " + userId);
+            System.out.println("[DEBUG-QUERY] getBookingHistory for userId: " + userId);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    model.BookingHistoryDTO dto = new model.BookingHistoryDTO();
+                    dto.setInvoiceId(rs.getInt("invoice_id"));
+                    dto.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
+                    dto.setStatus(rs.getString("status"));
+                    dto.setTotalAmount(rs.getBigDecimal("total_amount"));
+                    dto.setTicketCode(rs.getString("ticket_code"));
+                    dto.setMovieTitle(rs.getString("movie_title"));
+                    dto.setPosterUrl(rs.getString("poster_url"));
+                    dto.setShowDate(rs.getDate("show_date").toLocalDate());
+                    dto.setStartTime(rs.getTime("start_time").toLocalTime());
+                    dto.setEndTime(rs.getTime("end_time").toLocalTime());
+                    dto.setHallName(rs.getString("hall_name"));
+                    dto.setSeatCodes(rs.getString("seat_codes"));
 
-            while (rs.next()) {
-                model.BookingHistoryDTO dto = new model.BookingHistoryDTO();
-                dto.setInvoiceId(rs.getInt("invoice_id"));
-                dto.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
-                dto.setStatus(rs.getString("status"));
-                dto.setTotalAmount(rs.getBigDecimal("total_amount"));
-                dto.setTicketCode(rs.getString("ticket_code"));
-                dto.setMovieTitle(rs.getString("movie_title"));
-                dto.setPosterUrl(rs.getString("poster_url"));
-                dto.setShowDate(rs.getDate("show_date").toLocalDate());
-                dto.setStartTime(rs.getTime("start_time").toLocalTime());
-                dto.setEndTime(rs.getTime("end_time").toLocalTime());
-                dto.setHallName(rs.getString("hall_name"));
-                dto.setSeatCodes(rs.getString("seat_codes"));
-
-                history.add(dto);
+                    history.add(dto);
+                }
+                System.out.println("[DEBUG-QUERY] Found " + history.size() + " items for userId " + userId);
             }
-
-            System.out.println("DEBUG - InvoiceDAO.getBookingHistory() - Found " + history.size() + " bookings");
         } catch (SQLException e) {
             System.err.println("ERROR - InvoiceDAO.getBookingHistory() - SQLException: " + e.getMessage());
             e.printStackTrace();
@@ -346,9 +346,10 @@ public class InvoiceDAO {
         try (Connection conn = DBConnect.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, days);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                history.put(rs.getDate("gap_date").toLocalDate(), rs.getDouble("daily_revenue"));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    history.put(rs.getDate("gap_date").toLocalDate(), rs.getDouble("daily_revenue"));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

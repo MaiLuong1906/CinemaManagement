@@ -16,10 +16,12 @@ public abstract class BaseDAOTest {
     @BeforeAll
     public static void setupDatabase() throws Exception {
         // Override DBConnect variables for in-memory H2 Database (MSSQL compatibility mode)
-        DBConnect.driver = "org.h2.Driver";
-        DBConnect.url = "jdbc:h2:mem:cinemadb;DB_CLOSE_DELAY=-1;MODE=MSSQLServer";
-        DBConnect.user = "sa";
-        DBConnect.pass = "";
+        DBConnect.initForTest(
+            "jdbc:h2:mem:cinemadb;DB_CLOSE_DELAY=-1;MODE=MSSQLServer",
+            "sa",
+            "",
+            "org.h2.Driver"
+        );
 
         // Re-establish connection and execute schema
         try (Connection conn = DBConnect.getConnection()) {
@@ -48,7 +50,10 @@ public abstract class BaseDAOTest {
         // Clean up database schema after tests complete
         try (Connection conn = DBConnect.getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute("DROP ALL OBJECTS");
+            if (conn != null) {
+                stmt.execute("DROP ALL OBJECTS");
+            }
         }
+        DBConnect.shutdown();
     }
 }

@@ -77,13 +77,17 @@ public class AccountServlet extends BaseServlet {
 
             // --- TRƯỜNG HỢP THÀNH CÔNG ---
             HttpSession session = request.getSession();
+            
+            // Lưu lại thông tin UID cũ (0 - Guest) để phục hồi chat nếu cần
+            session.setAttribute("preLoginUserId", 0);
+            
             session.setAttribute("user", user);
             session.setAttribute("userProfile", new UserProfile(user.getProfileId(), user.getFullName(),
                     user.getEmail(), user.isGender(), user.getAddress(), user.getDateOfBirth()));
 
             // SỬ DỤNG REDIRECT: Trình duyệt sẽ tải trang mới, URL sẽ đổi
-            // request.getContextPath() để lấy tên project (ví dụ: /cinema)
-            response.sendRedirect(request.getContextPath() + "/home");
+            // Thêm chatRestored=true để widget tự động mở và tải lại lịch sử
+            response.sendRedirect(request.getContextPath() + "/home?chatRestored=true");
         } else {
             // --- TRƯỜNG HỢP THẤT BẠI ---
             request.setAttribute("Error", "Phone Number or password are incorrect !");
@@ -100,7 +104,6 @@ public class AccountServlet extends BaseServlet {
         session.invalidate();
 
         // 2. SỬ DỤNG REDIRECT: Chuyển hướng về trang chủ (hoặc trang login)
-        // URL trên trình duyệt sẽ thay đổi về .../home.jsp thay vì .../AccountServlet
         response.sendRedirect(request.getContextPath() + "/home");
     }
 
@@ -255,7 +258,6 @@ public class AccountServlet extends BaseServlet {
 
     private void updateProfile(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        MovieDAO movieDAO = new MovieDAO();
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
 
@@ -333,5 +335,4 @@ public class AccountServlet extends BaseServlet {
 
         }
     }
-
 }

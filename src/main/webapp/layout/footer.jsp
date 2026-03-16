@@ -185,10 +185,6 @@
             </div>
         </div>
     </footer>
-
-    <!-- Global AI Chat Widget -->
-    <jsp:include page="/views/common/ai-chat-widget.jsp"></jsp:include>
-
     <style>
         /* Footer Styles */
         .footer-custom {
