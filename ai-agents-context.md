@@ -1,48 +1,40 @@
 This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
 
-<file_summary>
-This section contains a summary of this file.
+# File Summary
 
-<purpose>
+## Purpose
 This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
-</purpose>
 
-<file_format>
+## File Format
 The content is organized as follows:
 1. This summary section
 2. Repository information
 3. Directory structure
 4. Repository files (if enabled)
 5. Multiple file entries, each consisting of:
-  - File path as an attribute
-  - Full contents of the file
-</file_format>
+  a. A header with the file path (## File: path/to/file)
+  b. The full contents of the file in a code block
 
-<usage_guidelines>
+## Usage Guidelines
 - This file should be treated as read-only. Any changes should be made to the
   original repository files, not this packed version.
 - When processing this file, use the file path to distinguish
   between different files in the repository.
 - Be aware that this file may contain sensitive information. Handle it with
   the same level of security as you would the original repository.
-</usage_guidelines>
 
-<notes>
+## Notes
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Only files matching these patterns are included: src/main/java/ai/CineAgentProvider.java, src/main/java/controller/ChatServlet.java, src/main/java/dao/ChatMessageDAO.java, src/main/java/ai/skills/user/InfoBotSkills.java, src/main/java/ai/skills/user/BookBotSkills.java, src/main/java/ai/skills/admin/AnalystBotSkills.java, src/main/java/ai/skills/admin/MarketingBotSkills.java, src/main/java/ai/skills/admin/ModerateBotSkills.java, src/main/webapp/views/common/ai-chat-widget.jsp, pom.xml, src/main/resources/db.properties, SQL_version1_english/chat_persistence.sql, src/test/java/ai/AgentRealApiTest.java
+- Only files matching these patterns are included: src/main/java/ai/CineAgentProvider.java, src/main/java/ai/skills/user/InfoBotSkills.java, src/main/java/ai/skills/user/BookBotSkills.java, src/main/java/ai/skills/admin/AnalystBotSkills.java, src/main/java/ai/skills/admin/MarketingBotSkills.java, src/main/java/ai/skills/admin/ModerateBotSkills.java, src/main/java/controller/ChatServlet.java, src/main/java/dao/ChatMessageDAO.java, src/main/java/dao/DBConnect.java, src/main/java/dao/MovieDAO.java, src/main/java/dao/ShowtimeDAO.java, src/main/java/dao/SeatDAO.java, src/main/java/dao/InvoiceDAO.java, src/main/java/dao/ProductDAO.java, src/main/java/dao/TicketDetailDAO.java, src/main/java/util/ConfigLoader.java, src/main/webapp/views/common/ai-chat-widget.jsp
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
-</notes>
 
-</file_summary>
-
-<directory_structure>
-pom.xml
-SQL_version1_english/chat_persistence.sql
+# Directory Structure
+```
 src/main/java/ai/CineAgentProvider.java
 src/main/java/ai/skills/admin/AnalystBotSkills.java
 src/main/java/ai/skills/admin/MarketingBotSkills.java
@@ -51,269 +43,924 @@ src/main/java/ai/skills/user/BookBotSkills.java
 src/main/java/ai/skills/user/InfoBotSkills.java
 src/main/java/controller/ChatServlet.java
 src/main/java/dao/ChatMessageDAO.java
+src/main/java/dao/DBConnect.java
+src/main/java/dao/InvoiceDAO.java
+src/main/java/dao/MovieDAO.java
+src/main/java/dao/ProductDAO.java
+src/main/java/dao/SeatDAO.java
+src/main/java/dao/ShowtimeDAO.java
+src/main/java/dao/TicketDetailDAO.java
+src/main/java/util/ConfigLoader.java
 src/main/webapp/views/common/ai-chat-widget.jsp
-src/test/java/ai/AgentRealApiTest.java
-</directory_structure>
+```
 
-<files>
-This section contains the contents of the repository's files.
+# Files
 
-<file path="src/test/java/ai/AgentRealApiTest.java">
-// package ai;
+## File: src/main/java/dao/ProductDAO.java
+```java
+package dao;
 
-// import org.junit.jupiter.api.Test;
-// import static org.junit.jupiter.api.Assertions.*;
+import model.Product;
 
-// /**
-// * Integration tests using real Groq API and CineAgentProvider.
-// * Verifies that the LLM can use InfoBot and BookBot skills to answer queries.
-// */
-// public class AgentRealApiTest {
-
-// @Test
-// public void testUserAgentWithInfoBot() throws InterruptedException {
-// System.out.println("--- Testing UserAgent with InfoBot (Real API) ---");
-// CineAgentProvider.CineAgent agent = CineAgentProvider.createUserAgent();
-// Thread.sleep(15000); // 15 seconds to be safe with TPM
-
-// // Query that requires searching for movies
-// long start = System.currentTimeMillis();
-// String response = agent.chat("test-session-info", "Rạp đang có những phim
-// gì?");
-// long end = System.currentTimeMillis();
-
-// System.out.println("AI Response: " + response);
-// System.out.println("Time taken: " + (end - start) + "ms");
-
-// assertNotNull(response);
-// assertFalse(response.isEmpty());
-// assertTrue(response.length() > 20);
-// }
-
-// @Test
-// public void testUserAgentWithBookBot() throws InterruptedException {
-// System.out.println("--- Testing UserAgent with BookBot (Real API) ---");
-// CineAgentProvider.CineAgent agent = CineAgentProvider.createUserAgent();
-// Thread.sleep(15000);
-
-// // Query that requires getting a seat map
-// long start = System.currentTimeMillis();
-// String response = agent.chat("test-session-book", "Cho tôi xem sơ đồ ghế của
-// suất chiếu ID 1");
-// long end = System.currentTimeMillis();
-
-// System.out.println("AI Response: " + response);
-// System.out.println("Time taken: " + (end - start) + "ms");
-
-// assertNotNull(response);
-// assertTrue(response.contains("ghế") || response.contains("A1") ||
-// response.contains("BOOKED") || response.contains("AVAILABLE"));
-// }
-
-// @Test
-// public void testUserAgentAdvancedFlow() throws InterruptedException {
-// System.out.println("--- Testing UserAgent Advanced Flow (Real API) ---");
-// CineAgentProvider.CineAgent agent = CineAgentProvider.createUserAgent();
-// Thread.sleep(15000);
-// // Complex query: find a movie, then ask for showtimes
-// agent.chat("adv-session", "Rạp có phim Spider-man không?");
-// Thread.sleep(15000);
-// String response = agent.chat("adv-session", "Vậy phim đó có lịch chiếu lúc
-// nào?");
-
-// System.out.println("AI Response: " + response);
-
-// assertNotNull(response);
-// assertTrue(response.contains("suất chiếu") || response.contains("lịch chiếu")
-// || response.contains("ID"));
-// }
-// }
-</file>
-
-<file path="SQL_version1_english/chat_persistence.sql">
-/* =========================================================
-   Chat Persistence Schema for AI Agents
-   Adds long-term memory capabilities to CineGuide and CineAnalyst
-   ========================================================= */
-
-USE CinemaManagement;
-GO
-
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='chat_messages' AND xtype='U')
-BEGIN
-    CREATE TABLE chat_messages (
-        id INT IDENTITY(1,1) PRIMARY KEY,
-        session_id VARCHAR(100) NOT NULL,
-        user_id INT NULL, -- NULL if guest
-        role VARCHAR(20) NOT NULL, -- 'user', 'assistant', 'system'
-        content NVARCHAR(MAX) NOT NULL,
-        created_at DATETIME DEFAULT GETDATE(),
-        
-        -- Optional foreign key if user logs out, we still keep history? 
-        -- Yes, standard practice. But since user_id is nullable, we shouldn't enforce strict CASCADE unless needed.
-        CONSTRAINT FK_Chat_User FOREIGN KEY (user_id) REFERENCES user_profiles(user_id) ON DELETE SET NULL
-    );
-
-    -- Indexes for fast retrieval
-    CREATE INDEX idx_chat_session ON chat_messages(session_id, created_at);
-    CREATE INDEX idx_chat_user ON chat_messages(user_id, created_at);
-
-    PRINT 'Table chat_messages created successfully.';
-END
-ELSE
-BEGIN
-    PRINT 'Table chat_messages already exists.';
-END
-GO
-</file>
-
-<file path="src/main/java/ai/skills/admin/AnalystBotSkills.java">
-package ai.skills.admin;
-
-import dev.langchain4j.agent.tool.Tool;
-import service.IncomeStatictisService;
-import service.TicketManagementService;
-import service.SeatFillRate_ViewService;
-import service.ForecastService;
-import model.Movie_Ticket_ViewDTO;
-import model.ForecastResult;
-import model.ForecastDTO;
-import java.util.List;
-import java.util.stream.Collectors;
-
-/**
- * Tools for AnalystBot sub-agent to handle statistics, performance metrics, and forecasting.
- * Now encapsulates the intelligence logic previously in ForecastService.
- */
-public class AnalystBotSkills {
-
-    private final IncomeStatictisService incomeService = new IncomeStatictisService();
-    private final TicketManagementService ticketService = new TicketManagementService();
-    private final SeatFillRate_ViewService seatService = new SeatFillRate_ViewService();
-    private final ForecastService forecastService = new ForecastService();
-
-    @Tool("Lấy báo cáo doanh thu tổng quan bao gồm doanh thu ngày, tháng, năm")
-    public String getRevenueSummary() {
-        double daily = incomeService.getDaylyRevenue();
-        double monthly = incomeService.calculateTotalRevenue();
-        double yearly = incomeService.getYearlyRevenue();
-
-        return String.format(
-            "Báo cáo doanh thu:\n- Hôm nay: %,.0f VND\n- Tháng này: %,.0f VND\n- Năm nay: %,.0f VND",
-            daily, monthly, yearly
-        );
-    }
-
-    @Tool("Lấy danh sách các phim bán chạy nhất (Top Movies)")
-    public String getTopPerformingMovies() {
-        try {
-            List<Movie_Ticket_ViewDTO> topMovies = ticketService.getAllOfPageNumber(1);
-            if (topMovies == null || topMovies.isEmpty()) return "Chưa có dữ liệu phim bán chạy.";
-
-            return topMovies.stream()
-                .limit(5)
-                .map(m -> String.format("- %s: %d vé, %,.0f VND", m.getTitle(), m.getTicketsSold(), m.getRevenue()))
-                .collect(Collectors.joining("\n", "Top 5 phim bán chạy nhất:\n", ""));
-        } catch (Exception e) {
-            return "Lỗi khi lấy dữ liệu phim: " + e.getMessage();
-        }
-    }
-
-    @Tool("Dự báo doanh thu và số lượng vé bán trong 7 ngày tới (Sử dụng AI)")
-    public String get7DayForecast() {
-        try {
-            // AnalystBot logic: ForecastService now performs the heavy lifting and LLM call
-            // We keep the service call but centralize the "Identity" of the analyst here.
-            ForecastResult result = forecastService.get7DayForecast();
-            List<ForecastDTO> futureData = result.getDailyData().stream()
-                .filter(ForecastDTO::isFuture)
-                .collect(Collectors.toList());
-
-            double totalRevenue = futureData.stream().mapToDouble(ForecastDTO::getForecastRevenue).sum();
-            int totalTickets = futureData.stream().mapToInt(ForecastDTO::getForecastTickets).sum();
-            
-            return String.format(
-                "Dự báo 7 ngày tới:\n- Tổng doanh thu dự kiến: %,.0f VND\n- Tổng số vé dự kiến: %,d vé\n- Phân tích chi tiết: %s",
-                totalRevenue, totalTickets, result.getAnalysis()
-            );
-        } catch (Exception e) {
-            return "Lỗi khi dự báo: " + e.getMessage();
-        }
-    }
-
-    @Tool("Lấy dữ liệu thô (Raw Data) của 14 ngày qua để tự phân tích")
-    public String getHistoricalData() {
-        try {
-            ForecastResult result = forecastService.get7DayForecast();
-            return result.getDailyData().stream()
-                .filter(d -> !d.isFuture())
-                .map(d -> String.format("%s: %,.0f VND, %d vé", d.getDate(), d.getActualRevenue(), d.getActualTickets()))
-                .collect(Collectors.joining("\n", "Dữ liệu lịch sử 14 ngày qua:\n", ""));
-        } catch (Exception e) {
-            return "Lỗi: " + e.getMessage();
-        }
-    }
-
-    @Tool("Lấy tỉ lệ lấp đầy ghế (Seat Fill Rate) trung bình tháng này")
-    public String getMonthlySeatFillRate() {
-        try {
-            double rate = seatService.getSeatFillRateCurrentMonth();
-            return String.format("Tỉ lệ lấp đầy ghế trung bình tháng này: %.2f%%", rate * 100);
-        } catch (Exception e) {
-            return "Lỗi khi lấy tỉ lệ lấp đầy: " + e.getMessage();
-        }
-    }
-}
-</file>
-
-<file path="src/main/java/ai/skills/admin/MarketingBotSkills.java">
-package ai.skills.admin;
-
-import dao.DBConnect;
-import dao.MovieDAO;
-import dev.langchain4j.agent.tool.Tool;
-import dev.langchain4j.agent.tool.P;
-import model.Movie;
-import service.TicketManagementService;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Tools for MarketingBot sub-agent to retrieve context for content generation.
- */
-public class MarketingBotSkills {
+public class ProductDAO {
 
-    private final MovieDAO movieDAO = new MovieDAO();
+    private static final String INSERT_SQL
+            = "INSERT INTO products (item_name, price, stock_quantity, img_user_url) VALUES (?, ?, ?, ?)";
 
-    @Tool("Lấy thông tin chi tiết phim để viết bài quảng cáo (ID phim)")
-    public String getMovieDetailsForMarketing(@P("ID phim") int movieId) {
-        try (Connection conn = DBConnect.getConnection()) {
-            Movie movie = movieDAO.findById(conn, movieId);
-            if (movie == null) return "Không tìm thấy phim.";
-            return String.format("Phim: %s\nRating: %s\nMô tả: %s", 
-                movie.getTitle(), movie.getAgeRating(), movie.getDescription());
-        } catch (Exception e) {
-            return "Lỗi: " + e.getMessage();
+    private static final String UPDATE_SQL
+        = "UPDATE products SET item_name = ?, price = ?, stock_quantity = ?, img_user_url = ? WHERE item_id = ?";
+
+
+    private static final String DELETE_SQL
+            = "DELETE FROM products WHERE item_id = ?";
+
+    private static final String SELECT_BY_ID_SQL
+            = "SELECT * FROM products WHERE item_id = ?";
+
+    private static final String SELECT_ALL_SQL
+            = "SELECT * FROM products";
+
+    private static final String UPDATE_STOCK_SQL
+            = "UPDATE products SET stock_quantity = stock_quantity + ? WHERE item_id = ?";
+    private static final String DELETE_PRODUCT_DETAILS_SQL
+            = "DELETE FROM products_details WHERE item_id = ?";
+
+    // =========================
+    // 1. Thêm sản phẩm (Admin)
+    // =========================
+    public void insert(Product p) throws SQLException {
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(INSERT_SQL)) {
+
+            ps.setString(1, p.getItemName());
+            ps.setBigDecimal(2, p.getPrice());
+            ps.setInt(3, p.getStockQuantity());
+            ps.setString(4, p.getProductImgUrl()); // 
+            ps.executeUpdate();
         }
     }
 
-    @Tool("Lấy danh sách phim để chọn làm mục tiêu marketing")
-    public String getMoviesForMarketing() {
-        try {
-            List<Movie> movies = movieDAO.getAllMovies();
-            return movies.stream()
-                .limit(10)
-                .map(m -> String.format("- %s (ID: %d)", m.getTitle(), m.getMovieId()))
-                .collect(Collectors.joining("\n", "Danh sách phim:\n", ""));
-        } catch (Exception e) {
-            return "Lỗi: " + e.getMessage();
-        }
+    // =========================
+    // 2. Cập nhật sản phẩm
+    // =========================
+    public void update(Product p) throws SQLException {
+    try (Connection conn = DBConnect.getConnection();
+         PreparedStatement ps = conn.prepareStatement(UPDATE_SQL)) {
+
+        ps.setString(1, p.getItemName());
+        ps.setBigDecimal(2, p.getPrice());
+        ps.setInt(3, p.getStockQuantity());
+        ps.setString(4, p.getProductImgUrl()); // tên file ảnh
+        ps.setInt(5, p.getItemId());
+
+        ps.executeUpdate();
     }
 }
-</file>
 
-<file path="src/main/java/ai/skills/admin/ModerateBotSkills.java">
+    // =========================
+    // 3. Xóa sản phẩm
+    // =========================
+    public void delete(int itemId) throws SQLException {
+
+        Connection conn = null;
+        PreparedStatement psDetail = null;
+        PreparedStatement psProduct = null;
+
+        try {
+            conn = DBConnect.getConnection();
+            conn.setAutoCommit(false); // BẮT ĐẦU TRANSACTION
+
+            // 1. Xóa bảng con trước
+            psDetail = conn.prepareStatement(DELETE_PRODUCT_DETAILS_SQL);
+            psDetail.setInt(1, itemId);
+            psDetail.executeUpdate();
+
+            // 2. Xóa bảng products
+            psProduct = conn.prepareStatement(DELETE_SQL);
+            psProduct.setInt(1, itemId);
+            psProduct.executeUpdate();
+
+            conn.commit(); // OK → LƯU
+
+        } catch (SQLException e) {
+            if (conn != null) {
+                conn.rollback(); // LỖI → QUAY LẠI
+            }
+            throw e;
+        } finally {
+            if (psDetail != null) {
+                psDetail.close();
+            }
+            if (psProduct != null) {
+                psProduct.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+
+    // =========================
+    // 4. Tìm theo ID
+    // =========================
+    public Product findById(int itemId) throws SQLException {
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_BY_ID_SQL)) {
+
+            ps.setInt(1, itemId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    // =========================
+    // 5. Lấy tất cả sản phẩm
+    // =========================
+    public List<Product> findAll() throws SQLException {
+        List<Product> list = new ArrayList<>();
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ALL_SQL); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        }
+        return list;
+    }
+
+    // =========================
+    // 6. Cập nhật tồn kho (+ / -)
+    // =========================
+    public void updateStock(Connection conn, int itemId, int quantity) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(UPDATE_STOCK_SQL)) {
+            ps.setInt(1, quantity); // âm = trừ kho, dương = cộng kho
+            ps.setInt(2, itemId);
+            ps.executeUpdate();
+        }
+    }
+
+    // =========================
+    // mapRow
+    // =========================
+    private Product mapRow(ResultSet rs) throws SQLException {
+        Product p = new Product();
+        p.setItemId(rs.getInt("item_id"));
+        p.setItemName(rs.getString("item_name"));
+        p.setPrice(rs.getBigDecimal("price"));
+        p.setStockQuantity(rs.getInt("stock_quantity"));
+        p.setProductImgUrl(rs.getString("img_user_url")); // ⭐ QUYẾT ĐỊNH
+        return p;
+    }
+
+}
+```
+
+## File: src/main/java/dao/SeatDAO.java
+```java
+package dao;
+
+import model.Seat;
+import model.SeatType;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import model.SeatSelectionDTO;
+
+
+public class SeatDAO {
+
+    /* =========================
+       1. KIỂM TRA GHẾ TỒN TẠI
+       ========================= */
+    public boolean exists(int seatId) {
+        String sql = "SELECT 1 FROM seats WHERE seat_id = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, seatId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    /* =========================
+       2. TÌMGHẾ THEO ID
+       ========================= */
+    public Seat findById(int seatId) throws SQLException {
+        String sql = """
+            SELECT s.*, st.type_name, st.extra_fee
+            FROM seats s
+            JOIN seat_types st ON s.seat_type_id = st.seat_type_id
+            WHERE s.seat_id = ?
+        """;
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, seatId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+            return null;
+        }
+    }
+
+    /* =========================
+       3. DANH SÁCH GHẾ THEO PHÒNG
+       ========================= */
+    public List<Seat> findByHall(int hallId) throws SQLException {
+        String sql = """
+            SELECT s.*, st.type_name, st.extra_fee
+            FROM seats s
+            JOIN seat_types st ON s.seat_type_id = st.seat_type_id
+            WHERE s.hall_id = ?
+            ORDER BY s.row_index, s.column_index
+        """;
+
+        List<Seat> list = new ArrayList<>();
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    /* =========================
+       4. THÊM 1 GHẾ
+       ========================= */
+    public void insert(
+            int hallId,
+            String seatCode,
+            int rowIndex,
+            int columnIndex,
+            int seatTypeId,
+            boolean active
+    ) throws SQLException {
+
+        String sql = """
+            INSERT INTO seats
+            (hall_id, seat_code, row_index, column_index, seat_type_id, is_active)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            ps.setString(2, seatCode);
+            ps.setInt(3, rowIndex);
+            ps.setInt(4, columnIndex);
+            ps.setInt(5, seatTypeId);
+            ps.setBoolean(6, active);
+
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       5. CẬP NHẬT LOẠI GHẾ
+       ========================= */
+    public void updateSeatType(int seatId, int seatTypeId) throws SQLException {
+        String sql = "UPDATE seats SET seat_type_id = ? WHERE seat_id = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, seatTypeId);
+            ps.setInt(2, seatId);
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       6. BẬT / TẮT GHẾ
+       ========================= */
+    public void updateActive(int seatId, boolean active) throws SQLException {
+        String sql = "UPDATE seats SET is_active = ? WHERE seat_id = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setBoolean(1, active);
+            ps.setInt(2, seatId);
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       7. XOÁ GHẾ THEO PHÒNG
+       ========================= */
+    public void deleteByHall(int hallId) throws SQLException {
+        String sql = "DELETE FROM seats WHERE hall_id = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            ps.executeUpdate();
+        }
+    }
+
+    // ===== CÁC METHOD CẦN BỔ SUNG =====
+
+    /* =========================
+       8. ĐẾM TỔNG SỐ GHẾ TRONG PHÒNG
+       ========================= */
+    public int countSeatsByHall(int hallId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM seats WHERE hall_id = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /* =========================
+       9. ĐẾM SỐ GHẾ HOẠT ĐỘNG TRONG PHÒNG
+       ========================= */
+    public int countActiveSeats(int hallId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM seats WHERE hall_id = ? AND is_active = 1";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /* =========================
+       10. KIỂM TRA MÃ GHẾ ĐÃ TỒN TẠI TRONG PHÒNG
+       ========================= */
+    public boolean isSeatCodeExists(int hallId, String seatCode) throws SQLException {
+        String sql = "SELECT 1 FROM seats WHERE hall_id = ? AND seat_code = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            ps.setString(2, seatCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /* =========================
+       11. KIỂM TRA TỌA ĐỘ ĐÃ TỒN TẠI TRONG PHÒNG
+       ========================= */
+    public boolean isCoordinateExists(int hallId, int rowIndex, int colIndex) throws SQLException {
+        String sql = "SELECT 1 FROM seats WHERE hall_id = ? AND row_index = ? AND column_index = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            ps.setInt(2, rowIndex);
+            ps.setInt(3, colIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /* =========================
+       12. XOÁ 1 GHẾ CỤ THỂ
+       ========================= */
+    public boolean deleteSeat(int seatId) throws SQLException {
+        String sql = "DELETE FROM seats WHERE seat_id = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, seatId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /* =========================
+       13. LẤY GHẾ THEO TỌA ĐỘ
+       ========================= */
+    public Seat findByCoordinate(int hallId, int rowIndex, int colIndex) throws SQLException {
+        String sql = """
+            SELECT s.*, st.type_name, st.extra_fee
+            FROM seats s
+            JOIN seat_types st ON s.seat_type_id = st.seat_type_id
+            WHERE s.hall_id = ? AND s.row_index = ? AND s.column_index = ?
+        """;
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            ps.setInt(2, rowIndex);
+            ps.setInt(3, colIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+            return null;
+        }
+    }
+
+    /* =========================
+       14. CẬP NHẬT HÀNG LOẠT LOẠI GHẾ (dùng khi chọn nhiều ghế cùng lúc)
+       ========================= */
+    public void batchUpdateSeatType(List<Integer> seatIds, int seatTypeId) throws SQLException {
+        String sql = "UPDATE seats SET seat_type_id = ? WHERE seat_id = ?";
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            con.setAutoCommit(false);
+            try {
+                for (Integer seatId : seatIds) {
+                    ps.setInt(1, seatTypeId);
+                    ps.setInt(2, seatId);
+                    ps.addBatch();
+                }
+
+                ps.executeBatch();
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(true);
+            }
+        }
+    }
+
+    /* =========================
+       15. LẤY DANH SÁCH GHẾ THEO LOẠI
+       ========================= */
+    public List<Seat> findBySeatType(int hallId, int seatTypeId) throws SQLException {
+        String sql = """
+            SELECT s.*, st.type_name, st.extra_fee
+            FROM seats s
+            JOIN seat_types st ON s.seat_type_id = st.seat_type_id
+            WHERE s.hall_id = ? AND s.seat_type_id = ?
+            ORDER BY s.row_index, s.column_index
+        """;
+
+        List<Seat> list = new ArrayList<>();
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, hallId);
+            ps.setInt(2, seatTypeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+    /* ========
+    16. CẬP NHẬT HÀNG LOẠT TRẠNG THÁI GHẾ (THÊM MỚI)
+       ========================= */
+    public void batchUpdateSeatStatus(List<Integer> seatIds, boolean active) throws SQLException {
+        String sql = "UPDATE seats SET is_active = ? WHERE seat_id = ?";
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            con.setAutoCommit(false);
+            try {
+                for (Integer seatId : seatIds) {
+                    ps.setBoolean(1, active);
+                    ps.setInt(2, seatId);
+                    ps.addBatch();
+                }
+
+                ps.executeBatch();
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    public List<SeatSelectionDTO> getSeatsByShowtime(int showtimeId) {
+    List<SeatSelectionDTO> list = new ArrayList<>();
+
+    String sql = """
+        SELECT
+            s.seat_id,
+            s.seat_code,
+            s.row_index,
+            s.column_index,
+            s.seat_type_id,
+            (ts.slot_price + st.extra_fee) AS price,
+            CASE
+                WHEN td.seat_id IS NULL THEN 'AVAILABLE'
+                ELSE 'BOOKED'
+            END AS seat_status
+        FROM showtimes sh
+        JOIN cinema_halls h ON sh.hall_id = h.hall_id
+        JOIN seats s ON h.hall_id = s.hall_id
+        JOIN seat_types st ON s.seat_type_id = st.seat_type_id
+        JOIN time_slots ts ON sh.slot_id = ts.slot_id
+        LEFT JOIN ticket_details td
+               ON td.seat_id = s.seat_id
+              AND td.showtime_id = sh.showtime_id
+        WHERE sh.showtime_id = ?
+          AND s.is_active = 1
+        ORDER BY s.row_index, s.column_index
+    """;
+
+    try (Connection con = DBConnect.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, showtimeId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new SeatSelectionDTO(
+                    rs.getInt("seat_id"),
+                    rs.getString("seat_code"),
+                    rs.getInt("row_index"),
+                    rs.getInt("column_index"),
+                    rs.getInt("seat_type_id"), 
+                    rs.getDouble("price"),
+                    rs.getString("seat_status")
+                ));
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+
+    
+    /* =========================
+       8. MAP RESULTSET → OBJECT
+       ========================= */
+    private Seat mapRow(ResultSet rs) throws SQLException {
+
+        Seat seat = new Seat();
+        seat.setSeatId(rs.getInt("seat_id"));
+        seat.setHallId(rs.getInt("hall_id"));
+        seat.setSeatCode(rs.getString("seat_code"));
+        seat.setRowIndex(rs.getInt("row_index"));
+        seat.setColumnIndex(rs.getInt("column_index"));
+        seat.setActive(rs.getBoolean("is_active"));
+
+        SeatType type = new SeatType();
+        type.setSeatTypeId(rs.getInt("seat_type_id"));
+        type.setTypeName(rs.getString("type_name"));
+        type.setExtraFee(rs.getBigDecimal("extra_fee"));
+
+        seat.setSeatType(type);
+
+        return seat;
+    }
+}
+```
+
+## File: src/main/java/dao/ShowtimeDAO.java
+```java
+package dao;
+
+import model.Showtime;
+
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShowtimeDAO {
+
+    /* =========================
+       FIND BY ID
+       ========================= */
+    public Showtime findById(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM showtimes WHERE showtime_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    /* =========================
+       FIND BY MOVIE
+       ========================= */
+    public List<Showtime> findByMovie(Connection conn, int movieId) throws SQLException {
+        String sql = """
+            SELECT * FROM showtimes
+            WHERE movie_id = ?
+            ORDER BY show_date, slot_id
+        """;
+
+        List<Showtime> list = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, movieId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    /* =========================
+       FIND BY DATE
+       ========================= */
+    public List<Showtime> findByDate(Connection conn, LocalDate date) throws SQLException {
+        String sql = """
+            SELECT * FROM showtimes
+            WHERE show_date = ?
+            ORDER BY slot_id
+        """;
+
+        List<Showtime> list = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, Date.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    /* =========================
+       FIND UPCOMING
+       ========================= */
+    public List<Showtime> findUpcoming(Connection conn) throws SQLException {
+        String sql = """
+            SELECT * FROM showtimes
+            WHERE show_date >= CAST(GETDATE() AS DATE)
+            ORDER BY show_date, slot_id
+        """;
+
+        List<Showtime> list = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    /* =========================
+       INSERT
+       ========================= */
+    public void insert(Connection conn, Showtime st) throws SQLException {
+        String sql = """
+            INSERT INTO showtimes (movie_id, hall_id, show_date, slot_id)
+            VALUES (?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, st.getMovieId());
+            ps.setInt(2, st.getHallId());
+            ps.setDate(3, Date.valueOf(st.getShowDate()));
+            ps.setInt(4, st.getSlotId());
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       UPDATE (ADMIN)
+       ========================= */
+    public void update(Connection conn, Showtime st) throws SQLException {
+        String sql = """
+            UPDATE showtimes
+            SET movie_id = ?, hall_id = ?, show_date = ?, slot_id = ?
+            WHERE showtime_id = ?
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, st.getMovieId());
+            ps.setInt(2, st.getHallId());
+            ps.setDate(3, Date.valueOf(st.getShowDate()));
+            ps.setInt(4, st.getSlotId());
+            ps.setInt(5, st.getShowtimeId());
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       DELETE (ADMIN)
+       ========================= */
+    public boolean delete(Connection conn, int showtimeId) throws SQLException {
+    String sql = "DELETE FROM showtimes WHERE showtime_id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, showtimeId);
+
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected > 0;
+    }
+}
+
+
+    /* =========================
+       MAP RESULTSET
+       ========================= */
+    private Showtime mapRow(ResultSet rs) throws SQLException {
+        Showtime st = new Showtime();
+        st.setShowtimeId(rs.getInt("showtime_id"));
+        st.setMovieId(rs.getInt("movie_id"));
+        st.setHallId(rs.getInt("hall_id"));
+        st.setShowDate(rs.getDate("show_date").toLocalDate());
+        st.setSlotId(rs.getInt("slot_id"));
+        return st;
+    }
+}
+```
+
+## File: src/main/java/dao/TicketDetailDAO.java
+```java
+package dao;
+
+import model.TicketDetail;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TicketDetailDAO {
+
+    private static final String INSERT_SQL = "INSERT INTO ticket_details (invoice_id, seat_id, showtime_id, actual_price) "
+            +
+            "VALUES (?, ?, ?, ?)";
+
+    private static final String SELECT_BY_INVOICE_SQL = "SELECT * FROM ticket_details WHERE invoice_id = ?";
+
+    private static final String DELETE_BY_INVOICE_SQL = "DELETE FROM ticket_details WHERE invoice_id = ?";
+
+    private static final String CHECK_SEAT_SQL = "SELECT 1 FROM ticket_details WHERE showtime_id = ? AND seat_id = ?";
+
+    // =========================
+    // 1. Đặt 1 ghế
+    // =========================
+    public void insert(Connection conn, TicketDetail t) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(INSERT_SQL)) {
+            ps.setInt(1, t.getInvoiceId());
+            ps.setInt(2, t.getSeatId());
+            ps.setInt(3, t.getShowtimeId());
+            ps.setBigDecimal(4, t.getActualPrice());
+            ps.executeUpdate(); // nếu trùng ghế → SQLException
+        }
+    }
+
+    // =========================
+    // 2. Đặt nhiều ghế 1 lần (batch)
+    // =========================
+    public void insertBatch(Connection conn, List<TicketDetail> list) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(INSERT_SQL)) {
+            for (TicketDetail t : list) {
+                ps.setInt(1, t.getInvoiceId());
+                ps.setInt(2, t.getSeatId());
+                ps.setInt(3, t.getShowtimeId());
+                ps.setBigDecimal(4, t.getActualPrice());
+                ps.addBatch();
+            }
+            ps.executeBatch(); // ❗ SQLException nếu có ghế trùng
+        }
+    }
+
+    // =========================
+    // 3. Kiểm tra ghế đã đặt chưa
+    // =========================
+    public boolean existsSeat(Connection conn, int showtimeId, int seatId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(CHECK_SEAT_SQL)) {
+            ps.setInt(1, showtimeId);
+            ps.setInt(2, seatId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    // =========================
+    // 4. Lấy danh sách ghế theo hóa đơn
+    // =========================
+    public List<TicketDetail> getByInvoice(int invoiceId) throws SQLException {
+        List<TicketDetail> list = new ArrayList<>();
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(SELECT_BY_INVOICE_SQL)) {
+
+            ps.setInt(1, invoiceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    // =========================
+    // 5. Xóa ghế theo hóa đơn (rollback)
+    // =========================
+    public void deleteByInvoice(Connection conn, int invoiceId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(DELETE_BY_INVOICE_SQL)) {
+            ps.setInt(1, invoiceId);
+            ps.executeUpdate();
+        }
+    }
+
+    // =========================
+    // mapRow
+    // =========================
+    private TicketDetail mapRow(ResultSet rs) throws SQLException {
+        TicketDetail t = new TicketDetail();
+        t.setInvoiceId(rs.getInt("invoice_id"));
+        t.setSeatId(rs.getInt("seat_id"));
+        t.setShowtimeId(rs.getInt("showtime_id"));
+        t.setActualPrice(rs.getBigDecimal("actual_price"));
+        return t;
+    }
+}
+```
+
+## File: src/main/java/util/ConfigLoader.java
+```java
+package util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+/**
+ * Utility class to load application configuration from properties file.
+ */
+public class ConfigLoader {
+    private static final Properties properties = new Properties();
+
+    static {
+        try (InputStream input = ConfigLoader.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                System.err.println("Sorry, unable to find db.properties");
+            } else {
+                properties.load(input);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static String get(String key) {
+        return properties.getProperty(key);
+    }
+
+    public static String get(String key, String defaultValue) {
+        return properties.getProperty(key, defaultValue);
+    }
+}
+```
+
+## File: src/main/java/ai/skills/admin/ModerateBotSkills.java
+```java
 package ai.skills.admin;
 
 import dao.UserProfileDAO;
@@ -332,7 +979,15 @@ import java.util.stream.Collectors;
  */
 public class ModerateBotSkills {
 
-    private final UserProfileDAO userProfileDAO = new UserProfileDAO();
+    private final UserProfileDAO userProfileDAO;
+
+    public ModerateBotSkills() {
+        this.userProfileDAO = new UserProfileDAO();
+    }
+
+    public ModerateBotSkills(UserProfileDAO userProfileDAO) {
+        this.userProfileDAO = userProfileDAO;
+    }
 
     @Tool("Lấy danh sách người dùng trong hệ thống (Tên, Email, Vai trò)")
     public String getUserList() {
@@ -367,206 +1022,15 @@ public class ModerateBotSkills {
         }
     }
 }
-</file>
+```
 
-<file path="src/main/java/ai/skills/user/BookBotSkills.java">
-package ai.skills.user;
-
-import dao.DBConnect;
-import dao.InvoiceDAO;
-import dao.SeatDAO;
-import dev.langchain4j.agent.tool.Tool;
-import dev.langchain4j.agent.tool.P;
-import model.BookingHistoryDTO;
-import model.Invoice;
-import model.SeatSelectionDTO;
-import java.sql.Connection;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.math.BigDecimal;
-
-/**
- * Tools for BookBot sub-agent to handle booking flows, history, and interactive confirmations.
- */
-public class BookBotSkills {
-
-    private final InvoiceDAO invoiceDAO = new InvoiceDAO();
-    private final SeatDAO seatDAO = new SeatDAO();
-
-    @Tool("Lấy lịch sử đặt vé của tôi")
-    public String getMyBookingHistory(@P("ID người dùng") int userId) {
-        System.out.println("[AI-DEBUG] Tool getMyBookingHistory called for UserID: " + userId);
-        try {
-            List<BookingHistoryDTO> history = invoiceDAO.getBookingHistory(userId);
-            System.out.println("[AI-DEBUG] Found " + history.size() + " history records");
-            if (history.isEmpty()) return "Bạn chưa có giao dịch nào.";
-
-            return history.stream()
-                .map(h -> String.format("- %s: %s | Suất chiếu: %s %s | Trạng thái: %s", 
-                    h.getMovieTitle(), h.getTicketCode() != null ? h.getTicketCode() : "N/A",
-                    h.getShowDate(), h.getStartTime(), h.getStatus()))
-                .collect(Collectors.joining("\n", "Lịch sử đặt vé của bạn:\n", ""));
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] getMyBookingHistory error: " + e.getMessage());
-            return "Lỗi khi lấy lịch sử: " + e.getMessage();
-        }
-    }
-
-    @Tool("Xem sơ đồ ghế và chọn ghế cho suất chiếu (showtimeId)")
-    public String getSeatMap(@P("ID suất chiếu (showtimeId)") int showtimeId) {
-        System.out.println("[AI-DEBUG] Tool getSeatMap called for ShowtimeID: " + showtimeId);
-        try {
-            List<SeatSelectionDTO> seats = seatDAO.getSeatsByShowtime(showtimeId);
-            System.out.println("[AI-DEBUG] Found " + seats.size() + " seats");
-            if (seats.isEmpty()) return "Không tìm thấy sơ đồ ghế cho suất chiếu này.";
-
-            return seats.stream()
-                .map(s -> String.format("[%s: %s Price:%,.0f]", s.getSeatCode(), s.getStatus(), s.getPrice()))
-                .collect(Collectors.joining(" ", "Sơ đồ ghế (AVAILABLE/BOOKED):\n", ""));
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] getSeatMap error: " + e.getMessage());
-            return "Lỗi khi lấy sơ đồ ghế: " + e.getMessage();
-        }
-    }
-
-    @Tool("Chuẩn bị xác nhận đặt vé (Cần showtimeId và danh sách seatIds)")
-    public String prepareBooking(@P("ID suất chiếu") int showtimeId, @P("Mã ghế (ví dụ: A1, A2)") String seatCodes, @P("Tổng tiền") double totalAmount) {
-        System.out.println("[AI-DEBUG] Tool prepareBooking called: " + showtimeId + ", " + seatCodes);
-        return String.format(
-            "{\"actionType\": \"BOOKING_CONFIRM\", \"data\": {\"showtimeId\": %d, \"seats\": \"%s\", \"total\": %.0f}, \"message\": \"Vui lòng xác nhận để tiến hành đặt ghế và thanh toán.\"}",
-            showtimeId, seatCodes, totalAmount
-        );
-    }
-
-    @Tool("Xác nhận và tiến hành đặt vé sau khi người dùng đã đồng ý (Cần showtimeId, seatCodes, totalAmount)")
-    public String confirmBooking(@P("ID suất chiếu") int showtimeId, @P("Mã ghế") String seatCodes, @P("Tổng tiền") double totalAmount) {
-        System.out.println("[AI-DEBUG] Tool confirmBooking called: " + showtimeId + ", " + seatCodes);
-        try {
-            return String.format(
-                "{\"actionType\": \"BOOKING_SUCCESS\", \"data\": {\"showtimeId\": %d, \"seats\": \"%s\", \"total\": %.0f}, \"message\": \"Đã ghi nhận yêu cầu đặt vé. Vui lòng hoàn tất thanh toán.\"}",
-                showtimeId, seatCodes, totalAmount
-            );
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] confirmBooking error: " + e.getMessage());
-            return "Lỗi khi xác nhận đặt vé: " + e.getMessage();
-        }
-    }
-
-    @Tool("Huỷ hoá đơn hoặc booking đang chờ (invoiceId)")
-    public String cancelInvoice(@P("ID hóa đơn (invoiceId)") int invoiceId) {
-        System.out.println("[AI-DEBUG] Tool cancelInvoice called for InvoiceID: " + invoiceId);
-        try {
-            invoiceDAO.updateStatus(invoiceId, "Canceled");
-            return "Đã hủy hóa đơn thành công.";
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] cancelInvoice error: " + e.getMessage());
-            return "Lỗi khi hủy hóa đơn: " + e.getMessage();
-        }
-    }
-}
-</file>
-
-<file path="src/main/java/ai/skills/user/InfoBotSkills.java">
-package ai.skills.user;
-
-import dao.DBConnect;
-import dao.MovieDAO;
-import dao.ShowtimeDAO;
-import dao.ProductDAO;
-import dev.langchain4j.agent.tool.Tool;
-import dev.langchain4j.agent.tool.P;
-import model.Movie;
-import model.Showtime;
-import model.Product;
-import java.sql.Connection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-/**
- * Tools for InfoBot sub-agent to handle inquiries about movies, showtimes, and products.
- */
-public class InfoBotSkills {
-
-    private final MovieDAO movieDAO = new MovieDAO();
-    private final ShowtimeDAO showtimeDAO = new ShowtimeDAO();
-    private final ProductDAO productDAO = new ProductDAO();
-
-    @Tool("Tìm kiếm phim theo tên hoặc từ khóa liên quan")
-    public String searchMovies(@P("Tên phim hoặc từ khóa tìm kiếm") String query) {
-        System.out.println("[AI-DEBUG] Tool searchMovies called with query: " + query);
-        try (Connection conn = DBConnect.getConnection()) {
-            List<Movie> movies = movieDAO.searchByTitle(conn, query);
-            System.out.println("[AI-DEBUG] Found " + movies.size() + " movies for query: " + query);
-            if (movies.isEmpty()) return "Không tìm thấy phim nào khớp với từ khóa '" + query + "'.";
-
-            return movies.stream()
-                .map(m -> String.format("- %s (ID: %d): %s", m.getTitle(), m.getMovieId(), m.getDescription()))
-                .collect(Collectors.joining("\n", "Tìm thấy các phim sau:\n", ""));
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] searchMovies error: " + e.getMessage());
-            return "Lỗi khi tìm kiếm phim: " + e.getMessage();
-        }
-    }
-
-    @Tool("Lấy danh sách phim đang có tại rạp")
-    public String getAllMovies() {
-        System.out.println("[AI-DEBUG] Tool getAllMovies called");
-        try {
-            List<Movie> movies = movieDAO.getAllMovies();
-            System.out.println("[AI-DEBUG] Found " + movies.size() + " movies in theater");
-            if (movies.isEmpty()) return "Hiện tại rạp chưa có phim nào.";
-
-            return movies.stream()
-                .map(m -> String.format("- %s (ID: %d)", m.getTitle(), m.getMovieId()))
-                .collect(Collectors.joining("\n", "Danh sách phim tại rạp:\n", ""));
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] getAllMovies error: " + e.getMessage());
-            return "Lỗi khi lấy danh sách phim: " + e.getMessage();
-        }
-    }
-
-    @Tool("Lấy lịch chiếu (Showtimes) của một bộ phim dựa trên ID phim")
-    public String getShowtimesForMovie(@P("ID của bộ phim") int movieId) {
-        System.out.println("[AI-DEBUG] Tool getShowtimesForMovie called with ID: " + movieId);
-        try (Connection conn = DBConnect.getConnection()) {
-            List<Showtime> showtimes = showtimeDAO.findByMovie(conn, movieId);
-            System.out.println("[AI-DEBUG] Found " + showtimes.size() + " showtimes for ID: " + movieId);
-            if (showtimes.isEmpty()) return "Hiện chưa có lịch chiếu cho phim này.";
-
-            return showtimes.stream()
-                .map(s -> String.format("- Suất chiếu ID: %d | Ngày %s | Slot ID: %s", s.getShowtimeId(), s.getShowDate(), s.getSlotId()))
-                .collect(Collectors.joining("\n", "Lịch chiếu cho phim (ID " + movieId + "):\n", ""));
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] getShowtimesForMovie error: " + e.getMessage());
-            return "Lỗi khi lấy lịch chiếu: " + e.getMessage();
-        }
-    }
-
-    @Tool("Lấy danh sách combo bắp nước và giá cả")
-    public String getComboProducts() {
-        System.out.println("[AI-DEBUG] Tool getComboProducts called");
-        try {
-            List<Product> products = productDAO.findAll();
-            System.out.println("[AI-DEBUG] Found " + products.size() + " combos");
-            if (products.isEmpty()) return "Hiện không có sản phẩm combo nào.";
-
-            return products.stream()
-                .map(p -> String.format("- %s (ID: %d): %,.0f VND", p.getItemName(), p.getItemId(), p.getPrice()))
-                .collect(Collectors.joining("\n", "Danh sách bắp nước & combo:\n", ""));
-        } catch (Exception e) {
-            System.err.println("[AI-ERROR] getComboProducts error: " + e.getMessage());
-            return "Lỗi khi lấy danh sách sản phẩm: " + e.getMessage();
-        }
-    }
-}
-</file>
-
-<file path="src/main/webapp/views/common/ai-chat-widget.jsp">
+## File: src/main/webapp/views/common/ai-chat-widget.jsp
+```
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="chat-widget-container" id="chatWidgetContainer">
     <!-- Chat Toggle Button -->
     <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
-        <i class="fas fa-robot"></i>
+        <i class="fa-solid fa-robot forced-fa6"></i>
         <span class="chat-badge" id="chatBadge" style="display: none;">1</span>
     </button>
 
@@ -575,7 +1039,7 @@ public class InfoBotSkills {
         <div class="chat-header">
             <div class="d-flex align-items-center gap-2">
                 <div class="bot-avatar">
-                    <i class="fas fa-robot text-white"></i>
+                    <i class="fa-solid fa-robot text-white forced-fa6"></i>
                 </div>
                 <div>
                     <h6 class="mb-0 fw-bold text-white">Cine AI Assistant</h6>
@@ -584,16 +1048,19 @@ public class InfoBotSkills {
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-sm text-white-50 hover-white" onclick="resetChat()" title="Reset session">
-                    <i class="fas fa-sync-alt"></i>
+                    <i class="fa-solid fa-rotate-right"></i>
                 </button>
                 <button class="btn btn-sm text-white-50 hover-white" onclick="toggleChat()">
-                    <i class="fas fa-times"></i>
+                    <i class="fa-solid fa-times"></i>
                 </button>
             </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <div class="message bot-message">
+                <div class="message-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
                 <div class="message-content">
                     Xin chào! Tôi là trợ lý AI của rạp chiếu phim. Bạn cần hỗ trợ gì hôm nay (tìm phim, lịch chiếu, đặt vé...)?
                 </div>
@@ -605,7 +1072,7 @@ public class InfoBotSkills {
                 <div class="input-group">
                     <input type="text" id="chatInput" class="form-control" placeholder="Nhập tin nhắn..." autocomplete="off">
                     <button class="btn btn-primary" type="submit" id="sendBtn">
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
             </form>
@@ -783,6 +1250,41 @@ public class InfoBotSkills {
     40% { transform: scale(1); }
 }
 
+/* Message Avatar */
+.message-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+
+/* Force FA6 rendering */
+.forced-fa6 {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    display: inline-block !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+.bot-message {
+    flex-direction: row !important;
+    gap: 8px;
+}
+
+.user-message {
+    align-items: flex-end;
+}
+
 /* Interactive Actions (JSON payload) */
 .action-card {
     background: rgba(102, 126, 234, 0.1);
@@ -864,19 +1366,26 @@ public class InfoBotSkills {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
         
+        if (sender === 'bot') {
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            avatarDiv.innerHTML = '<i class="fa-solid fa-robot forced-fa6"></i>';
+            msgDiv.appendChild(avatarDiv);
+        }
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         
         if (isHtml) {
             contentDiv.innerHTML = content;
         } else {
-            contentDiv.textContent = content; // format using markdown optionally if library available
+            contentDiv.textContent = content;
         }
         
         msgDiv.appendChild(contentDiv);
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        return contentDiv; // Return reference for appending streaming text
+        return contentDiv; 
     }
 
     function showTyping() {
@@ -960,9 +1469,21 @@ public class InfoBotSkills {
                             if (parsed.status === 'complete') {
                                 checkStructuredJson(accumulatedJson, botMessageContainer);
                             } else if (parsed.token) {
-                                const rawToken = parsed.token.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
-                                accumulatedJson += rawToken;
-                                botMessageContainer.innerHTML += rawToken.replace(/\n/g, '<br>');
+                                accumulatedJson += parsed.token;
+                                // Fix Bug #5: Safe streaming render
+                                const rawToken = parsed.token;
+                                if (rawToken.includes('\n')) {
+                                    // Handle newlines safely
+                                    const parts = rawToken.split('\n');
+                                    for (let i = 0; i < parts.length; i++) {
+                                        botMessageContainer.appendChild(document.createTextNode(parts[i]));
+                                        if (i < parts.length - 1) {
+                                            botMessageContainer.appendChild(document.createElement('br'));
+                                        }
+                                    }
+                                } else {
+                                    botMessageContainer.appendChild(document.createTextNode(rawToken));
+                                }
                                 document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
                             } else if (parsed.error) {
                                 botMessageContainer.innerHTML += `<div class="alert alert-danger p-2 small mt-2">AI Error: ${parsed.error}</div>`;
@@ -980,7 +1501,16 @@ public class InfoBotSkills {
                  try {
                      const parsed = JSON.parse(dataStr);
                      if (parsed.token) {
-                         botMessageContainer.innerHTML += parsed.token.replace(/\\n/g, '\n').replace(/\n/g, '<br>');
+                         const rawToken = parsed.token.replace(/\\n/g, '\n');
+                         if (rawToken.includes('\n')) {
+                             const parts = rawToken.split('\n');
+                             for (let i = 0; i < parts.length; i++) {
+                                 botMessageContainer.appendChild(document.createTextNode(parts[i]));
+                                 if (i < parts.length - 1) botMessageContainer.appendChild(document.createElement('br'));
+                             }
+                         } else {
+                             botMessageContainer.appendChild(document.createTextNode(rawToken));
+                         }
                      }
                  } catch(e) {}
             }
@@ -1002,18 +1532,17 @@ public class InfoBotSkills {
             try {
                 const data = JSON.parse(fullText);
                 if (data.actionType === 'BOOKING_CONFIRM') {
-                    // It's an interactive action, replace the raw JSON text with UI
-                    const details = data.details || {};
+                    // Fix Bug #4: Sync with backend payload keys
+                    const details = data.data || {}; 
                     const html = `
                         <div class="mb-2">Đây là thông tin xác nhận đặt vé của bạn:</div>
                         <div class="action-card">
                             <div class="small mb-1"><strong>Phim:</strong> \${details.movieName || 'N/A'}</div>
-                            <div class="small mb-1"><strong>Suất:</strong> \${details.showTime || 'N/A'} - \${details.showDate || 'N/A'}</div>
                             <div class="small mb-1"><strong>Ghế:</strong> \${details.seats || 'N/A'}</div>
-                            <div class="small mb-1"><strong>Tổng tiền:</strong> \${details.totalPrice || '0'} VNĐ</div>
+                            <div class="small mb-1"><strong>Tổng tiền:</strong> \${Number(details.total).toLocaleString()} VNĐ</div>
                             
-                            <button class="action-btn" onclick="executeSilentAction('Tôi xác nhận đặt vé cho phim \${details.movieName}')">
-                                Xác Nhận & Thanh Toán <i class="fas fa-check-circle ms-1"></i>
+                            <button class="action-btn" onclick="executeSilentAction('Tôi xác nhận đặt vé phim \${details.movieName.replace(/'/g, "\\'")} ghế \${details.seats}')">
+                                Xác Nhận & Thanh Toán <i class="fa-solid fa-check-circle forced-fa6 ms-1"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="executeSilentAction('Hủy quá trình đặt vé')">
                                 Hủy Bỏ
@@ -1051,143 +1580,1136 @@ public class InfoBotSkills {
         }
     }
 </script>
-</file>
+```
 
-<file path="src/main/java/dao/ChatMessageDAO.java">
+## File: src/main/java/ai/skills/admin/AnalystBotSkills.java
+```java
+package ai.skills.admin;
+
+import dev.langchain4j.agent.tool.Tool;
+import service.IncomeStatictisService;
+import service.TicketManagementService;
+import service.SeatFillRate_ViewService;
+import service.ForecastService;
+import model.Movie_Ticket_ViewDTO;
+import model.ForecastResult;
+import model.ForecastDTO;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+/**
+ * Tools for AnalystBot sub-agent to handle statistics, performance metrics, and forecasting.
+ * Now encapsulates the intelligence logic previously in ForecastService.
+ */
+public class AnalystBotSkills {
+
+    private final IncomeStatictisService incomeService;
+    private final TicketManagementService ticketService;
+    private final SeatFillRate_ViewService seatService;
+    private final ForecastService forecastService;
+
+    public AnalystBotSkills() {
+        this.incomeService = new IncomeStatictisService();
+        this.ticketService = new TicketManagementService();
+        this.seatService = new SeatFillRate_ViewService();
+        this.forecastService = new ForecastService();
+    }
+
+    public AnalystBotSkills(IncomeStatictisService incomeService, TicketManagementService ticketService, SeatFillRate_ViewService seatService, ForecastService forecastService) {
+        this.incomeService = incomeService;
+        this.ticketService = ticketService;
+        this.seatService = seatService;
+        this.forecastService = forecastService;
+    }
+
+    @Tool("Lấy báo cáo doanh thu tổng quan bao gồm doanh thu ngày, tháng, năm")
+    public String getRevenueSummary() {
+        double daily = incomeService.getDaylyRevenue();
+        double monthly = incomeService.calculateTotalRevenue();
+        double yearly = incomeService.getYearlyRevenue();
+
+        return String.format(
+            Locale.GERMAN,
+            "Báo cáo doanh thu:\n- Hôm nay: %,.0f VND\n- Tháng này: %,.0f VND\n- Năm nay: %,.0f VND",
+            daily, monthly, yearly
+        );
+    }
+
+    @Tool("Lấy danh sách các phim bán chạy nhất (Top Movies)")
+    public String getTopPerformingMovies() {
+        try {
+            List<Movie_Ticket_ViewDTO> topMovies = ticketService.getAllOfPageNumber(1);
+            if (topMovies == null || topMovies.isEmpty()) return "Chưa có dữ liệu phim bán chạy.";
+
+            return topMovies.stream()
+                .limit(5)
+                .map(m -> String.format(Locale.GERMAN, "- %s: %d vé, %,.0f VND", m.getTitle(), m.getTicketsSold(), m.getRevenue()))
+                .collect(Collectors.joining("\n", "Top 5 phim bán chạy nhất:\n", ""));
+        } catch (Exception e) {
+            return "Lỗi khi lấy dữ liệu phim: " + e.getMessage();
+        }
+    }
+
+    @Tool("Dự báo doanh thu và số lượng vé bán trong 7 ngày tới (Sử dụng AI)")
+    public String get7DayForecast() {
+        try {
+            // AnalystBot logic: ForecastService now performs the heavy lifting and LLM call
+            // We keep the service call but centralize the "Identity" of the analyst here.
+            ForecastResult result = forecastService.get7DayForecast();
+            List<ForecastDTO> futureData = result.getDailyData().stream()
+                .filter(ForecastDTO::isFuture)
+                .collect(Collectors.toList());
+
+            double totalRevenue = futureData.stream().mapToDouble(ForecastDTO::getForecastRevenue).sum();
+            int totalTickets = futureData.stream().mapToInt(ForecastDTO::getForecastTickets).sum();
+            
+            return String.format(
+                Locale.GERMAN,
+                "Dự báo 7 ngày tới:\n- Tổng doanh thu dự kiến: %,.0f VND\n- Tổng số vé dự kiến: %,d vé\n- Phân tích chi tiết: %s",
+                totalRevenue, totalTickets, result.getAnalysis()
+            );
+        } catch (Exception e) {
+            return "Lỗi khi dự báo: " + e.getMessage();
+        }
+    }
+
+    @Tool("Lấy dữ liệu thô (Raw Data) của 14 ngày qua để tự phân tích")
+    public String getHistoricalData() {
+        try {
+            ForecastResult result = forecastService.get7DayForecast();
+            return result.getDailyData().stream()
+                .filter(d -> !d.isFuture())
+                .map(d -> String.format("%s: %,.0f VND, %d vé", d.getDate(), d.getActualRevenue(), d.getActualTickets()))
+                .collect(Collectors.joining("\n", "Dữ liệu lịch sử 14 ngày qua:\n", ""));
+        } catch (Exception e) {
+            return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    @Tool("Lấy tỉ lệ lấp đầy ghế (Seat Fill Rate) trung bình tháng này")
+    public String getMonthlySeatFillRate() {
+        try {
+            double rate = seatService.getSeatFillRateCurrentMonth();
+            return String.format("Tỉ lệ lấp đầy ghế trung bình tháng này: %.2f%%", rate * 100);
+        } catch (Exception e) {
+            return "Lỗi khi lấy tỉ lệ lấp đầy: " + e.getMessage();
+        }
+    }
+}
+```
+
+## File: src/main/java/ai/skills/admin/MarketingBotSkills.java
+```java
+package ai.skills.admin;
+
+import dao.DBConnect;
+import dao.MovieDAO;
+import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.agent.tool.P;
+import model.Movie;
+import service.TicketManagementService;
+import java.sql.Connection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Tools for MarketingBot sub-agent to retrieve context for content generation.
+ */
+public class MarketingBotSkills {
+
+    private final MovieDAO movieDAO;
+
+    public MarketingBotSkills() {
+        this.movieDAO = new MovieDAO();
+    }
+
+    public MarketingBotSkills(MovieDAO movieDAO) {
+        this.movieDAO = movieDAO;
+    }
+
+    @Tool("Lấy thông tin chi tiết phim để viết bài quảng cáo (ID phim)")
+    public String getMovieDetailsForMarketing(@P("ID phim") int movieId) {
+        try (Connection conn = DBConnect.getConnection()) {
+            Movie movie = movieDAO.findById(conn, movieId);
+            if (movie == null) return "Không tìm thấy phim.";
+            return String.format("Phim: %s\nRating: %s\nMô tả: %s", 
+                movie.getTitle(), movie.getAgeRating(), movie.getDescription());
+        } catch (Exception e) {
+            return "Lỗi: " + e.getMessage();
+        }
+    }
+
+    @Tool("Lấy danh sách phim để chọn làm mục tiêu marketing")
+    public String getMoviesForMarketing() {
+        try {
+            List<Movie> movies = movieDAO.getAllMovies();
+            return movies.stream()
+                .limit(10)
+                .map(m -> String.format("- %s (ID: %d)", m.getTitle(), m.getMovieId()))
+                .collect(Collectors.joining("\n", "Danh sách phim:\n", ""));
+        } catch (Exception e) {
+            return "Lỗi: " + e.getMessage();
+        }
+    }
+}
+```
+
+## File: src/main/java/ai/skills/user/BookBotSkills.java
+```java
+package ai.skills.user;
+
+import dao.DBConnect;
+import dao.InvoiceDAO;
+import dao.SeatDAO;
+import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.agent.tool.P;
+import model.BookingHistoryDTO;
+import model.Invoice;
+import model.SeatSelectionDTO;
+import java.sql.Connection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.math.BigDecimal;
+
+/**
+ * Tools for BookBot sub-agent to handle booking flows, history, and interactive confirmations.
+ */
+public class BookBotSkills {
+
+    private final InvoiceDAO invoiceDAO;
+    private final SeatDAO seatDAO;
+    private final dao.TicketDetailDAO ticketDAO;
+    private final int userId;
+
+    public BookBotSkills(int userId) {
+        this.userId = userId;
+        this.invoiceDAO = new InvoiceDAO();
+        this.seatDAO = new SeatDAO();
+        this.ticketDAO = new dao.TicketDetailDAO();
+    }
+
+    public BookBotSkills(int userId, InvoiceDAO invoiceDAO, SeatDAO seatDAO, dao.TicketDetailDAO ticketDAO) {
+        this.userId = userId;
+        this.invoiceDAO = invoiceDAO;
+        this.seatDAO = seatDAO;
+        this.ticketDAO = ticketDAO;
+    }
+
+    protected Connection getConnection() throws java.sql.SQLException {
+        return DBConnect.getConnection();
+    }
+
+    @Tool("Lấy lịch sử đặt vé của tôi")
+    public String getMyBookingHistory() {
+        System.out.println("[AI-DEBUG] Tool getMyBookingHistory called for UserID: " + this.userId);
+        try {
+            List<BookingHistoryDTO> history = invoiceDAO.getBookingHistory(this.userId);
+            System.out.println("[AI-DEBUG] Found " + history.size() + " history records");
+            if (history.isEmpty()) return "Bạn chưa có giao dịch nào.";
+
+            return history.stream()
+                .map(h -> String.format("- %s: %s | Suất chiếu: %s %s | Trạng thái: %s", 
+                    h.getMovieTitle(), h.getTicketCode() != null ? h.getTicketCode() : "N/A",
+                    h.getShowDate(), h.getStartTime(), h.getStatus()))
+                .collect(Collectors.joining("\n", "Lịch sử đặt vé của bạn:\n", ""));
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] getMyBookingHistory error: " + e.getMessage());
+            return "Lỗi khi lấy lịch sử: " + e.getMessage();
+        }
+    }
+
+    @Tool("Xem sơ đồ ghế và chọn ghế cho suất chiếu (showtimeId)")
+    public String getSeatMap(@P("ID suất chiếu (showtimeId)") int showtimeId) {
+        System.out.println("[AI-DEBUG] Tool getSeatMap called for ShowtimeID: " + showtimeId);
+        try {
+            List<SeatSelectionDTO> seats = seatDAO.getSeatsByShowtime(showtimeId);
+            System.out.println("[AI-DEBUG] Found " + seats.size() + " seats");
+            if (seats.isEmpty()) return "Không tìm thấy sơ đồ ghế cho suất chiếu này.";
+
+            return seats.stream()
+                .map(s -> String.format("[%s: %s Price:%,.0f]", s.getSeatCode(), s.getStatus(), s.getPrice()))
+                .collect(Collectors.joining(" ", "Sơ đồ ghế (AVAILABLE/BOOKED):\n", ""));
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] getSeatMap error: " + e.getMessage());
+            return "Lỗi khi lấy sơ đồ ghế: " + e.getMessage();
+        }
+    }
+
+    @Tool("Chuẩn bị xác nhận đặt vé (Cần showtimeId, movieName và danh sách seatIds)")
+    public String prepareBooking(@P("ID suất chiếu") int showtimeId, @P("Tên phim") String movieName, @P("Mã ghế (ví dụ: A1, A2)") String seatCodes, @P("Tổng tiền") double totalAmount) {
+        System.out.println("[AI-DEBUG] Tool prepareBooking called: " + showtimeId + ", " + seatCodes);
+        return String.format(
+            "{\"actionType\": \"BOOKING_CONFIRM\", \"data\": {\"showtimeId\": %d, \"movieName\": \"%s\", \"seats\": \"%s\", \"total\": %.0f}, \"message\": \"Vui lòng xác nhận để tiến hành đặt ghế và thanh toán.\"}",
+            showtimeId, movieName, seatCodes, totalAmount
+        );
+    }
+
+    @Tool("Xác nhận và tiến hành đặt vé sau khi người dùng đã đồng ý (Cần showtimeId, seatCodes, totalAmount)")
+    public String confirmBooking(@P("ID suất chiếu") int showtimeId, @P("Mã ghế") String seatCodes, @P("Tổng tiền") double totalAmount) {
+        System.out.println("[AI-DEBUG] Tool confirmBooking called for UserID: " + this.userId + ", Showtime: " + showtimeId + ", Seats: " + seatCodes);
+        
+        if (this.userId <= 0) {
+            return "Vui lòng đăng nhập để thực hiện đặt vé.";
+        }
+        
+        try {
+            // 1. Prepare seats to register
+            String[] targetCodesArray = seatCodes.toUpperCase().split("[,\\s/]+");
+            java.util.Set<String> targetCodes = java.util.Arrays.stream(targetCodesArray)
+                .filter(s -> !s.isEmpty())
+                .collect(java.util.stream.Collectors.toSet());
+                
+            List<SeatSelectionDTO> allSeats = seatDAO.getSeatsByShowtime(showtimeId);
+            List<SeatSelectionDTO> matchedSeats = allSeats.stream()
+                .filter(s -> targetCodes.contains(s.getSeatCode().toUpperCase()))
+                .collect(Collectors.toList());
+
+            if (matchedSeats.size() < targetCodes.size()) {
+                return "Một số ghế bạn chọn không tồn tại trong hệ thống. Vui lòng kiểm tra sơ đồ ghế.";
+            }
+            
+            // Check availability
+            for (SeatSelectionDTO seat : matchedSeats) {
+                if ("BOOKED".equalsIgnoreCase(seat.getStatus())) {
+                    return "Ghế " + seat.getSeatCode() + " đã có người đặt trước. Vui lòng chọn ghế khác.";
+                }
+            }
+
+            // 2. Create Invoice object
+            Invoice invoice = new Invoice();
+            invoice.setUserId(this.userId);
+            invoice.setShowtimeId(showtimeId);
+            invoice.setTotalAmount(new java.math.BigDecimal(totalAmount));
+            invoice.setStatus("PENDING");
+            
+            // 3. Persist to DB
+            try (Connection conn = getConnection()) {
+                if (conn == null) throw new Exception("Không thể kết nối database.");
+                conn.setAutoCommit(false);
+                try {
+                    int invoiceId = invoiceDAO.insert(conn, invoice);
+                    
+                    // 4. Register tickets
+                    List<model.TicketDetail> tickets = matchedSeats.stream().map(s -> {
+                        model.TicketDetail t = new model.TicketDetail();
+                        t.setInvoiceId(invoiceId);
+                        t.setSeatId(s.getSeatId());
+                        t.setShowtimeId(showtimeId);
+                        t.setActualPrice(new java.math.BigDecimal(s.getPrice()));
+                        return t;
+                    }).collect(Collectors.toList());
+                    
+                    ticketDAO.insertBatch(conn, tickets);
+                    
+                    conn.commit();
+                    return String.format(
+                        "{\"actionType\": \"BOOKING_SUCCESS\", \"data\": {\"invoiceId\": %d, \"showtimeId\": %d, \"seats\": \"%s\", \"total\": %.0f}, \"message\": \"Đặt vé thành công! Mã hóa đơn của bạn là #%d. Vui lòng hoàn tất thanh toán.\"}",
+                        invoiceId, showtimeId, seatCodes, totalAmount, invoiceId
+                    );
+                } catch (Exception e) {
+                    if (conn != null) conn.rollback();
+                    throw e;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] confirmBooking error: " + e.getMessage());
+            e.printStackTrace();
+            return "Lỗi khi xử lý đặt vé: " + e.getMessage();
+        }
+    }
+
+    @Tool("Huỷ hoá đơn hoặc booking đang chờ (invoiceId)")
+    public String cancelInvoice(@P("ID hóa đơn (invoiceId)") int invoiceId) {
+        System.out.println("[AI-DEBUG] Tool cancelInvoice called for InvoiceID: " + invoiceId);
+        try {
+            invoiceDAO.updateStatus(invoiceId, "Canceled");
+            return "Đã hủy hóa đơn thành công.";
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] cancelInvoice error: " + e.getMessage());
+            return "Lỗi khi hủy hóa đơn: " + e.getMessage();
+        }
+    }
+}
+```
+
+## File: src/main/java/ai/skills/user/InfoBotSkills.java
+```java
+package ai.skills.user;
+
+import dao.DBConnect;
+import dao.MovieDAO;
+import dao.ShowtimeDAO;
+import dao.ProductDAO;
+import dev.langchain4j.agent.tool.Tool;
+import dev.langchain4j.agent.tool.P;
+import model.Movie;
+import model.Showtime;
+import model.Product;
+import java.sql.Connection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Tools for InfoBot sub-agent to handle inquiries about movies, showtimes, and products.
+ */
+public class InfoBotSkills {
+
+    private final MovieDAO movieDAO;
+    private final ShowtimeDAO showtimeDAO;
+    private final ProductDAO productDAO;
+
+    public InfoBotSkills() {
+        this.movieDAO = new MovieDAO();
+        this.showtimeDAO = new ShowtimeDAO();
+        this.productDAO = new ProductDAO();
+    }
+
+    public InfoBotSkills(MovieDAO movieDAO, ShowtimeDAO showtimeDAO, ProductDAO productDAO) {
+        this.movieDAO = movieDAO;
+        this.showtimeDAO = showtimeDAO;
+        this.productDAO = productDAO;
+    }
+
+    @Tool("Tìm kiếm phim theo tên hoặc từ khóa liên quan")
+    public String searchMovies(@P("Tên phim hoặc từ khóa tìm kiếm") String query) {
+        System.out.println("[AI-DEBUG] Tool searchMovies called with query: " + query);
+        try (Connection conn = DBConnect.getConnection()) {
+            List<Movie> movies = movieDAO.searchByTitle(conn, query);
+            System.out.println("[AI-DEBUG] Found " + movies.size() + " movies for query: " + query);
+            if (movies.isEmpty()) return "Không tìm thấy phim nào khớp với từ khóa '" + query + "'.";
+
+            return movies.stream()
+                .map(m -> String.format("- %s (ID: %d): %s", m.getTitle(), m.getMovieId(), m.getDescription()))
+                .collect(Collectors.joining("\n", "Tìm thấy các phim sau:\n", ""));
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] searchMovies error: " + e.getMessage());
+            return "Lỗi khi tìm kiếm phim: " + e.getMessage();
+        }
+    }
+
+    @Tool("Lấy danh sách phim đang có tại rạp")
+    public String getAllMovies() {
+        System.out.println("[AI-DEBUG] Tool getAllMovies called");
+        try {
+            List<Movie> movies = movieDAO.getAllMovies();
+            System.out.println("[AI-DEBUG] Found " + movies.size() + " movies in theater");
+            if (movies.isEmpty()) return "Hiện tại rạp chưa có phim nào.";
+
+            return movies.stream()
+                .map(m -> String.format("- %s (ID: %d)", m.getTitle(), m.getMovieId()))
+                .collect(Collectors.joining("\n", "Danh sách phim tại rạp:\n", ""));
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] getAllMovies error: " + e.getMessage());
+            return "Lỗi khi lấy danh sách phim: " + e.getMessage();
+        }
+    }
+
+    @Tool("Lấy lịch chiếu (Showtimes) của một bộ phim dựa trên ID phim")
+    public String getShowtimesForMovie(@P("ID của bộ phim") int movieId) {
+        System.out.println("[AI-DEBUG] Tool getShowtimesForMovie called with ID: " + movieId);
+        try (Connection conn = DBConnect.getConnection()) {
+            List<Showtime> showtimes = showtimeDAO.findByMovie(conn, movieId);
+            System.out.println("[AI-DEBUG] Found " + showtimes.size() + " showtimes for ID: " + movieId);
+            if (showtimes.isEmpty()) return "Hiện chưa có lịch chiếu cho phim này.";
+
+            return showtimes.stream()
+                .map(s -> String.format("- Suất chiếu ID: %d | Ngày %s | Slot ID: %s", s.getShowtimeId(), s.getShowDate(), s.getSlotId()))
+                .collect(Collectors.joining("\n", "Lịch chiếu cho phim (ID " + movieId + "):\n", ""));
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] getShowtimesForMovie error: " + e.getMessage());
+            return "Lỗi khi lấy lịch chiếu: " + e.getMessage();
+        }
+    }
+
+    @Tool("Lấy danh sách combo bắp nước và giá cả")
+    public String getComboProducts() {
+        System.out.println("[AI-DEBUG] Tool getComboProducts called");
+        try {
+            List<Product> products = productDAO.findAll();
+            System.out.println("[AI-DEBUG] Found " + products.size() + " combos");
+            if (products.isEmpty()) return "Hiện không có sản phẩm combo nào.";
+
+            return products.stream()
+                .map(p -> String.format("- %s (ID: %d): %,.0f VND", p.getItemName(), p.getItemId(), p.getPrice()))
+                .collect(Collectors.joining("\n", "Danh sách bắp nước & combo:\n", ""));
+        } catch (Exception e) {
+            System.err.println("[AI-ERROR] getComboProducts error: " + e.getMessage());
+            return "Lỗi khi lấy danh sách sản phẩm: " + e.getMessage();
+        }
+    }
+}
+```
+
+## File: src/main/java/dao/InvoiceDAO.java
+```java
 package dao;
 
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.SystemMessage;
-import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import model.Invoice;
+
+public class InvoiceDAO {
+
+    public int insert(Connection conn, Invoice invoice) throws SQLException {
+
+        String sql = """
+                    INSERT INTO invoices
+                    (user_id, showtime_id, booking_time, expiry_time, total_amount, status)
+                    VALUES (?, ?, GETDATE(), DATEADD(MINUTE, 5, GETDATE()), ?, 'PENDING')
+                """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, invoice.getUserId());
+            ps.setInt(2, invoice.getShowtimeId());
+            ps.setBigDecimal(3, invoice.getTotalAmount());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next())
+                    return rs.getInt(1);
+            }
+        }
+
+        throw new SQLException("Insert invoice failed");
+    }
+
+    public void cleanupExpiredInvoices() {
+        String deleteTicket = """
+                    DELETE td
+                    FROM ticket_details td
+                    JOIN invoices i ON td.invoice_id = i.invoice_id
+                    WHERE i.status = 'Pending'
+                      AND i.expiry_time < GETDATE()
+                """;
+
+        String cancelInvoice = """
+                    UPDATE invoices
+                    SET status = 'Canceled'
+                    WHERE status = 'Pending'
+                      AND expiry_time < GETDATE()
+                """;
+
+        try (Connection con = DBConnect.getConnection();
+                Statement st = con.createStatement()) {
+
+            st.executeUpdate(deleteTicket);
+            st.executeUpdate(cancelInvoice);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public model.Invoice findById(int invoiceId) throws SQLException {
+        String sql = "SELECT * FROM invoices WHERE invoice_id = ?";
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, invoiceId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Invoice inv = new Invoice();
+                inv.setInvoiceId(rs.getInt("invoice_id"));
+                inv.setUserId(rs.getInt("user_id"));
+                inv.setShowtimeId(rs.getInt("showtime_id"));
+                inv.setTotalAmount(rs.getBigDecimal("total_amount"));
+                inv.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
+                inv.setStatus(rs.getString("status"));
+                return inv;
+            }
+        }
+        return null;
+    }
+
+    public void updateStatus(int invoiceId, String status) throws SQLException {
+        String sql = "UPDATE invoices SET status = ? WHERE invoice_id = ?";
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, invoiceId);
+            ps.executeUpdate();
+        }
+    }
+
+    /*
+     * =========================
+     * UPDATE TOTAL AMOUNT
+     * =========================
+     */
+    public void updateTotalAmount(Connection conn, int invoiceId, double total)
+            throws SQLException {
+
+        String sql = "UPDATE invoices SET total_amount = ? WHERE invoice_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, total);
+            ps.setInt(2, invoiceId);
+            ps.executeUpdate();
+        }
+    }
+
+    /*
+     * =========================
+     * AUTO CANCEL EXPIRED
+     * =========================
+     */
+    public void cancelExpiredInvoices(Connection conn) throws SQLException {
+        String sql = """
+                    UPDATE invoices
+                    SET status = 'Canceled'
+                    WHERE status = 'Pending'
+                      AND expiry_time < GETDATE()
+                """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.executeUpdate();
+        }
+    }
+
+    /*
+     * =========================
+     * MAP RESULTSET
+     * =========================
+     */
+    private Invoice mapRow(ResultSet rs) throws SQLException {
+        Invoice inv = new Invoice();
+        inv.setInvoiceId(rs.getInt("invoice_id"));
+        inv.setUserId(rs.getInt("user_id"));
+        inv.setShowtimeId(rs.getInt("showtime_id"));
+        inv.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
+
+        Timestamp exp = rs.getTimestamp("expiry_time");
+        if (exp != null) {
+            inv.setExpiryTime(exp.toLocalDateTime());
+        }
+
+        inv.setStatus(rs.getString("status"));
+        inv.setTotalAmount(rs.getBigDecimal("total_amount"));
+        inv.setTicketCode(rs.getString("ticket_code"));
+        return inv;
+    }
+
+    // bo sung by Dat
+    // ham lay tong doanh thu
+    public double calculateRevenue() {
+        String GET_MONTHLY_REVENUE = "SELECT ISNULL(SUM(total_amount), 0) AS monthly_revenue " +
+                "FROM invoices " +
+                "WHERE status = N'Paid' " +
+                "AND booking_time >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) " +
+                "AND booking_time < DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))";
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(GET_MONTHLY_REVENUE);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                revenue = rs.getDouble("monthly_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
+    // lay tong tien do an trong thang do ban duoc
+    public double getMonthlyProductRevenue() {
+        String GET_MONTHLY_PRODUCT_REVENUE = "SELECT ISNULL(SUM(pd.quantity * p.price), 0) AS product_revenue " +
+                "FROM invoices i " +
+                "JOIN products_details pd ON i.invoice_id = pd.invoice_id " +
+                "JOIN products p ON pd.item_id = p.item_id " +
+                "WHERE i.status = N'Paid' " +
+                "AND i.booking_time >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) " +
+                "AND i.booking_time <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))";
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(GET_MONTHLY_PRODUCT_REVENUE);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                revenue = rs.getDouble("product_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
+    // lay tong tien ban ve trong do
+    public double getMonthlyTicketRevenue() {
+        String GET_MONTHLY_TICKET_REVENUE = "SELECT ISNULL(SUM(td.actual_price), 0) AS ticket_revenue " +
+                "FROM invoices i " +
+                "JOIN ticket_details td ON i.invoice_id = td.invoice_id " +
+                "WHERE i.status = N'Paid' " +
+                "AND i.booking_time >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) " +
+                "AND i.booking_time <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))";
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(GET_MONTHLY_TICKET_REVENUE);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                revenue = rs.getDouble("ticket_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
+    // lay tong doanh thu trong ngay
+    public double getDailyRevenue() {
+        String GET_DAILY_REVENUE = "SELECT ISNULL(SUM(total_amount), 0) AS daily_revenue " +
+                "FROM invoices " +
+                "WHERE status = N'Paid' " +
+                "AND CAST(booking_time AS DATE) = CAST(GETDATE() AS DATE)";
+
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(GET_DAILY_REVENUE);
+                ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                revenue = rs.getDouble("daily_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
+    // lay tong doanh thu trong nam
+    public double getYearlyRevenue() {
+        String GET_YEARLY_REVENUE = "SELECT ISNULL(SUM(total_amount), 0) AS yearly_revenue " +
+                "FROM invoices " +
+                "WHERE status = N'Paid' " +
+                "AND booking_time >= DATEFROMPARTS(YEAR(GETDATE()), 1, 1) " +
+                "AND booking_time <  DATEADD(YEAR, 1, DATEFROMPARTS(YEAR(GETDATE()), 1, 1))";
+
+        double revenue = 0;
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(GET_YEARLY_REVENUE);
+                ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                revenue = rs.getDouble("yearly_revenue");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
+    /**
+     * Get booking history for a specific user
+     * 
+     * @param userId User's account ID
+     * @return List of BookingHistoryDTO ordered by booking time (newest first)
+     */
+    public List<model.BookingHistoryDTO> getBookingHistory(int userId) {
+        String sql = """
+                    SELECT
+                        i.invoice_id,
+                        i.booking_time,
+                        i.status,
+                        i.total_amount,
+                        i.ticket_code,
+                        m.title AS movie_title,
+                        m.poster_url,
+                        s.show_date,
+                        sl.start_time,
+                        sl.end_time,
+                        ch.hall_name,
+                        STRING_AGG(se.seat_code, ', ') AS seat_codes
+                    FROM invoices i
+                    JOIN showtimes s ON i.showtime_id = s.showtime_id
+                    JOIN movies m ON s.movie_id = m.movie_id
+                    JOIN cinema_halls ch ON s.hall_id = ch.hall_id
+                    JOIN time_slots sl ON s.slot_id = sl.slot_id
+                    LEFT JOIN ticket_details td ON i.invoice_id = td.invoice_id
+                    LEFT JOIN seats se ON td.seat_id = se.seat_id
+                    WHERE i.user_id = ?
+                    GROUP BY i.invoice_id, i.booking_time, i.status, i.total_amount, i.ticket_code,
+                             m.title, m.poster_url, s.show_date, sl.start_time, sl.end_time, ch.hall_name
+                    ORDER BY i.booking_time DESC
+                """;
+
+        List<model.BookingHistoryDTO> history = new ArrayList<>();
+
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            System.out.println("DEBUG - InvoiceDAO.getBookingHistory() - userId: " + userId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                model.BookingHistoryDTO dto = new model.BookingHistoryDTO();
+                dto.setInvoiceId(rs.getInt("invoice_id"));
+                dto.setBookingTime(rs.getTimestamp("booking_time").toLocalDateTime());
+                dto.setStatus(rs.getString("status"));
+                dto.setTotalAmount(rs.getBigDecimal("total_amount"));
+                dto.setTicketCode(rs.getString("ticket_code"));
+                dto.setMovieTitle(rs.getString("movie_title"));
+                dto.setPosterUrl(rs.getString("poster_url"));
+                dto.setShowDate(rs.getDate("show_date").toLocalDate());
+                dto.setStartTime(rs.getTime("start_time").toLocalTime());
+                dto.setEndTime(rs.getTime("end_time").toLocalTime());
+                dto.setHallName(rs.getString("hall_name"));
+                dto.setSeatCodes(rs.getString("seat_codes"));
+
+                history.add(dto);
+            }
+
+            System.out.println("DEBUG - InvoiceDAO.getBookingHistory() - Found " + history.size() + " bookings");
+        } catch (SQLException e) {
+            System.err.println("ERROR - InvoiceDAO.getBookingHistory() - SQLException: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return history;
+    }
+
+    /**
+     * Get daily revenue history for the last N days
+     */
+    public Map<LocalDate, Double> getDailyRevenueHistory(int days) {
+        String sql = """
+                    SELECT CAST(booking_time AS DATE) as gap_date, SUM(total_amount) as daily_revenue
+                    FROM invoices
+                    WHERE status = 'Paid'
+                      AND booking_time >= DATEADD(DAY, -?, GETDATE())
+                    GROUP BY CAST(booking_time AS DATE)
+                    ORDER BY gap_date ASC
+                """;
+        Map<LocalDate, Double> history = new LinkedHashMap<>();
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, days);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                history.put(rs.getDate("gap_date").toLocalDate(), rs.getDouble("daily_revenue"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return history;
+    }
+
+}
+```
+
+## File: src/main/java/dao/MovieDAO.java
+```java
+package dao;
+
+import model.Movie;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Custom ChatMemoryStore that persists messages to SQL Server database.
- * Auto-called by LangChain4j when managing chat memory.
- */
-public class ChatMessageDAO implements ChatMemoryStore {
+public class MovieDAO {
 
-    @Override
-    public List<ChatMessage> getMessages(Object memoryId) {
-        String sessionId = memoryId.toString();
-        List<ChatMessage> history = new ArrayList<>();
-        
-        // Retrieve the last 20 messages, ordered oldest to newest for LangChain context window
-        String sql = "SELECT role, content FROM (" +
-                     "   SELECT TOP 20 role, content, created_at FROM chat_messages " +
-                     "   WHERE session_id = ? ORDER BY created_at DESC" +
-                     ") AS recent_msgs ORDER BY created_at ASC";
-        
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setString(1, sessionId);
-            
+    /* =========================
+       FIND BY ID
+       ========================= */
+    public Movie findById(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM movies WHERE movie_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String role = rs.getString("role");
-                    String content = rs.getString("content");
-                    
-                    if ("user".equalsIgnoreCase(role)) {
-                        history.add(new UserMessage(content));
-                    } else if ("assistant".equalsIgnoreCase(role)) {
-                        history.add(new AiMessage(content));
-                    } else if ("system".equalsIgnoreCase(role)) {
-                        history.add(new SystemMessage(content));
-                    }
+                if (rs.next()) {
+                    return mapRow(rs);
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("Error loading chat memory from DB: " + e.getMessage());
-        }
-        
-        return history;
-    }
-
-    @Override
-    public void updateMessages(Object memoryId, List<ChatMessage> messages) {
-        String sessionId = memoryId.toString();
-        Integer userId = extractUserIdFromSessionId(sessionId); // Or null if unavailable here
-        
-        // Logic: The most efficient way is to append ONLY the newest message. 
-        // Langchain provides the FULL list. We need to persist only what's missing, OR just the last message.
-        // For simplicity and to avoid duplicates, we can clear the session and re-insert the list, 
-        // OR better: we handle insert manually in Servlet, but wait, ChatMemoryStore is meant to sync.
-        
-        // Actually, deleting old and re-inserting is safest for window sliding (it keeps only 20 in DB too).
-        // Let's implement full sync to keep the window perfectly mirrored in DB.
-        
-        String deleteSql = "DELETE FROM chat_messages WHERE session_id = ?";
-        String insertSql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
-        
-        try (Connection conn = DBConnect.getConnection()) {
-            if (conn == null) return;
-            conn.setAutoCommit(false); // Transaction
-            
-            try {
-                try (PreparedStatement psDel = conn.prepareStatement(deleteSql)) {
-                    psDel.setString(1, sessionId);
-                    psDel.executeUpdate();
-                }
-                
-                try (PreparedStatement psIns = conn.prepareStatement(insertSql)) {
-                    for (ChatMessage msg : messages) {
-                        psIns.setString(1, sessionId);
-                        if (userId != null && userId > 0) {
-                            psIns.setInt(2, userId);
-                        } else {
-                            psIns.setNull(2, java.sql.Types.INTEGER);
-                        }
-                        
-                        psIns.setString(3, msg.type().name().toLowerCase());
-                        String text = (msg.text() != null) ? msg.text() : "";
-                        psIns.setNString(4, text);
-                        psIns.addBatch();
-                    }
-                    psIns.executeBatch();
-                }
-                
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
-        } catch (SQLException e) {
-            System.err.println("Error syncing chat memory to DB: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void deleteMessages(Object memoryId) {
-        String sessionId = memoryId.toString();
-        String sql = "DELETE FROM chat_messages WHERE session_id = ?";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, sessionId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error deleting chat memory from DB: " + e.getMessage());
-        }
-    }
-    
-    // Utility to map a session pattern to a user ID if needed, though typically session_id alone is fine
-    private Integer extractUserIdFromSessionId(String sessionId) {
-        if (sessionId.contains("_User_")) {
-            try {
-                return Integer.parseInt(sessionId.split("_User_")[1]);
-            } catch (Exception e) {}
         }
         return null;
     }
-}
-</file>
 
-<file path="src/main/java/ai/CineAgentProvider.java">
+    public Movie findById(int id) throws SQLException {
+        String sql = "SELECT * FROM movies WHERE movie_id = ?";
+        try (Connection con = DBConnect.getConnection()) {
+            if (con == null) return null;
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return mapRow(rs);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /* =========================
+       FIND ALL
+       ========================= */
+    public List<Movie> findAll(Connection conn) throws SQLException {
+        String sql = "SELECT * FROM movies ORDER BY release_date DESC";
+        List<Movie> list = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        }
+        return list;
+    }
+
+    /* =========================
+       SEARCH BY TITLE (SQL)
+       ========================= */
+    public List<Movie> searchByTitle(Connection conn, String keyword) throws SQLException {
+        String sql = "SELECT * FROM movies WHERE title LIKE ?";
+        List<Movie> list = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    /* =========================
+       INSERT (ADMIN)
+       ========================= */
+    public void insert(Connection conn, Movie movie) throws SQLException {
+        String sql = """
+            INSERT INTO movies
+            (title, duration, description, release_date, age_rating, poster_url)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, movie.getTitle());
+            ps.setInt(2, movie.getDuration());
+            ps.setString(3, movie.getDescription());
+            ps.setDate(4, Date.valueOf(movie.getReleaseDate()));
+            ps.setString(5, movie.getAgeRating());
+            ps.setString(6, movie.getPosterUrl());
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       UPDATE (ADMIN)
+       ========================= */
+    public void update(Connection conn, Movie movie) throws SQLException {
+        String sql = """
+            UPDATE movies
+            SET title = ?, duration = ?, description = ?, 
+                release_date = ?, age_rating = ?, poster_url = ?
+            WHERE movie_id = ?
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, movie.getTitle());
+            ps.setInt(2, movie.getDuration());
+            ps.setString(3, movie.getDescription());
+            ps.setDate(4, Date.valueOf(movie.getReleaseDate()));
+            ps.setString(5, movie.getAgeRating());
+            ps.setString(6, movie.getPosterUrl());
+            ps.setInt(7, movie.getMovieId());
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       DELETE (ADMIN)
+       ========================= */
+    public void delete(Connection conn, int id) throws SQLException {
+        String sql = "DELETE FROM movies WHERE movie_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    /* =========================
+       MAP RESULTSET
+       ========================= */
+    private Movie mapRow(ResultSet rs) throws SQLException {
+        Movie m = new Movie();
+        m.setMovieId(rs.getInt("movie_id"));
+        m.setTitle(rs.getString("title"));
+        m.setDuration(rs.getInt("duration"));
+        m.setDescription(rs.getString("description"));
+        Date d = rs.getDate("release_date");
+        if (d != null) {
+            m.setReleaseDate(d.toLocalDate());
+        }
+        m.setAgeRating(rs.getString("age_rating"));
+        m.setPosterUrl(rs.getString("poster_url"));
+        return m;
+    }
+
+    // lay toan bo film
+    public List<Movie> getAllMovies() {
+        List<Movie> list = new ArrayList<>();
+        String sql = "SELECT * FROM movies ORDER BY release_date DESC";
+
+        System.out.println("MovieDAO: getAllMovies() connecting...");
+        try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) {
+                System.out.println("MovieDAO: Connection failed (null)");
+                return list;
+            }
+            System.out.println("MovieDAO: Connection established. Executing query...");
+            try (PreparedStatement ps = conn.prepareStatement(sql); 
+                 ResultSet rs = ps.executeQuery()) {
+                System.out.println("MovieDAO: Query executed. Mapping rows...");
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+                System.out.println("MovieDAO: Done. Found " + list.size() + " movies.");
+            }
+        } catch (Exception e) {
+            System.out.println("MovieDAO Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Lấy phim theo nhiều thể loại (OR logic) Phim sẽ hiển thị nếu thuộc ít
+     * nhất 1 trong các genre được chọn
+     */
+    public List<Movie> getMoviesByMultipleGenres(String[] genres) {
+        List<Movie> list = new ArrayList<>();
+
+        if (genres == null || genres.length == 0) {
+            return list;
+        }
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT DISTINCT m.* ")
+                .append("FROM movie_genre_rel mgl ")
+                .append("JOIN movies m ON mgl.movie_id = m.movie_id ")
+                .append("JOIN movie_genres mg ON mg.genre_id = mgl.genre_id ")
+                .append("WHERE mg.genre_name IN (");
+
+        for (int i = 0; i < genres.length; i++) {
+            sql.append("?");
+            if (i < genres.length - 1) {
+                sql.append(", ");
+            }
+        }
+        sql.append(") ORDER BY m.release_date DESC");
+
+        try (Connection con = DBConnect.getConnection()) {
+            if (con == null) return list;
+            try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+                for (int i = 0; i < genres.length; i++) {
+                    ps.setString(i + 1, genres[i]);
+                }
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(mapRow(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    /**
+     * Tìm kiếm phim trong danh sách theo keyword Search trong title và
+     * description
+     */
+    public List<Movie> searchMovies(List<Movie> movies, String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return movies;
+        }
+
+        List<Movie> result = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase();
+
+        for (Movie movie : movies) {
+            String title = movie.getTitle() != null ? movie.getTitle().toLowerCase() : "";
+            String description = movie.getDescription() != null ? movie.getDescription().toLowerCase() : "";
+
+            if (title.contains(lowerKeyword) || description.contains(lowerKeyword)) {
+                result.add(movie);
+            }
+        }
+
+        return result;
+    }
+
+    // insert va tra ve id cua phim vua them
+    public int insertAndReturnId(Connection conn, Movie movie) throws SQLException {
+
+        String sql = """
+        INSERT INTO movies
+        (title, duration, description, release_date, age_rating, poster_url)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """;
+
+        try (PreparedStatement ps
+                = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, movie.getTitle());
+            ps.setInt(2, movie.getDuration());
+            ps.setString(3, movie.getDescription());
+            ps.setDate(4, Date.valueOf(movie.getReleaseDate()));
+            ps.setString(5, movie.getAgeRating());
+            ps.setString(6, movie.getPosterUrl());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // movie_id vừa insert
+                }
+            }
+        }
+
+        throw new SQLException("Insert movie failed, no ID returned.");
+    }
+
+    public int getGenreIdByMovieId(int movieId) {
+        String sql = """
+        SELECT movie_genre_id
+        FROM movie_genre_rel
+        WHERE movie_id = ?
+    """;
+
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, movieId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("movie_genre_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1; // không tìm thấy
+    }
+
+}
+```
+
+## File: src/main/java/ai/CineAgentProvider.java
+```java
 package ai;
 
 import ai.skills.admin.AnalystBotSkills;
@@ -1196,22 +2718,60 @@ import ai.skills.admin.ModerateBotSkills;
 import ai.skills.user.BookBotSkills;
 import ai.skills.user.InfoBotSkills;
 import dao.ChatMessageDAO;
-import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.UserMessage;
-import utils.ConfigLoader;
+import util.ConfigLoader;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Lớp cung cấp các Agent chuyên biệt sử dụng LangChain4j.
+ * Đã hỗ trợ xoay tua API Key và tối ưu hóa Model theo tác vụ.
  */
 public class CineAgentProvider {
 
-    private static final String API_KEY = ConfigLoader.get("ai.api.key");
-    private static final String MODEL_NAME = "llama-3.3-70b-versatile";
+    // Model constants
+    public static final String FAST_MODEL = "llama3-8b-8192";           // Cực nhanh, rẻ, dùng cho query đơn giản
+    public static final String VERSATILE_MODEL = "llama-3.3-70b-versatile"; // Cân bằng, dùng cho chatbot chính
+    public static final String THINKING_MODEL = "deepseek-r1-distill-llama-70b"; // Thinking model cho Analyst
+    
     private static final String GROQ_URL = "https://api.groq.com/openai/v1";
+
+    /**
+     * Quản lý xoay tua API Key.
+     */
+    private static class ApiKeyManager {
+        private static final List<String> keys = new ArrayList<>();
+        private static final AtomicInteger currentIndex = new AtomicInteger(0);
+
+        static {
+            String rawKeys = ConfigLoader.get("ai.api.key");
+            if (rawKeys != null) {
+                for (String k : rawKeys.split(",")) {
+                    if (!k.trim().isEmpty()) keys.add(k.trim());
+                }
+            }
+            if (keys.isEmpty()) {
+                System.err.println("[AI-WARN] No API Keys found! AI services will fail.");
+            }
+        }
+
+        public static String getNextKey() {
+            if (keys.isEmpty()) return "";
+            int index = currentIndex.getAndIncrement() % keys.size();
+            return keys.get(index);
+        }
+
+        public static int getKeyCount() {
+            return keys.size();
+        }
+    }
 
     /**
      * Giao diện chung cho các AI Agent.
@@ -1229,12 +2789,13 @@ public class CineAgentProvider {
 
     /**
      * Khởi tạo Agent cho người dùng cuối (Customer).
+     * Sử dụng VERSATILE_MODEL để đảm bảo chất lượng phản hồi.
      */
-    public static CineAgent createUserAgent() {
+    public static CineAgent createUserAgent(int userId) {
         OpenAiChatModel model = OpenAiChatModel.builder()
-                .apiKey(API_KEY)
+                .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
-                .modelName(MODEL_NAME)
+                .modelName(VERSATILE_MODEL)
                 .build();
 
         return AiServices.builder(CineAgent.class)
@@ -1244,7 +2805,7 @@ public class CineAgentProvider {
                         .maxMessages(30)
                         .chatMemoryStore(new ChatMessageDAO())
                         .build())
-                .tools(new InfoBotSkills(), new BookBotSkills())
+                .tools(new InfoBotSkills(), new BookBotSkills(userId))
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. " +
                     "Bạn có 2 bộ phận hỗ trợ:\n" +
@@ -1257,12 +2818,13 @@ public class CineAgentProvider {
 
     /**
      * Khởi tạo Agent cho quản trị viên (Admin).
+     * Sử dụng THINKING_MODEL cho AnalystBot để phân tích dữ liệu chuyên sâu.
      */
     public static CineAgent createAdminAgent() {
         OpenAiChatModel model = OpenAiChatModel.builder()
-                .apiKey(API_KEY)
+                .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
-                .modelName(MODEL_NAME)
+                .modelName(THINKING_MODEL)
                 .build();
 
         return AiServices.builder(CineAgent.class)
@@ -1274,7 +2836,7 @@ public class CineAgentProvider {
                         .build())
                 .tools(new AnalystBotSkills(), new MarketingBotSkills(), new ModerateBotSkills())
                 .systemMessageProvider(chatId -> 
-                    "Bạn là CineAnalyst, trợ lý quản trị cấp cao. " +
+                    "Bạn là CineAnalyst, trợ lý quản trị cấp cao dựa trên tư duy phân tích của DeepSeek. " +
                     "Bạn điều hành 3 chuyên gia:\n" +
                     "1. AnalystBot: Thống kê doanh thu, vé và dự báo.\n" +
                     "2. MarketingBot: Tạo nội dung quảng cáo dựa trên dữ liệu phim.\n" +
@@ -1287,11 +2849,11 @@ public class CineAgentProvider {
     /**
      * Khởi tạo Streaming Agent cho người dùng cuối.
      */
-    public static StreamingCineAgent createStreamingUserAgent() {
-        dev.langchain4j.model.chat.StreamingChatLanguageModel model = dev.langchain4j.model.openai.OpenAiStreamingChatModel.builder()
-                .apiKey(API_KEY)
+    public static StreamingCineAgent createStreamingUserAgent(int userId) {
+        dev.langchain4j.model.chat.StreamingChatLanguageModel model = OpenAiStreamingChatModel.builder()
+                .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
-                .modelName(MODEL_NAME)
+                .modelName(VERSATILE_MODEL)
                 .build();
 
         return AiServices.builder(StreamingCineAgent.class)
@@ -1301,7 +2863,7 @@ public class CineAgentProvider {
                         .maxMessages(30)
                         .chatMemoryStore(new ChatMessageDAO())
                         .build())
-                .tools(new InfoBotSkills(), new BookBotSkills())
+                .tools(new InfoBotSkills(), new BookBotSkills(userId))
                 .systemMessageProvider(chatId -> 
                     "Bạn là CineGuide, một trợ lý rạp phim thông minh. Giúp người dùng tra cứu phim, lịch chiếu và đặt vé qua InfoBot và BookBot."
                 )
@@ -1312,10 +2874,10 @@ public class CineAgentProvider {
      * Khởi tạo Streaming Agent cho quản trị viên.
      */
     public static StreamingCineAgent createStreamingAdminAgent() {
-        dev.langchain4j.model.chat.StreamingChatLanguageModel model = dev.langchain4j.model.openai.OpenAiStreamingChatModel.builder()
-                .apiKey(API_KEY)
+        dev.langchain4j.model.chat.StreamingChatLanguageModel model = OpenAiStreamingChatModel.builder()
+                .apiKey(ApiKeyManager.getNextKey())
                 .baseUrl(GROQ_URL)
-                .modelName(MODEL_NAME)
+                .modelName(THINKING_MODEL)
                 .build();
 
         return AiServices.builder(StreamingCineAgent.class)
@@ -1331,162 +2893,298 @@ public class CineAgentProvider {
                 )
                 .build();
     }
+
+    /**
+     * Utility method to get a fast model for simple operations.
+     */
+    public static OpenAiChatModel getFastModel() {
+        return OpenAiChatModel.builder()
+                .apiKey(ApiKeyManager.getNextKey())
+                .baseUrl(GROQ_URL)
+                .modelName(FAST_MODEL)
+                .build();
+    }
+    /**
+     * Helper for non-streaming Admin tasks (like Forecasting).
+     */
+    public static OpenAiChatModel createAdminAgentModel() {
+        return OpenAiChatModel.builder()
+                .apiKey(ApiKeyManager.getNextKey())
+                .baseUrl(GROQ_URL)
+                .modelName(THINKING_MODEL)
+                .build();
+    }
 }
-</file>
+```
 
-<file path="pom.xml">
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
-    <artifactId>CinemaManagement</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <name>CinemaManagement</name>
-    
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jakartaee>10.0.0</jakartaee>
-    </properties>
-    
-    <dependencies>
+## File: src/main/java/dao/ChatMessageDAO.java
+```java
+package dao;
 
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>${jakartaee}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>12.6.1.jre11</version>
-            <!--  Chạy được trên JDK 11+ (bao gồm JDK 21)  -->
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet.jsp</groupId>
-            <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>3.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-         <!-- Jackson JSON -->
-        <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-          <version>2.17.1</version>
-        </dependency>
-        <!-- LangChain4j -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j</artifactId>
-            <version>0.36.2</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-open-ai</artifactId>
-            <version>0.36.2</version>
-        </dependency>
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.data.message.*;
+import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import java.sql.*;
+import java.util.*;
 
-        <!-- Testing -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.15.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.15.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <version>1.11.4</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
-                <configuration>
-                    <argLine>-Dnet.bytebuddy.experimental=true</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                    <parameters>true</parameters>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals><goal>copy</goal></goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.heroku</groupId>
-                                    <artifactId>webapp-runner</artifactId>
-                                    <version>10.1.36.0</version>
-                                    <destFileName>webapp-runner.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-</project>
-</file>
+/**
+ * Custom ChatMemoryStore that persists messages to SQL Server database.
+ * Auto-called by LangChain4j when managing chat memory.
+ */
+public class ChatMessageDAO implements ChatMemoryStore {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-<file path="src/main/java/controller/ChatServlet.java">
+    @Override
+    public List<ChatMessage> getMessages(Object memoryId) {
+        String sessionId = memoryId.toString();
+        List<ChatMessage> history = new ArrayList<>();
+
+        String sql = "SELECT role, content FROM (" +
+                "   SELECT TOP 30 role, content, id FROM chat_messages " +
+                "   WHERE session_id = ? ORDER BY id DESC" +
+                ") AS recent_msgs ORDER BY id ASC";
+
+        try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) {
+                System.err.println("[AI-DB-ERROR] Connection is null for memoryId: " + memoryId);
+                return history;
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, sessionId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String role = rs.getString("role");
+                        String content = rs.getString("content");
+                        try {
+                            ChatMessage message = deserialize(role, content);
+                            if (message != null) {
+                                history.add(message);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("[AI-DB-ERROR] Error deserializing message: " + e.getMessage());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[AI-DB-ERROR] Error loading chat memory from DB for session " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return history;
+    }
+
+    private ChatMessage deserialize(String role, String content) throws JsonProcessingException {
+        if (content == null || content.isEmpty())
+            return null;
+
+        if (content.trim().startsWith("{")) {
+            Map<String, Object> map = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {
+            });
+            String text = (String) map.get("text");
+
+            return switch (role.toLowerCase()) {
+                case "user" -> new UserMessage(text);
+                case "system" -> new SystemMessage(text);
+                case "assistant" -> {
+                    List<ToolExecutionRequest> toolRequests = new ArrayList<>();
+                    if (map.containsKey("toolExecutionRequests")) {
+                        List<Map<String, Object>> requests = (List<Map<String, Object>>) map
+                                .get("toolExecutionRequests");
+                        for (Map<String, Object> req : requests) {
+                            toolRequests.add(ToolExecutionRequest.builder()
+                                    .id((String) req.get("id"))
+                                    .name((String) req.get("name"))
+                                    .arguments((String) req.get("arguments"))
+                                    .build());
+                        }
+                    }
+                    if (!toolRequests.isEmpty()) {
+                        yield AiMessage.from(toolRequests);
+                    } else {
+                        yield AiMessage.from(text);
+                    }
+                }
+                case "tool_execution_result" -> {
+                    String id = (String) map.get("toolExecutionRequestId");
+                    String toolName = (String) map.get("toolName");
+                    yield ToolExecutionResultMessage.from(id, toolName, text);
+                }
+                default -> null;
+            };
+        }
+
+        // Fallback for legacy plain text messages
+        return switch (role.toLowerCase()) {
+            case "user" -> new UserMessage(content);
+            case "assistant" -> new AiMessage(content);
+            case "system" -> new SystemMessage(content);
+            default -> null;
+        };
+    }
+
+    @Override
+    public void updateMessages(Object memoryId, List<ChatMessage> messages) {
+        String sessionId = memoryId.toString();
+        Integer userId = extractUserIdFromSessionId(sessionId);
+
+        String deleteSql = "DELETE FROM chat_messages WHERE session_id = ?";
+        String insertSql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) {
+                System.err.println("[AI-DB-ERROR] Connection is null during update for: " + memoryId);
+                return;
+            }
+            conn.setAutoCommit(false);
+
+            try {
+                try (PreparedStatement psDel = conn.prepareStatement(deleteSql)) {
+                    psDel.setString(1, sessionId);
+                    psDel.executeUpdate();
+                }
+
+                try (PreparedStatement psIns = conn.prepareStatement(insertSql)) {
+                    for (ChatMessage msg : messages) {
+                        psIns.setString(1, sessionId);
+                        if (userId != null && userId > 0) {
+                            psIns.setInt(2, userId);
+                        } else {
+                            psIns.setNull(2, java.sql.Types.INTEGER);
+                        }
+
+                        psIns.setString(3, toRoleString(msg));
+
+                        try {
+                            String json = serialize(msg);
+                            psIns.setNString(4, json);
+                        } catch (Exception e) {
+                            String text = (msg.text() != null) ? msg.text() : "";
+                            psIns.setNString(4, text);
+                        }
+
+                        psIns.addBatch();
+                    }
+                    psIns.executeBatch();
+                }
+
+                conn.commit();
+                System.out.println("[AI-DB-DEBUG] Successfully synced " + messages.size() + " messages for session: " + sessionId);
+            } catch (Exception e) {
+                if (conn != null) conn.rollback();
+                System.err.println("[AI-DB-ERROR] Error during transaction for session " + sessionId + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            System.err.println("[AI-DB-ERROR] Error syncing chat memory to DB for session " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Efficiently appends a single message to the chat history.
+     * Can be used to optimize high-frequency chat updates.
+     */
+    public void appendMessage(String sessionId, ChatMessage msg) {
+        Integer userId = extractUserIdFromSessionId(sessionId);
+        String sql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, sessionId);
+            if (userId != null && userId > 0) {
+                ps.setInt(2, userId);
+            } else {
+                ps.setNull(2, java.sql.Types.INTEGER);
+            }
+
+            ps.setString(3, toRoleString(msg));
+            ps.setNString(4, (msg.text() != null) ? msg.text() : "");
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error appending chat message to DB: " + e.getMessage());
+        }
+    }
+
+    private String serialize(ChatMessage msg) throws JsonProcessingException {
+        Map<String, Object> map = new HashMap<>();
+        if (msg instanceof UserMessage) {
+            map.put("text", ((UserMessage) msg).text());
+        } else if (msg instanceof AiMessage) {
+            AiMessage ai = (AiMessage) msg;
+            map.put("text", ai.text());
+            if (ai.hasToolExecutionRequests()) {
+                List<Map<String, String>> requests = new ArrayList<>();
+                for (ToolExecutionRequest req : ai.toolExecutionRequests()) {
+                    Map<String, String> reqMap = new HashMap<>();
+                    reqMap.put("id", req.id());
+                    reqMap.put("name", req.name());
+                    reqMap.put("arguments", req.arguments());
+                    requests.add(reqMap);
+                }
+                map.put("toolExecutionRequests", requests);
+            }
+        } else if (msg instanceof ToolExecutionResultMessage) {
+            ToolExecutionResultMessage tr = (ToolExecutionResultMessage) msg;
+            map.put("toolExecutionRequestId", tr.id());
+            map.put("toolName", tr.toolName());
+            map.put("text", tr.text());
+        } else if (msg instanceof SystemMessage) {
+            map.put("text", ((SystemMessage) msg).text());
+        }
+        return objectMapper.writeValueAsString(map);
+    }
+
+    private String toRoleString(ChatMessage msg) {
+        return switch (msg.type()) {
+            case USER -> "user";
+            case AI -> "assistant";
+            case SYSTEM -> "system";
+            default -> msg.type().name().toLowerCase();
+        };
+    }
+
+    @Override
+    public void deleteMessages(Object memoryId) {
+        String sessionId = memoryId.toString();
+        String sql = "DELETE FROM chat_messages WHERE session_id = ?";
+        try (Connection conn = DBConnect.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, sessionId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting chat memory from DB: " + e.getMessage());
+        }
+    }
+
+    // Utility to map a session pattern to a user ID if needed, though typically
+    // session_id alone is fine
+    private Integer extractUserIdFromSessionId(String sessionId) {
+        if (sessionId.contains("-u")) {
+            try {
+                return Integer.parseInt(sessionId.split("-u")[1]);
+            } catch (Exception e) {
+            }
+        }
+        // Legacy support
+        if (sessionId.contains("_User_")) {
+            try {
+                return Integer.parseInt(sessionId.split("_User_")[1]);
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+}
+```
+
+## File: src/main/java/controller/ChatServlet.java
+```java
 package controller;
 
 import ai.CineAgentProvider;
@@ -1529,20 +3227,25 @@ public class ChatServlet extends HttpServlet {
     /**
      * Lấy hoặc tạo AI Agent cho session hiện tại.
      * Phân biệt AdminAgent và UserAgent dựa trên role của user.
+     * Tự động làm mới Agent nếu User ID trong session thay đổi (ví dụ: người dùng vừa đăng nhập).
      */
     private CineAgentProvider.CineAgent getOrCreateAgent(HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        int currentUid = (user != null) ? user.getAccountId() : 0;
+        
         CineAgentProvider.CineAgent agent = (CineAgentProvider.CineAgent) session.getAttribute("aiAgent");
+        Integer agentUid = (Integer) session.getAttribute("aiAgentUserId");
 
-        if (agent == null) {
-            UserDTO user = (UserDTO) session.getAttribute("user");
-            // Mặc định là UserAgent, nếu role là Admin thì dùng AdminAgent
+        // Làm mới agent nếu chưa có hoặc UID đã thay đổi
+        if (agent == null || agentUid == null || agentUid != currentUid) {
             if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
                 agent = CineAgentProvider.createAdminAgent();
             } else {
-                agent = CineAgentProvider.createUserAgent();
+                agent = CineAgentProvider.createUserAgent(currentUid);
             }
             session.setAttribute("aiAgent", agent);
-            log("Created new AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
+            session.setAttribute("aiAgentUserId", currentUid);
+            log("Created/Refreshed AI Agent (UID: " + currentUid + ", Role: " + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
         }
 
         return agent;
@@ -1593,10 +3296,14 @@ public class ChatServlet extends HttpServlet {
 
             HttpSession session = request.getSession(true);
             CineAgentProvider.CineAgent agent = getOrCreateAgent(session);
+            
+            // Format memoryId: sessionId-uId để ChatMessageDAO có thể trích xuất userId
+            int uid = (Integer) session.getAttribute("aiAgentUserId");
+            String memoryId = session.getId() + "-u" + uid;
 
             long startTime = System.currentTimeMillis();
             // Gọi AI Agent xử lý (AI sẽ tự động gọi Tool nếu cần)
-            String reply = agent.chat(session.getId(), userMessage);
+            String reply = agent.chat(memoryId, userMessage);
             long endTime = System.currentTimeMillis();
 
             ObjectNode jsonResponse = objectMapper.createObjectNode();
@@ -1634,17 +3341,21 @@ public class ChatServlet extends HttpServlet {
     }
 
     private CineAgentProvider.StreamingCineAgent getOrCreateStreamingAgent(HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        int currentUid = (user != null) ? user.getAccountId() : 0;
+        
         CineAgentProvider.StreamingCineAgent agent = (CineAgentProvider.StreamingCineAgent) session.getAttribute("aiStreamingAgent");
+        Integer agentUid = (Integer) session.getAttribute("aiStreamingAgentUserId");
 
-        if (agent == null) {
-            UserDTO user = (UserDTO) session.getAttribute("user");
+        if (agent == null || agentUid == null || agentUid != currentUid) {
             if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
                 agent = CineAgentProvider.createStreamingAdminAgent();
             } else {
-                agent = CineAgentProvider.createStreamingUserAgent();
+                agent = CineAgentProvider.createStreamingUserAgent(currentUid);
             }
             session.setAttribute("aiStreamingAgent", agent);
-            log("Created new Streaming AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
+            session.setAttribute("aiStreamingAgentUserId", currentUid);
+            log("Created/Refreshed Streaming AI Agent (UID: " + currentUid + ", Role: " + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
         }
 
         return agent;
@@ -1668,26 +3379,36 @@ public class ChatServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         CineAgentProvider.StreamingCineAgent agent = getOrCreateStreamingAgent(session);
 
+        // Format memoryId: sessionId-uId
+        int uid = (Integer) session.getAttribute("aiStreamingAgentUserId");
+        String memoryId = session.getId() + "-u" + uid;
+
         // Bật AsyncContext để không block thread của Tomcat/Servlet
         jakarta.servlet.AsyncContext asyncContext = request.startAsync();
         asyncContext.setTimeout(120000); // 2 minutes timeout for slow AI
         
+        // Fix Bug #8: Add AsyncListener
+        asyncContext.addListener(new jakarta.servlet.AsyncListener() {
+            @Override public void onComplete(jakarta.servlet.AsyncEvent e) {}
+            @Override public void onTimeout(jakarta.servlet.AsyncEvent e) { asyncContext.complete(); }
+            @Override public void onError(jakarta.servlet.AsyncEvent e) { asyncContext.complete(); }
+            @Override public void onStartAsync(jakarta.servlet.AsyncEvent e) {}
+        });
+
         // Cần lấy writer từ asyncContext để đảm bảo an toàn trong môi trường async
         PrintWriter asyncOut = asyncContext.getResponse().getWriter();
 
         try {
-            dev.langchain4j.service.TokenStream tokenStream = agent.chat(session.getId(), userMessage);
+            log("[STREAM-DEBUG] Starting chat for memoryId: " + memoryId);
+            dev.langchain4j.service.TokenStream tokenStream = agent.chat(memoryId, userMessage);
 
             tokenStream
                 .onNext(token -> {
                     try {
                         log("[STREAM] Received token: " + (token.length() > 20 ? token.substring(0, 20) + "..." : token));
-                        // Escape newline and quotes for JSON safety
-                        String cleanToken = token.replace("\\", "\\\\")
-                                               .replace("\n", "\\n")
-                                               .replace("\r", "\\r")
-                                               .replace("\"", "\\\"");
-                        asyncOut.print("data: {\"token\": \"" + cleanToken + "\"}\n\n");
+                        // Fix Bug #10: Use Jackson for JSON escaping
+                        String json = objectMapper.writeValueAsString(java.util.Map.of("token", token));
+                        asyncOut.print("data: " + json + "\n\n");
                         asyncOut.flush();
                     } catch (Exception e) {
                         log("Error sending token", e);
@@ -1708,17 +3429,25 @@ public class ChatServlet extends HttpServlet {
                     try {
                         String errMsg = error.getMessage() != null ? error.getMessage() : "Unknown AI Error";
                         log("[STREAM-ERROR] AI Stream Error: " + errMsg);
-                        error.printStackTrace(); // Log full stack trace to server console
+                        error.printStackTrace();
                         
-                        String cleanErr = errMsg.replace("\\", "\\\\").replace("\n", " ").replace("\"", "\\\"");
-                        asyncOut.print("data: {\"error\": \"" + cleanErr + "\"}\n\n");
-                        asyncOut.flush();
-                        asyncContext.complete();
+                        String userFriendlyMsg = "Hệ thống AI đang bận (Rate Limit). Vui lòng thử lại sau vài giây.";
+                        if (errMsg.contains("rate_limit_exceeded")) {
+                            userFriendlyMsg = "Hệ thống đang quá tải. Tôi đang tự động thử lại với tài nguyên khác, vui lòng gửi lại tin nhắn sau 5-10 giây.";
+                        }
+
+                        if (!asyncContext.getResponse().isCommitted()) {
+                             asyncOut.print("data: {\"error\": \"" + userFriendlyMsg + "\"}\n\n");
+                             asyncOut.flush();
+                        }
                     } catch (Exception e) {
                         log("Error sending error stream", e);
+                    } finally {
+                        try { asyncContext.complete(); } catch(Exception e) {}
                     }
                 })
                 .start();
+            log("[STREAM-DEBUG] tokenStream.start() called.");
         } catch (Exception e) {
             log("Error starting stream", e);
             asyncOut.print("data: {\"error\": \"Internal Server Error: " + e.getMessage().replace("\"", "'") + "\"}\n\n");
@@ -1739,7 +3468,9 @@ public class ChatServlet extends HttpServlet {
 
             if (session != null) {
                 session.removeAttribute("aiAgent");
+                session.removeAttribute("aiAgentUserId");
                 session.removeAttribute("aiStreamingAgent");
+                session.removeAttribute("aiStreamingAgentUserId");
                 log("Reset AI Agent for session: " + session.getId());
             }
 
@@ -1775,6 +3506,63 @@ public class ChatServlet extends HttpServlet {
         super.destroy();
     }
 }
-</file>
+```
 
-</files>
+## File: src/main/java/dao/DBConnect.java
+```java
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dao;
+
+/**
+ *
+ * @author LENOVO
+ */
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import util.ConfigLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+public class DBConnect {
+    private static final Logger LOGGER = Logger.getLogger(DBConnect.class.getName());
+    static String user = ConfigLoader.get("db.username");
+    static String pass = ConfigLoader.get("db.password");
+    static String url = ConfigLoader.get("db.url");
+    static String driver = ConfigLoader.get("db.driver-class-name");
+
+    public static Connection getConnection() {
+        // Debug-level log without exposing full connection details at higher levels
+        LOGGER.fine("[DB] Attempting to obtain a database connection.");
+        try {
+            Class.forName(driver);
+            // Set login timeout to 5 seconds to prevent indefinite hangs
+            DriverManager.setLoginTimeout(5);
+            Connection conn = DriverManager.getConnection(url, user, pass);
+            if (conn != null) {
+                LOGGER.fine("[DB] Database connection established successfully.");
+            } else {
+                LOGGER.warning("[DB] Database connection obtained is null.");
+            }
+            return conn;
+        } catch (ClassNotFoundException | SQLException e) {
+            // Log the exception with stack trace at SEVERE level, without printing to stdout/stderr directly
+            LOGGER.log(Level.SEVERE, "[DB] Failed to obtain database connection.", e);
+            return null;
+        }
+    }
+
+    public static void closeConnection(Connection c) {
+        try {
+            if (c != null) {
+                c.close();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+```

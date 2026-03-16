@@ -35,7 +35,7 @@ public class InfoBotSkillsTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        infoBotSkills = new InfoBotSkills(movieDAO, showtimeDAO, productDAO);
+        infoBotSkills = new InfoBotSkills(movieDAO, showtimeDAO, productDAO, 0);
     }
 
     @Test

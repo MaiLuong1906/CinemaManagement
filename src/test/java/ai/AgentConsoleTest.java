@@ -19,7 +19,7 @@ public class AgentConsoleTest {
             agent = CineAgentProvider.createAdminAgent();
             System.out.println("--- CineAnalyst (Admin) Online ---");
         } else {
-            agent = CineAgentProvider.createUserAgent(1);
+            agent = CineAgentProvider.createUserAgent(1, null);
             System.out.println("--- CineGuide (User) Online ---");
         }
 

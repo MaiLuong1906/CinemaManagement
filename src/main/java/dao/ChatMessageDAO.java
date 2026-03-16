@@ -228,6 +228,53 @@ public class ChatMessageDAO implements ChatMemoryStore {
         };
     }
 
+    /**
+     * Returns recent visible messages (user/assistant only) for frontend history restore.
+     * Excludes system, tool-call, and tool-result messages.
+     */
+    public List<Map<String, String>> getRecentMessages(String memoryId, int maxCount) {
+        List<Map<String, String>> result = new ArrayList<>();
+        String sql = "SELECT role, content FROM (" +
+                "   SELECT TOP " + maxCount + " role, content, id FROM chat_messages " +
+                "   WHERE session_id = ? AND role IN ('user','assistant') ORDER BY id DESC" +
+                ") AS recent_msgs ORDER BY id ASC";
+        try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) return result;
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, memoryId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String role = rs.getString("role");
+                        String content = rs.getString("content");
+                        String text = extractText(content);
+                        if (text != null && !text.isBlank()) {
+                            Map<String, String> msg = new HashMap<>();
+                            msg.put("role", role);
+                            msg.put("text", text);
+                            result.add(msg);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[AI-DB-ERROR] getRecentMessages error: " + e.getMessage());
+        }
+        return result;
+    }
+
+    /** Extracts plain text from serialized JSON content, falling back to raw string. */
+    private String extractText(String content) {
+        if (content == null) return null;
+        try {
+            if (content.trim().startsWith("{")) {
+                Map<String, Object> map = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {});
+                Object text = map.get("text");
+                return text != null ? text.toString() : null;
+            }
+        } catch (Exception ignored) {}
+        return content;
+    }
+
     @Override
     public void deleteMessages(Object memoryId) {
         String sessionId = memoryId.toString();

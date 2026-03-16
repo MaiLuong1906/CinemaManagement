@@ -21,21 +21,25 @@ public class InfoBotSkills {
     private final MovieDAO movieDAO;
     private final ShowtimeDAO showtimeDAO;
     private final ProductDAO productDAO;
+    private final int userId;
 
-    public InfoBotSkills() {
+    public InfoBotSkills(int userId) {
         this.movieDAO = new MovieDAO();
         this.showtimeDAO = new ShowtimeDAO();
         this.productDAO = new ProductDAO();
+        this.userId = userId;
     }
 
-    public InfoBotSkills(MovieDAO movieDAO, ShowtimeDAO showtimeDAO, ProductDAO productDAO) {
+    public InfoBotSkills(MovieDAO movieDAO, ShowtimeDAO showtimeDAO, ProductDAO productDAO, int userId) {
         this.movieDAO = movieDAO;
         this.showtimeDAO = showtimeDAO;
         this.productDAO = productDAO;
+        this.userId = userId;
     }
 
     @Tool("Tìm kiếm phim theo tên hoặc từ khóa liên quan")
     public String searchMovies(@P("Tên phim hoặc từ khóa tìm kiếm") String query) {
+        ai.ToolLogger.log(userId, "{\"tool\": \"Tìm kiếm phim: " + query + "\"}");
         System.out.println("[AI-DEBUG] Tool searchMovies called with query: " + query);
         try (Connection conn = DBConnect.getConnection()) {
             List<Movie> movies = movieDAO.searchByTitle(conn, query);
@@ -53,6 +57,7 @@ public class InfoBotSkills {
 
     @Tool("Lấy danh sách phim đang có tại rạp")
     public String getAllMovies() {
+        ai.ToolLogger.log(userId, "{\"tool\": \"Tải danh sách phim\"}");
         System.out.println("[AI-DEBUG] Tool getAllMovies called");
         try {
             List<Movie> movies = movieDAO.getAllMovies();
@@ -70,6 +75,7 @@ public class InfoBotSkills {
 
     @Tool("Lấy lịch chiếu (Showtimes) của một bộ phim dựa trên ID phim")
     public String getShowtimesForMovie(@P("ID của bộ phim") int movieId) {
+        ai.ToolLogger.log(userId, "{\"tool\": \"Tra cứu lịch chiếu phim ID: " + movieId + "\"}");
         System.out.println("[AI-DEBUG] Tool getShowtimesForMovie called with ID: " + movieId);
         try (Connection conn = DBConnect.getConnection()) {
             List<Showtime> showtimes = showtimeDAO.findByMovie(conn, movieId);
@@ -87,6 +93,7 @@ public class InfoBotSkills {
 
     @Tool("Lấy danh sách combo bắp nước và giá cả")
     public String getComboProducts() {
+        ai.ToolLogger.log(userId, "{\"tool\": \"Tra cứu giá combo bắp nước\"}");
         System.out.println("[AI-DEBUG] Tool getComboProducts called");
         try {
             List<Product> products = productDAO.findAll();
