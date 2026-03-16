@@ -21,16 +21,23 @@ public class DBConnect {
     static String driver = ConfigLoader.get("db.driver-class-name");
 
     public static Connection getConnection() {
+        System.out.println("[DB-DEBUG] Attempting to get connection to: " + url + " with driver: " + driver);
         try {
             Class.forName(driver);
             // Set login timeout to 5 seconds to prevent indefinite hangs
             DriverManager.setLoginTimeout(5);
-            return DriverManager.getConnection(url, user, pass);
+            Connection conn = DriverManager.getConnection(url, user, pass);
+            if (conn != null) {
+                System.out.println("[DB-DEBUG] Connection established successfully.");
+            } else {
+                System.out.println("[DB-DEBUG] Connection received is null.");
+            }
+            return conn;
         } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("loi connect : " + e.getMessage());
+            System.err.println("[DB-ERROR] Connection failed: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
-
     }
 
     public static void closeConnection(Connection c) {
