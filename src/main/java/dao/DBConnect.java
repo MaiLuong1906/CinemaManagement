@@ -13,29 +13,32 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import util.ConfigLoader;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 public class DBConnect {
+    private static final Logger LOGGER = Logger.getLogger(DBConnect.class.getName());
     static String user = ConfigLoader.get("db.username");
     static String pass = ConfigLoader.get("db.password");
     static String url = ConfigLoader.get("db.url");
     static String driver = ConfigLoader.get("db.driver-class-name");
 
     public static Connection getConnection() {
-        System.out.println("[DB-DEBUG] Attempting to get connection to: " + url + " with driver: " + driver);
+        // Debug-level log without exposing full connection details at higher levels
+        LOGGER.fine("[DB] Attempting to obtain a database connection.");
         try {
             Class.forName(driver);
             // Set login timeout to 5 seconds to prevent indefinite hangs
             DriverManager.setLoginTimeout(5);
             Connection conn = DriverManager.getConnection(url, user, pass);
             if (conn != null) {
-                System.out.println("[DB-DEBUG] Connection established successfully.");
+                LOGGER.fine("[DB] Database connection established successfully.");
             } else {
-                System.out.println("[DB-DEBUG] Connection received is null.");
+                LOGGER.warning("[DB] Database connection obtained is null.");
             }
             return conn;
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println("[DB-ERROR] Connection failed: " + e.getMessage());
-            e.printStackTrace();
+            // Log the exception with stack trace at SEVERE level, without printing to stdout/stderr directly
+            LOGGER.log(Level.SEVERE, "[DB] Failed to obtain database connection.", e);
             return null;
         }
     }
