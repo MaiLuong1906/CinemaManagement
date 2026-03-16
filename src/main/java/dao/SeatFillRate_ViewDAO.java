@@ -24,8 +24,8 @@ public class SeatFillRate_ViewDAO {
                 SELECT
                 SUM(seats_sold) * 100.0 / NULLIF(SUM(total_seats), 0)
                 FROM vw_seat_coverage_detail
-                WHERE year = YEAR(GETDATE())
-                AND month = MONTH(GETDATE())
+                WHERE "year" = YEAR(GETDATE())
+                AND "month" = MONTH(GETDATE())
         """;
 
         try (Connection conn = DBConnect.getConnection();
@@ -109,8 +109,8 @@ public class SeatFillRate_ViewDAO {
             total_seats,
             seat_coverage_percent
         FROM vw_seat_coverage_detail
-        WHERE year  = YEAR(GETDATE())
-          AND month = MONTH(GETDATE())
+        WHERE "year"  = YEAR(GETDATE())
+          AND "month" = MONTH(GETDATE())
         ORDER BY show_date, start_time
     """;
 
