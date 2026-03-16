@@ -15,9 +15,13 @@ public class SeatService {
     private Connection conn;
 
     public SeatService(Connection conn) {
+        this(conn, new SeatDAO(), new SeatTypeDAO());
+    }
+
+    public SeatService(Connection conn, SeatDAO seatDAO, SeatTypeDAO seatTypeDAO) {
         this.conn = conn;
-        this.seatDAO = new SeatDAO();
-        this.seatTypeDAO = new SeatTypeDAO();
+        this.seatDAO = seatDAO;
+        this.seatTypeDAO = seatTypeDAO;
     }
 
     // Tạo ghế mới

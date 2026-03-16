@@ -6,6 +6,7 @@ package service;
 
 import dao.DBConnect;
 import dao.MovieDAO;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -13,19 +14,24 @@ import java.sql.SQLException;
  * @author nguye
  */
 public class MovieService {
-    // lay ra list phim
-    
-    // update 
-    
+    private MovieDAO movieDao;
+
+    public MovieService() {
+        this.movieDao = new MovieDAO();
+    }
+
+    public MovieService(MovieDAO movieDao) {
+        this.movieDao = movieDao;
+    }
+
     // xoa phim
-    public boolean DeleteMovie (int id) throws Exception{
+    public boolean DeleteMovie (Connection conn, int id) throws Exception{
         // check validator
         
         // logic chinh
-        MovieDAO movieDao = new MovieDAO();
         boolean flag;
         try{
-            movieDao.delete(DBConnect.getConnection(), id);
+            movieDao.delete(conn, id);
             flag = true;
         }catch(SQLException e){
             throw new Exception("Phim không tồn tại", e);

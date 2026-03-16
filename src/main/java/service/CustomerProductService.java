@@ -7,8 +7,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CustomerProductService {
+    private ProductDAO productDAO;
 
-    private final ProductDAO productDAO = new ProductDAO();
+    public CustomerProductService() {
+        this.productDAO = new ProductDAO();
+    }
+
+    public CustomerProductService(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
 
     public List<Product> findAll() throws SQLException {
         return productDAO.findAll();

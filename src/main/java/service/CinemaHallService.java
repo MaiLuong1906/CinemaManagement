@@ -18,6 +18,11 @@ public class CinemaHallService {
         this.seatDAO = new SeatDAO();
     }
 
+    public CinemaHallService(CinemaHallDAO hallDAO, SeatDAO seatDAO) {
+        this.hallDAO = hallDAO;
+        this.seatDAO = seatDAO;
+    }
+
     // Tạo phòng mới
     public int createHall(String hallName, int rows, int cols) throws SQLException {
         // Validate input

@@ -10,8 +10,15 @@ import java.util.Map;
 
 //Bazero
 public class CartService {
+    private final ProductDAO productDAO;
 
-    private final ProductDAO productDAO = new ProductDAO();
+    public CartService() {
+        this.productDAO = new ProductDAO();
+    }
+
+    public CartService(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
 
     @SuppressWarnings("unchecked")
     private Map<Integer, Integer> getCart(HttpSession session) {
