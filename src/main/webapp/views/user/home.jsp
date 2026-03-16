@@ -192,6 +192,9 @@
 
             <!-- Custom JS -->
             <script src="${pageContext.request.contextPath}/js/home.js"></script>
+
+            <!-- AI Chat Widget (Trang chủ) - Moved to end to ensure it is on top and clickable -->
+            <jsp:include page="/views/common/ai-chat-widget.jsp" />
         </body>
 
         </html>
