@@ -17,10 +17,24 @@ import java.util.stream.Collectors;
  */
 public class AnalystBotSkills {
 
-    private final IncomeStatictisService incomeService = new IncomeStatictisService();
-    private final TicketManagementService ticketService = new TicketManagementService();
-    private final SeatFillRate_ViewService seatService = new SeatFillRate_ViewService();
-    private final ForecastService forecastService = new ForecastService();
+    private final IncomeStatictisService incomeService;
+    private final TicketManagementService ticketService;
+    private final SeatFillRate_ViewService seatService;
+    private final ForecastService forecastService;
+
+    public AnalystBotSkills() {
+        this.incomeService = new IncomeStatictisService();
+        this.ticketService = new TicketManagementService();
+        this.seatService = new SeatFillRate_ViewService();
+        this.forecastService = new ForecastService();
+    }
+
+    public AnalystBotSkills(IncomeStatictisService incomeService, TicketManagementService ticketService, SeatFillRate_ViewService seatService, ForecastService forecastService) {
+        this.incomeService = incomeService;
+        this.ticketService = ticketService;
+        this.seatService = seatService;
+        this.forecastService = forecastService;
+    }
 
     @Tool("Lấy báo cáo doanh thu tổng quan bao gồm doanh thu ngày, tháng, năm")
     public String getRevenueSummary() {

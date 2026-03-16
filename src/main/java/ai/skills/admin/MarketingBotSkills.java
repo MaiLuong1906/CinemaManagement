@@ -15,7 +15,15 @@ import java.util.stream.Collectors;
  */
 public class MarketingBotSkills {
 
-    private final MovieDAO movieDAO = new MovieDAO();
+    private final MovieDAO movieDAO;
+
+    public MarketingBotSkills() {
+        this.movieDAO = new MovieDAO();
+    }
+
+    public MarketingBotSkills(MovieDAO movieDAO) {
+        this.movieDAO = movieDAO;
+    }
 
     @Tool("Lấy thông tin chi tiết phim để viết bài quảng cáo (ID phim)")
     public String getMovieDetailsForMarketing(@P("ID phim") int movieId) {

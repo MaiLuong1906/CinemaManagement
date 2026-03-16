@@ -10,7 +10,15 @@ import dao.InvoiceDAO;
  * @author nguye
  */
 public class IncomeStatictisService {
-    InvoiceDAO invoiceDAO = new InvoiceDAO();
+    private final InvoiceDAO invoiceDAO;
+
+    public IncomeStatictisService() {
+        this.invoiceDAO = new InvoiceDAO();
+    }
+
+    public IncomeStatictisService(InvoiceDAO invoiceDAO) {
+        this.invoiceDAO = invoiceDAO;
+    }
 
     // trang service de lay cac phan lien quan den doanh thu
     // tra ve ti le bieu do tron

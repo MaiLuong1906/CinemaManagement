@@ -15,7 +15,15 @@ import model.SeatFillRate_ViewDTO;
  */
 public class SeatFillRate_ViewService {
     // toan bo tien ich nếu cần độ phủ ghế
-    SeatFillRate_ViewDAO dao = new SeatFillRate_ViewDAO();
+    private final SeatFillRate_ViewDAO dao;
+
+    public SeatFillRate_ViewService() {
+        this.dao = new SeatFillRate_ViewDAO();
+    }
+
+    public SeatFillRate_ViewService(SeatFillRate_ViewDAO dao) {
+        this.dao = dao;
+    }
     // lay do phu ghe cua thang hien tai
     public double getSeatFillRateCurrentMonth(){
         return dao.getCinemaFillRateCurrentMonth();

@@ -18,9 +18,21 @@ import java.util.stream.Collectors;
  */
 public class InfoBotSkills {
 
-    private final MovieDAO movieDAO = new MovieDAO();
-    private final ShowtimeDAO showtimeDAO = new ShowtimeDAO();
-    private final ProductDAO productDAO = new ProductDAO();
+    private final MovieDAO movieDAO;
+    private final ShowtimeDAO showtimeDAO;
+    private final ProductDAO productDAO;
+
+    public InfoBotSkills() {
+        this.movieDAO = new MovieDAO();
+        this.showtimeDAO = new ShowtimeDAO();
+        this.productDAO = new ProductDAO();
+    }
+
+    public InfoBotSkills(MovieDAO movieDAO, ShowtimeDAO showtimeDAO, ProductDAO productDAO) {
+        this.movieDAO = movieDAO;
+        this.showtimeDAO = showtimeDAO;
+        this.productDAO = productDAO;
+    }
 
     @Tool("Tìm kiếm phim theo tên hoặc từ khóa liên quan")
     public String searchMovies(@P("Tên phim hoặc từ khóa tìm kiếm") String query) {
