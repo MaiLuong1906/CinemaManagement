@@ -2,48 +2,99 @@ package ai.skills.user;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import dao.MovieDAO;
+import dao.ShowtimeDAO;
+import dao.ProductDAO;
+import model.Movie;
+import model.Showtime;
+import model.Product;
+import java.sql.Connection;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 /**
- * Integration tests for InfoBotSkills using a real database connection.
+ * Unit tests for InfoBotSkills using Mockito to avoid real database connections.
  */
 public class InfoBotSkillsTest {
 
-    private final InfoBotSkills infoBotSkills = new InfoBotSkills();
+    private InfoBotSkills infoBotSkills;
+
+    @Mock
+    private MovieDAO movieDAO;
+    @Mock
+    private ShowtimeDAO showtimeDAO;
+    @Mock
+    private ProductDAO productDAO;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        infoBotSkills = new InfoBotSkills(movieDAO, showtimeDAO, productDAO);
+    }
 
     @Test
-    public void testGetAllMovies() {
-        System.out.println("--- Testing getAllMovies ---");
+    public void testGetAllMovies() throws Exception {
+        System.out.println("--- Testing getAllMovies (Mocked) ---");
+        Movie m = new Movie();
+        m.setTitle("Mock Movie");
+        m.setMovieId(1);
+        
+        when(movieDAO.getAllMovies()).thenReturn(Arrays.asList(m));
+
         String result = infoBotSkills.getAllMovies();
         System.out.println(result);
         assertNotNull(result);
-        assertTrue(result.contains("Danh sách phim") || result.contains("Hiện tại rạp chưa có phim nào."));
+        assertTrue(result.contains("Mock Movie"));
     }
 
     @Test
-    public void testSearchMovies() {
-        System.out.println("--- Testing searchMovies (Query: 'Spider') ---");
+    public void testSearchMovies() throws Exception {
+        System.out.println("--- Testing searchMovies (Query: 'Spider') (Mocked) ---");
+        Movie m = new Movie();
+        m.setTitle("Spider-man");
+        m.setDescription("Web slinger");
+        
+        when(movieDAO.searchByTitle(any(), eq("Spider"))).thenReturn(Arrays.asList(m));
+
         String result = infoBotSkills.searchMovies("Spider");
         System.out.println(result);
         assertNotNull(result);
-        // Even if not found, it should return a message not an exception
-        assertTrue(result.contains("Tìm thấy") || result.contains("Không tìm thấy"));
+        assertTrue(result.contains("Spider-man"));
     }
 
     @Test
-    public void testGetShowtimesForMovie() {
-        System.out.println("--- Testing getShowtimesForMovie (MovieID: 1) ---");
+    public void testGetShowtimesForMovie() throws Exception {
+        System.out.println("--- Testing getShowtimesForMovie (MovieID: 1) (Mocked) ---");
+        Showtime s = new Showtime();
+        s.setShowtimeId(101);
+        s.setShowDate(java.time.LocalDate.now());
+        
+        when(showtimeDAO.findByMovie(any(), eq(1))).thenReturn(Arrays.asList(s));
+
         String result = infoBotSkills.getShowtimesForMovie(1);
         System.out.println(result);
         assertNotNull(result);
-        assertTrue(result.contains("Lịch chiếu") || result.contains("Hiện chưa có lịch chiếu"));
+        assertTrue(result.contains("101"));
     }
 
     @Test
-    public void testGetComboProducts() {
-        System.out.println("--- Testing getComboProducts ---");
+    public void testGetComboProducts() throws Exception {
+        System.out.println("--- Testing getComboProducts (Mocked) ---");
+        Product p = new Product();
+        p.setItemName("Mock Popcorn");
+        p.setPrice(new java.math.BigDecimal("50000"));
+        
+        when(productDAO.findAll()).thenReturn(Arrays.asList(p));
+
         String result = infoBotSkills.getComboProducts();
         System.out.println(result);
         assertNotNull(result);
-        assertTrue(result.contains("Danh sách bắp nước") || result.contains("Hiện không có sản phẩm"));
+        assertTrue(result.contains("Mock Popcorn"));
     }
 }
