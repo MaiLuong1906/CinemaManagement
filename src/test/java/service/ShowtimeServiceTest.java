@@ -12,8 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import dao.BaseDAOTest;
 
-public class ShowtimeServiceTest {
+public class ShowtimeServiceTest extends BaseDAOTest {
 
     private ShowtimeService service;
 
