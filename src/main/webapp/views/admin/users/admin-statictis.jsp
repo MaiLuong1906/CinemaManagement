@@ -36,6 +36,9 @@
                         <p class="text-secondary fs-5">
                             Thống kê doanh thu & hiệu suất rạp chiếu phim
                         </p>
+                        <a href="${pageContext.request.contextPath}/admin/statistic?action=export-excel" class="btn btn-outline-success rounded-pill px-4">
+                            <i class="fas fa-file-excel me-2"></i>Xuất Báo cáo Excel
+                        </a>
                     </div>
 
                     <!-- ===== SUMMARY CARDS ===== -->
