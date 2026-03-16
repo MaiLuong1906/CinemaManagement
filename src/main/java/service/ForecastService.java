@@ -1,7 +1,6 @@
 package service;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.message.AiMessage;
@@ -12,7 +11,6 @@ import dao.InvoiceDAO;
 import dao.TicketsSoldDAO;
 import model.ForecastDTO;
 import model.ForecastResult;
-import util.ConfigLoader;
 import ai.CineAgentProvider;
 
 import java.time.LocalDate;
