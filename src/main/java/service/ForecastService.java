@@ -33,11 +33,8 @@ public class ForecastService {
     public ForecastService() {
         this.invoiceDAO = new InvoiceDAO();
         this.ticketsSoldDAO = new TicketsSoldDAO();
-        this.model = OpenAiChatModel.builder()
-                .apiKey(ConfigLoader.get("ai.api.key"))
-                .baseUrl("https://api.groq.com/openai/v1")
-                .modelName("llama-3.3-70b-versatile")
-                .build();
+        // Sử dụng logic xoay tua key và model chuyên sâu
+        this.model = CineAgentProvider.createAdminAgentModel(); // Cần thêm helper này hoặc khởi tạo thủ công
     }
 
     public ForecastService(InvoiceDAO invoiceDAO, TicketsSoldDAO ticketsSoldDAO, ChatLanguageModel model) {
