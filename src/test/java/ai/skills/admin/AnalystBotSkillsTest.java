@@ -1,26 +1,27 @@
 package ai.skills.admin;
 
+import model.ForecastDTO;
+import model.ForecastResult;
+import model.Movie_Ticket_ViewDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import service.IncomeStatictisService;
-import service.TicketManagementService;
-import service.SeatFillRate_ViewService;
 import service.ForecastService;
-import model.Movie_Ticket_ViewDTO;
-import model.ForecastResult;
-import model.ForecastDTO;
+import service.IncomeStatictisService;
+import service.SeatFillRate_ViewService;
+import service.TicketManagementService;
+
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AnalystBotSkillsTest {
 
-    private AnalystBotSkills analystBotSkills;
+    private AnalystBotSkills skills;
 
     @Mock
     private IncomeStatictisService incomeService;
@@ -34,55 +35,52 @@ public class AnalystBotSkillsTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        analystBotSkills = new AnalystBotSkills(incomeService, ticketService, seatService, forecastService);
+        skills = new AnalystBotSkills(incomeService, ticketService, seatService, forecastService);
     }
 
     @Test
     public void testGetRevenueSummary() {
-        System.out.println("--- Testing getRevenueSummary (Mocked) ---");
         when(incomeService.getDaylyRevenue()).thenReturn(100.0);
-        when(incomeService.calculateTotalRevenue()).thenReturn(5000.0);
-        when(incomeService.getYearlyRevenue()).thenReturn(60000.0);
+        when(incomeService.calculateTotalRevenue()).thenReturn(3000.0);
+        when(incomeService.getYearlyRevenue()).thenReturn(50000.0);
 
-        String result = analystBotSkills.getRevenueSummary();
-        System.out.println(result);
-        assertNotNull(result);
-        assertTrue(result.contains("100"));
-        assertTrue(result.contains("5.000"));
-        assertTrue(result.contains("60.000"));
+        String summary = skills.getRevenueSummary();
+        
+        assertTrue(summary.contains("100"));
+        assertTrue(summary.contains("3.000"));
+        assertTrue(summary.contains("50.000"));
     }
 
     @Test
     public void testGetTopPerformingMovies() {
-        System.out.println("--- Testing getTopPerformingMovies (Mocked) ---");
-        Movie_Ticket_ViewDTO m = new Movie_Ticket_ViewDTO();
-        m.setTitle("Mock Top Movie");
-        m.setTicketsSold(100);
-        m.setRevenue(8000.0);
+        Movie_Ticket_ViewDTO m1 = new Movie_Ticket_ViewDTO();
+        m1.setTitle("Movie A");
+        m1.setTicketsSold(10);
+        m1.setRevenue(1000.0);
+        
+        when(ticketService.getAllOfPageNumber(1)).thenReturn(Collections.singletonList(m1));
 
-        when(ticketService.getAllOfPageNumber(1)).thenReturn(Arrays.asList(m));
-
-        String result = analystBotSkills.getTopPerformingMovies();
-        System.out.println(result);
-        assertNotNull(result);
-        assertTrue(result.contains("Mock Top Movie"));
+        String result = skills.getTopPerformingMovies();
+        
+        assertTrue(result.contains("Movie A"));
+        assertTrue(result.contains("10 vé"));
+        assertTrue(result.contains("1.000 VND"));
     }
 
     @Test
     public void testGet7DayForecast() {
-        System.out.println("--- Testing get7DayForecast (Mocked) ---");
-        ForecastDTO dto = new ForecastDTO();
-        dto.setForecastRevenue(1000.0);
-        dto.setForecastTickets(10);
-        dto.setFuture(true);
+        ForecastDTO future = new ForecastDTO();
+        future.setFuture(true);
+        future.setForecastRevenue(1000.0);
+        future.setForecastTickets(10);
         
-        ForecastResult fr = new ForecastResult(Arrays.asList(dto), "Expect growth");
-        when(forecastService.get7DayForecast()).thenReturn(fr);
+        ForecastResult mockResult = new ForecastResult(Collections.singletonList(future), "Healthy growth");
+        when(forecastService.get7DayForecast()).thenReturn(mockResult);
 
-        String result = analystBotSkills.get7DayForecast();
-        System.out.println(result);
-        assertNotNull(result);
-        assertTrue(result.contains("1.000"));
-        assertTrue(result.contains("Expect growth"));
+        String forecast = skills.get7DayForecast();
+        
+        assertTrue(forecast.contains("1.000 VND"));
+        assertTrue(forecast.contains("10 vé"));
+        assertTrue(forecast.contains("Healthy growth"));
     }
 }

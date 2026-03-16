@@ -14,6 +14,9 @@ public class MovieDetailDTO {
     private String hallName;
     private String genres;
 
+    public MovieDetailDTO() {
+    }
+
     public MovieDetailDTO(int showtimeId,
                           String movieTitle,
                           String slotName,

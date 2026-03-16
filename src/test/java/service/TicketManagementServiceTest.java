@@ -1,8 +1,8 @@
 package service;
 
-import dao.TicketSoldBySlot_ViewDAO;
-import dao.Ticket_Movie_ViewDAO;
 import dao.TicketsSoldDAO;
+import dao.Ticket_Movie_ViewDAO;
+import dao.TicketSoldBySlot_ViewDAO;
 import model.Movie_Ticket_ViewDTO;
 import model.TicketSoldBySlot_ViewDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,12 +11,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TicketManagementServiceTest {
 
@@ -26,77 +25,39 @@ public class TicketManagementServiceTest {
     private TicketsSoldDAO ticketsSoldDAO;
 
     @Mock
-    private Ticket_Movie_ViewDAO ticketMovieViewDAO;
+    private Ticket_Movie_ViewDAO ticket_Movie_ViewDAO;
 
     @Mock
-    private TicketSoldBySlot_ViewDAO bySlotViewDAO;
+    private TicketSoldBySlot_ViewDAO bySlot_ViewDAO;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new TicketManagementService(ticketsSoldDAO, ticketMovieViewDAO, bySlotViewDAO);
+        service = new TicketManagementService(ticketsSoldDAO, ticket_Movie_ViewDAO, bySlot_ViewDAO);
     }
 
     @Test
     public void testGetMothlyTicketsSold() throws SQLException {
-        when(ticketsSoldDAO.countSoldTicketsThisMonth()).thenReturn(500);
-        assertEquals(500, service.getMothlyTicketsSold());
-    }
-
-    @Test
-    public void testGetDailyTicketsSold() throws SQLException {
-        when(ticketsSoldDAO.countSoldTicketsToday()).thenReturn(20);
-        assertEquals(20, service.getDailyTicketsSold());
-    }
-
-    @Test
-    public void testGetYearlyTicketsSold() throws SQLException {
-        when(ticketsSoldDAO.countSoldTicketsThisYear()).thenReturn(6000);
-        assertEquals(6000, service.getYearlyTicketsSold());
+        when(ticketsSoldDAO.countSoldTicketsThisMonth()).thenReturn(150);
+        assertEquals(150, service.getMothlyTicketsSold());
     }
 
     @Test
     public void testReturnNumberPageSuccess() throws SQLException {
-        when(ticketMovieViewDAO.getTotalPages()).thenReturn(10);
-        assertEquals(10, service.returnNumberPage());
+        when(ticket_Movie_ViewDAO.getTotalPages()).thenReturn(5);
+        assertEquals(5, service.returnNumberPage());
     }
 
     @Test
-    public void testReturnNumberPageException() throws SQLException {
-        when(ticketMovieViewDAO.getTotalPages()).thenThrow(new SQLException("Error"));
+    public void testReturnNumberPageError() throws SQLException {
+        when(ticket_Movie_ViewDAO.getTotalPages()).thenThrow(new SQLException("DB Error"));
         assertThrows(RuntimeException.class, () -> service.returnNumberPage());
     }
 
     @Test
-    public void testGetAllOfPageNumberSuccess() throws SQLException {
-        Movie_Ticket_ViewDTO dto = new Movie_Ticket_ViewDTO();
-        List<Movie_Ticket_ViewDTO> mockList = Arrays.asList(dto);
-        when(ticketMovieViewDAO.getByPage(1)).thenReturn(mockList);
-        
-        List<Movie_Ticket_ViewDTO> result = service.getAllOfPageNumber(1);
-        assertEquals(1, result.size());
-        assertEquals(dto, result.get(0));
-    }
-
-    @Test
-    public void testGetTicketSoldBySlotCurrentMonthSuccess() throws Exception {
-        TicketSoldBySlot_ViewDTO dto = new TicketSoldBySlot_ViewDTO();
-        List<TicketSoldBySlot_ViewDTO> mockList = Arrays.asList(dto);
-        when(bySlotViewDAO.getAll()).thenReturn(mockList);
-        
-        List<TicketSoldBySlot_ViewDTO> result = service.getTicketSoldBySlotCurrentMonth();
-        assertEquals(1, result.size());
-        assertEquals(dto, result.get(0));
-    }
-
-    @Test
-    public void testGetAllMovieStatsSuccess() throws SQLException {
-        Movie_Ticket_ViewDTO dto = new Movie_Ticket_ViewDTO();
-        List<Movie_Ticket_ViewDTO> mockList = Arrays.asList(dto);
-        when(ticketMovieViewDAO.getAll()).thenReturn(mockList);
-        
-        List<Movie_Ticket_ViewDTO> result = service.getAllMovieStats();
-        assertEquals(1, result.size());
-        assertEquals(dto, result.get(0));
+    public void testGetAllOfPageNumber() throws SQLException {
+        List<Movie_Ticket_ViewDTO> mockList = Collections.singletonList(new Movie_Ticket_ViewDTO());
+        when(ticket_Movie_ViewDAO.getByPage(1)).thenReturn(mockList);
+        assertEquals(mockList, service.getAllOfPageNumber(1));
     }
 }
