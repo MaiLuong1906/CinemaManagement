@@ -40,21 +40,25 @@ public class ChatServlet extends HttpServlet {
     /**
      * Lấy hoặc tạo AI Agent cho session hiện tại.
      * Phân biệt AdminAgent và UserAgent dựa trên role của user.
+     * Tự động làm mới Agent nếu User ID trong session thay đổi (ví dụ: người dùng vừa đăng nhập).
      */
     private CineAgentProvider.CineAgent getOrCreateAgent(HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        int currentUid = (user != null) ? user.getAccountId() : 0;
+        
         CineAgentProvider.CineAgent agent = (CineAgentProvider.CineAgent) session.getAttribute("aiAgent");
+        Integer agentUid = (Integer) session.getAttribute("aiAgentUserId");
 
-        if (agent == null) {
-            UserDTO user = (UserDTO) session.getAttribute("user");
-            int uid = (user != null) ? user.getAccountId() : 0;
-            // Mặc định là UserAgent, nếu role là Admin thì dùng AdminAgent
+        // Làm mới agent nếu chưa có hoặc UID đã thay đổi
+        if (agent == null || agentUid == null || agentUid != currentUid) {
             if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
                 agent = CineAgentProvider.createAdminAgent();
             } else {
-                agent = CineAgentProvider.createUserAgent(uid);
+                agent = CineAgentProvider.createUserAgent(currentUid);
             }
             session.setAttribute("aiAgent", agent);
-            log("Created new AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
+            session.setAttribute("aiAgentUserId", currentUid);
+            log("Created/Refreshed AI Agent (UID: " + currentUid + ", Role: " + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
         }
 
         return agent;
@@ -105,10 +109,14 @@ public class ChatServlet extends HttpServlet {
 
             HttpSession session = request.getSession(true);
             CineAgentProvider.CineAgent agent = getOrCreateAgent(session);
+            
+            // Format memoryId: sessionId-uId để ChatMessageDAO có thể trích xuất userId
+            int uid = (Integer) session.getAttribute("aiAgentUserId");
+            String memoryId = session.getId() + "-u" + uid;
 
             long startTime = System.currentTimeMillis();
             // Gọi AI Agent xử lý (AI sẽ tự động gọi Tool nếu cần)
-            String reply = agent.chat(session.getId(), userMessage);
+            String reply = agent.chat(memoryId, userMessage);
             long endTime = System.currentTimeMillis();
 
             ObjectNode jsonResponse = objectMapper.createObjectNode();
@@ -146,18 +154,21 @@ public class ChatServlet extends HttpServlet {
     }
 
     private CineAgentProvider.StreamingCineAgent getOrCreateStreamingAgent(HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        int currentUid = (user != null) ? user.getAccountId() : 0;
+        
         CineAgentProvider.StreamingCineAgent agent = (CineAgentProvider.StreamingCineAgent) session.getAttribute("aiStreamingAgent");
+        Integer agentUid = (Integer) session.getAttribute("aiStreamingAgentUserId");
 
-        if (agent == null) {
-            UserDTO user = (UserDTO) session.getAttribute("user");
-            int uid = (user != null) ? user.getAccountId() : 0;
+        if (agent == null || agentUid == null || agentUid != currentUid) {
             if (user != null && "Admin".equalsIgnoreCase(user.getRoleId())) {
                 agent = CineAgentProvider.createStreamingAdminAgent();
             } else {
-                agent = CineAgentProvider.createStreamingUserAgent(uid);
+                agent = CineAgentProvider.createStreamingUserAgent(currentUid);
             }
             session.setAttribute("aiStreamingAgent", agent);
-            log("Created new Streaming AI Agent (" + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
+            session.setAttribute("aiStreamingAgentUserId", currentUid);
+            log("Created/Refreshed Streaming AI Agent (UID: " + currentUid + ", Role: " + (user != null ? user.getRoleId() : "Guest") + ") for session: " + session.getId());
         }
 
         return agent;
@@ -181,6 +192,10 @@ public class ChatServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         CineAgentProvider.StreamingCineAgent agent = getOrCreateStreamingAgent(session);
 
+        // Format memoryId: sessionId-uId
+        int uid = (Integer) session.getAttribute("aiStreamingAgentUserId");
+        String memoryId = session.getId() + "-u" + uid;
+
         // Bật AsyncContext để không block thread của Tomcat/Servlet
         jakarta.servlet.AsyncContext asyncContext = request.startAsync();
         asyncContext.setTimeout(120000); // 2 minutes timeout for slow AI
@@ -197,7 +212,8 @@ public class ChatServlet extends HttpServlet {
         PrintWriter asyncOut = asyncContext.getResponse().getWriter();
 
         try {
-            dev.langchain4j.service.TokenStream tokenStream = agent.chat(session.getId(), userMessage);
+            log("[STREAM-DEBUG] Starting chat for memoryId: " + memoryId);
+            dev.langchain4j.service.TokenStream tokenStream = agent.chat(memoryId, userMessage);
 
             tokenStream
                 .onNext(token -> {
@@ -226,17 +242,25 @@ public class ChatServlet extends HttpServlet {
                     try {
                         String errMsg = error.getMessage() != null ? error.getMessage() : "Unknown AI Error";
                         log("[STREAM-ERROR] AI Stream Error: " + errMsg);
-                        error.printStackTrace(); // Log full stack trace to server console
+                        error.printStackTrace();
                         
-                        String cleanErr = errMsg.replace("\\", "\\\\").replace("\n", " ").replace("\"", "\\\"");
-                        asyncOut.print("data: {\"error\": \"" + cleanErr + "\"}\n\n");
-                        asyncOut.flush();
-                        asyncContext.complete();
+                        String userFriendlyMsg = "Hệ thống AI đang bận (Rate Limit). Vui lòng thử lại sau vài giây.";
+                        if (errMsg.contains("rate_limit_exceeded")) {
+                            userFriendlyMsg = "Hệ thống đang quá tải. Tôi đang tự động thử lại với tài nguyên khác, vui lòng gửi lại tin nhắn sau 5-10 giây.";
+                        }
+
+                        if (!asyncContext.getResponse().isCommitted()) {
+                             asyncOut.print("data: {\"error\": \"" + userFriendlyMsg + "\"}\n\n");
+                             asyncOut.flush();
+                        }
                     } catch (Exception e) {
                         log("Error sending error stream", e);
+                    } finally {
+                        try { asyncContext.complete(); } catch(Exception e) {}
                     }
                 })
                 .start();
+            log("[STREAM-DEBUG] tokenStream.start() called.");
         } catch (Exception e) {
             log("Error starting stream", e);
             asyncOut.print("data: {\"error\": \"Internal Server Error: " + e.getMessage().replace("\"", "'") + "\"}\n\n");
@@ -257,7 +281,9 @@ public class ChatServlet extends HttpServlet {
 
             if (session != null) {
                 session.removeAttribute("aiAgent");
+                session.removeAttribute("aiAgentUserId");
                 session.removeAttribute("aiStreamingAgent");
+                session.removeAttribute("aiStreamingAgentUserId");
                 log("Reset AI Agent for session: " + session.getId());
             }
 

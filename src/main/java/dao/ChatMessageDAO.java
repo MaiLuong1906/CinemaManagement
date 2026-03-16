@@ -26,28 +26,31 @@ public class ChatMessageDAO implements ChatMemoryStore {
                 "   WHERE session_id = ? ORDER BY id DESC" +
                 ") AS recent_msgs ORDER BY id ASC";
 
-        try (Connection conn = DBConnect.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, sessionId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String role = rs.getString("role");
-                    String content = rs.getString("content");
-
-                    try {
-                        ChatMessage message = deserialize(role, content);
-                        if (message != null) {
-                            history.add(message);
+        try (Connection conn = DBConnect.getConnection()) {
+            if (conn == null) {
+                System.err.println("[AI-DB-ERROR] Connection is null for memoryId: " + memoryId);
+                return history;
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, sessionId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String role = rs.getString("role");
+                        String content = rs.getString("content");
+                        try {
+                            ChatMessage message = deserialize(role, content);
+                            if (message != null) {
+                                history.add(message);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("[AI-DB-ERROR] Error deserializing message: " + e.getMessage());
                         }
-                    } catch (Exception e) {
-                        System.err.println("Error deserializing message: " + e.getMessage());
                     }
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("Error loading chat memory from DB: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("[AI-DB-ERROR] Error loading chat memory from DB for session " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
         }
 
         return history;
@@ -111,8 +114,10 @@ public class ChatMessageDAO implements ChatMemoryStore {
         String insertSql = "INSERT INTO chat_messages (session_id, user_id, role, content) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnect.getConnection()) {
-            if (conn == null)
+            if (conn == null) {
+                System.err.println("[AI-DB-ERROR] Connection is null during update for: " + memoryId);
                 return;
+            }
             conn.setAutoCommit(false);
 
             try {
@@ -146,12 +151,15 @@ public class ChatMessageDAO implements ChatMemoryStore {
                 }
 
                 conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
+                System.out.println("[AI-DB-DEBUG] Successfully synced " + messages.size() + " messages for session: " + sessionId);
+            } catch (Exception e) {
+                if (conn != null) conn.rollback();
+                System.err.println("[AI-DB-ERROR] Error during transaction for session " + sessionId + ": " + e.getMessage());
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            System.err.println("Error syncing chat memory to DB: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("[AI-DB-ERROR] Error syncing chat memory to DB for session " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -236,6 +244,13 @@ public class ChatMessageDAO implements ChatMemoryStore {
     // Utility to map a session pattern to a user ID if needed, though typically
     // session_id alone is fine
     private Integer extractUserIdFromSessionId(String sessionId) {
+        if (sessionId.contains("-u")) {
+            try {
+                return Integer.parseInt(sessionId.split("-u")[1]);
+            } catch (Exception e) {
+            }
+        }
+        // Legacy support
         if (sessionId.contains("_User_")) {
             try {
                 return Integer.parseInt(sessionId.split("_User_")[1]);

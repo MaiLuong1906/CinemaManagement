@@ -35,10 +35,12 @@ public class ChatServletTest extends BaseControllerTest {
         when(request.getParameter("message")).thenReturn("Hello AI");
         when(session.getId()).thenReturn("test-session-id");
         
-        // Pre-load the mocked agent into the session to avoid CineAgentProvider calls
+        // Pre-load the mocked agent and the matching userId into the session
         when(session.getAttribute("aiAgent")).thenReturn(mockAgent);
+        when(session.getAttribute("aiAgentUserId")).thenReturn(0);
         
-        when(mockAgent.chat("test-session-id", "Hello AI")).thenReturn("AI Reply");
+        // Match the new memoryId format: sessionId + "-u" + userId
+        when(mockAgent.chat("test-session-id-u0", "Hello AI")).thenReturn("AI Reply");
 
         // Execute
         servlet.doPost(request, response);
