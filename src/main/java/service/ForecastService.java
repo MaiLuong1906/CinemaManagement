@@ -12,7 +12,7 @@ import dao.InvoiceDAO;
 import dao.TicketsSoldDAO;
 import model.ForecastDTO;
 import model.ForecastResult;
-import utils.ConfigLoader;
+import util.ConfigLoader;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,17 +25,25 @@ import java.util.TreeMap;
  * Intelligence logic is mirrored here for UI use, while the Agent uses AnalystBotSkills.
  */
 public class ForecastService {
-    private final InvoiceDAO invoiceDAO = new InvoiceDAO();
-    private final TicketsSoldDAO ticketsSoldDAO = new TicketsSoldDAO();
+    private final InvoiceDAO invoiceDAO;
+    private final TicketsSoldDAO ticketsSoldDAO;
     private final ObjectMapper mapper = new ObjectMapper();
     private final ChatLanguageModel model;
 
     public ForecastService() {
+        this.invoiceDAO = new InvoiceDAO();
+        this.ticketsSoldDAO = new TicketsSoldDAO();
         this.model = OpenAiChatModel.builder()
                 .apiKey(ConfigLoader.get("ai.api.key"))
                 .baseUrl("https://api.groq.com/openai/v1")
                 .modelName("llama-3.3-70b-versatile")
                 .build();
+    }
+
+    public ForecastService(InvoiceDAO invoiceDAO, TicketsSoldDAO ticketsSoldDAO, ChatLanguageModel model) {
+        this.invoiceDAO = invoiceDAO;
+        this.ticketsSoldDAO = ticketsSoldDAO;
+        this.model = model;
     }
 
     /**

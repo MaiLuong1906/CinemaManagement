@@ -12,7 +12,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.UserMessage;
-import utils.ConfigLoader;
+import util.ConfigLoader;
 
 /**
  * Lớp cung cấp các Agent chuyên biệt sử dụng LangChain4j.
