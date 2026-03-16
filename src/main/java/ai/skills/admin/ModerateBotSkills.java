@@ -16,7 +16,15 @@ import java.util.stream.Collectors;
  */
 public class ModerateBotSkills {
 
-    private final UserProfileDAO userProfileDAO = new UserProfileDAO();
+    private final UserProfileDAO userProfileDAO;
+
+    public ModerateBotSkills() {
+        this.userProfileDAO = new UserProfileDAO();
+    }
+
+    public ModerateBotSkills(UserProfileDAO userProfileDAO) {
+        this.userProfileDAO = userProfileDAO;
+    }
 
     @Tool("Lấy danh sách người dùng trong hệ thống (Tên, Email, Vai trò)")
     public String getUserList() {

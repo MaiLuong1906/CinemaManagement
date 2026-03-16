@@ -98,7 +98,6 @@ public class TicketDetailDAO {
         TicketDetail t = new TicketDetail();
         t.setInvoiceId(rs.getInt("invoice_id"));
         t.setSeatId(rs.getInt("seat_id"));
-        t.setHallId(rs.getInt("hall_id"));
         t.setShowtimeId(rs.getInt("showtime_id"));
         t.setActualPrice(rs.getBigDecimal("actual_price"));
         return t;

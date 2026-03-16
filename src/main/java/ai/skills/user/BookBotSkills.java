@@ -18,12 +18,27 @@ import java.math.BigDecimal;
  */
 public class BookBotSkills {
 
-    private final InvoiceDAO invoiceDAO = new InvoiceDAO();
-    private final SeatDAO seatDAO = new SeatDAO();
+    private final InvoiceDAO invoiceDAO;
+    private final SeatDAO seatDAO;
+    private final dao.TicketDetailDAO ticketDAO;
     private final int userId;
 
     public BookBotSkills(int userId) {
         this.userId = userId;
+        this.invoiceDAO = new InvoiceDAO();
+        this.seatDAO = new SeatDAO();
+        this.ticketDAO = new dao.TicketDetailDAO();
+    }
+
+    public BookBotSkills(int userId, InvoiceDAO invoiceDAO, SeatDAO seatDAO, dao.TicketDetailDAO ticketDAO) {
+        this.userId = userId;
+        this.invoiceDAO = invoiceDAO;
+        this.seatDAO = seatDAO;
+        this.ticketDAO = ticketDAO;
+    }
+
+    protected Connection getConnection() throws java.sql.SQLException {
+        return DBConnect.getConnection();
     }
 
     @Tool("Lấy lịch sử đặt vé của tôi")
@@ -110,14 +125,13 @@ public class BookBotSkills {
             invoice.setStatus("PENDING");
             
             // 3. Persist to DB
-            try (Connection conn = DBConnect.getConnection()) {
+            try (Connection conn = getConnection()) {
                 if (conn == null) throw new Exception("Không thể kết nối database.");
                 conn.setAutoCommit(false);
                 try {
                     int invoiceId = invoiceDAO.insert(conn, invoice);
                     
                     // 4. Register tickets
-                    dao.TicketDetailDAO ticketDAO = new dao.TicketDetailDAO();
                     List<model.TicketDetail> tickets = matchedSeats.stream().map(s -> {
                         model.TicketDetail t = new model.TicketDetail();
                         t.setInvoiceId(invoiceId);

@@ -121,7 +121,7 @@ public class UserProfileDAO {
         }
     }
 
-    public static List<UserDTO> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<UserDTO> list = new ArrayList<>();
 
         String sql = """

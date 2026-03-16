@@ -17,11 +17,20 @@ import model.Showtime;
  * @author nguye
  */
 public class ShowtimeService {
-    ShowtimeDAO showtimeDAO = new ShowtimeDAO();
+    private ShowtimeDAO showtimeDAO;
+
+    public ShowtimeService() {
+        this.showtimeDAO = new ShowtimeDAO();
+    }
+
+    public ShowtimeService(ShowtimeDAO showtimeDAO) {
+        this.showtimeDAO = showtimeDAO;
+    }
+
     // xoa xuat chieu
     public void deleteShowtime(int showtimeId) throws Exception{
-         try{
-        boolean deleted = showtimeDAO.delete(DBConnect.getConnection(), showtimeId);
+         try (Connection conn = DBConnect.getConnection()) {
+        boolean deleted = showtimeDAO.delete(conn, showtimeId);
         if (!deleted) {
             throw new Exception("Suất chiếu không tồn tại!");
         }

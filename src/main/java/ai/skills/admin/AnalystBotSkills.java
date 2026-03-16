@@ -9,6 +9,7 @@ import model.Movie_Ticket_ViewDTO;
 import model.ForecastResult;
 import model.ForecastDTO;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -17,10 +18,24 @@ import java.util.stream.Collectors;
  */
 public class AnalystBotSkills {
 
-    private final IncomeStatictisService incomeService = new IncomeStatictisService();
-    private final TicketManagementService ticketService = new TicketManagementService();
-    private final SeatFillRate_ViewService seatService = new SeatFillRate_ViewService();
-    private final ForecastService forecastService = new ForecastService();
+    private final IncomeStatictisService incomeService;
+    private final TicketManagementService ticketService;
+    private final SeatFillRate_ViewService seatService;
+    private final ForecastService forecastService;
+
+    public AnalystBotSkills() {
+        this.incomeService = new IncomeStatictisService();
+        this.ticketService = new TicketManagementService();
+        this.seatService = new SeatFillRate_ViewService();
+        this.forecastService = new ForecastService();
+    }
+
+    public AnalystBotSkills(IncomeStatictisService incomeService, TicketManagementService ticketService, SeatFillRate_ViewService seatService, ForecastService forecastService) {
+        this.incomeService = incomeService;
+        this.ticketService = ticketService;
+        this.seatService = seatService;
+        this.forecastService = forecastService;
+    }
 
     @Tool("Lấy báo cáo doanh thu tổng quan bao gồm doanh thu ngày, tháng, năm")
     public String getRevenueSummary() {
@@ -29,6 +44,7 @@ public class AnalystBotSkills {
         double yearly = incomeService.getYearlyRevenue();
 
         return String.format(
+            Locale.GERMAN,
             "Báo cáo doanh thu:\n- Hôm nay: %,.0f VND\n- Tháng này: %,.0f VND\n- Năm nay: %,.0f VND",
             daily, monthly, yearly
         );
@@ -42,7 +58,7 @@ public class AnalystBotSkills {
 
             return topMovies.stream()
                 .limit(5)
-                .map(m -> String.format("- %s: %d vé, %,.0f VND", m.getTitle(), m.getTicketsSold(), m.getRevenue()))
+                .map(m -> String.format(Locale.GERMAN, "- %s: %d vé, %,.0f VND", m.getTitle(), m.getTicketsSold(), m.getRevenue()))
                 .collect(Collectors.joining("\n", "Top 5 phim bán chạy nhất:\n", ""));
         } catch (Exception e) {
             return "Lỗi khi lấy dữ liệu phim: " + e.getMessage();
@@ -63,6 +79,7 @@ public class AnalystBotSkills {
             int totalTickets = futureData.stream().mapToInt(ForecastDTO::getForecastTickets).sum();
             
             return String.format(
+                Locale.GERMAN,
                 "Dự báo 7 ngày tới:\n- Tổng doanh thu dự kiến: %,.0f VND\n- Tổng số vé dự kiến: %,d vé\n- Phân tích chi tiết: %s",
                 totalRevenue, totalTickets, result.getAnalysis()
             );

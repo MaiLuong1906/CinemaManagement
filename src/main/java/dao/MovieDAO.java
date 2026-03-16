@@ -278,7 +278,7 @@ public class MovieDAO {
     public int getGenreIdByMovieId(int movieId) {
         String sql = """
         SELECT movie_genre_id
-        FROM MovieGenreRel
+        FROM movie_genre_rel
         WHERE movie_id = ?
     """;
 

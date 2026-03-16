@@ -14,8 +14,18 @@ import model.TimeSlotKpiDTO;
  * @author nguye
  */
 public class TimeSlotService {
-    TimeSlotDAO timeSlotDAO = new TimeSlotDAO();
-    TimeSlotKpiDAO timeSlotKpiDAO = new TimeSlotKpiDAO();
+    private TimeSlotDAO timeSlotDAO;
+    private TimeSlotKpiDAO timeSlotKpiDAO;
+
+    public TimeSlotService() {
+        this.timeSlotDAO = new TimeSlotDAO();
+        this.timeSlotKpiDAO = new TimeSlotKpiDAO();
+    }
+
+    public TimeSlotService(TimeSlotDAO timeSlotDAO, TimeSlotKpiDAO timeSlotKpiDAO) {
+        this.timeSlotDAO = timeSlotDAO;
+        this.timeSlotKpiDAO = timeSlotKpiDAO;
+    }
     // lay ra so suat chieu hien tai
     public int countTimeSlot(){
         try {

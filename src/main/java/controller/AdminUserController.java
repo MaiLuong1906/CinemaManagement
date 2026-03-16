@@ -52,7 +52,8 @@ public class AdminUserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<UserDTO> users = UserProfileDAO.getAllUsers();
+        UserProfileDAO userProfileDAO = new UserProfileDAO();
+        List<UserDTO> users = userProfileDAO.getAllUsers();
         request.setAttribute("users", users);
         request.getRequestDispatcher("/views/admin/users/user-list.jsp")
        .forward(request, response);

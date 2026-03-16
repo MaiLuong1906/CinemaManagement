@@ -1,74 +1,79 @@
 package ai.skills.user;
 
-import org.junit.jupiter.api.Test;
+import model.SeatSelectionDTO;
+import model.BookingHistoryDTO;
+import dao.InvoiceDAO;
+import dao.SeatDAO;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import dao.DBConnect;
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Integration tests for BookBotSkills using a real database connection.
- * Tests JSON-based booking flow and history retrieval.
+ * Unit tests for BookBotSkills using Mockito to avoid real database connections.
  */
 public class BookBotSkillsTest {
+
+    @Mock
+    private InvoiceDAO invoiceDAO;
+    @Mock
+    private SeatDAO seatDAO;
+    @Mock
+    private dao.TicketDetailDAO ticketDAO;
+    @Mock
+    private Connection mockConnection;
 
     private BookBotSkills bookBotSkills;
 
     @BeforeEach
     public void setUp() throws Exception {
-        bookBotSkills = new BookBotSkills(1);
-        // Cleanup test data: remove any previous bookings for A5, A6 on showtime 1
-        try (Connection conn = DBConnect.getConnection()) {
-            conn.setAutoCommit(false);
-            // 1. Get seat IDs for A5, A6
-            String sqlGetSeats = "SELECT seat_id FROM seats WHERE seat_code IN ('A5', 'A6')";
-            List<Integer> seatIds = new ArrayList<>();
-            try (PreparedStatement ps = conn.prepareStatement(sqlGetSeats)) {
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) seatIds.add(rs.getInt("seat_id"));
-                }
-            }
-
-            if (!seatIds.isEmpty()) {
-                // 2. Delete from ticket_details for showtime 1 and these seats
-                StringBuilder sqlDeleteTickets = new StringBuilder("DELETE FROM ticket_details WHERE showtime_id = 1 AND seat_id IN (");
-                for (int i = 0; i < seatIds.size(); i++) {
-                    sqlDeleteTickets.append(i == 0 ? "?" : ", ?");
-                }
-                sqlDeleteTickets.append(")");
-
-                try (PreparedStatement ps = conn.prepareStatement(sqlDeleteTickets.toString())) {
-                    for (int i = 0; i < seatIds.size(); i++) {
-                        ps.setInt(i + 1, seatIds.get(i));
-                    }
-                    ps.executeUpdate();
-                }
-            }
-            conn.commit();
-        }
+        MockitoAnnotations.openMocks(this);
+        // Create the real object with mocks
+        BookBotSkills realSkills = new BookBotSkills(1, invoiceDAO, seatDAO, ticketDAO);
+        // Create a spy to mock protected methods
+        bookBotSkills = spy(realSkills);
+        
+        // Mock connection
+        doReturn(mockConnection).when(bookBotSkills).getConnection();
+        when(mockConnection.isClosed()).thenReturn(false);
     }
 
     @Test
-    public void testGetMyBookingHistory() {
-        System.out.println("--- Testing getMyBookingHistory (UserID: 1) ---");
-        // Using UserID 1 as a common default for testing
+    public void testGetMyBookingHistory() throws Exception {
+        System.out.println("--- Testing getMyBookingHistory (Mocked) ---");
+        BookingHistoryDTO dto = new BookingHistoryDTO();
+        dto.setMovieTitle("Mock Movie");
+        dto.setStatus("Paid");
+        
+        when(invoiceDAO.getBookingHistory(1)).thenReturn(Arrays.asList(dto));
+
         String result = bookBotSkills.getMyBookingHistory();
         System.out.println(result);
         assertNotNull(result);
-        assertTrue(result.contains("Lịch sử") || result.contains("Bạn chưa có giao dịch"));
+        assertTrue(result.contains("Mock Movie"));
     }
 
     @Test
-    public void testGetSeatMap() {
-        System.out.println("--- Testing getSeatMap (ShowtimeID: 1) ---");
+    public void testGetSeatMap() throws Exception {
+        System.out.println("--- Testing getSeatMap (Mocked) ---");
+        // SeatSelectionDTO(int seatId, String seatCode, int rowIndex, int columnIndex, int seatTypeId, double price, String status)
+        SeatSelectionDTO s = new SeatSelectionDTO(10, "A1", 0, 0, 1, 80000.0, "AVAILABLE");
+        
+        when(seatDAO.getSeatsByShowtime(1)).thenReturn(Arrays.asList(s));
+
         String result = bookBotSkills.getSeatMap(1);
         System.out.println(result);
         assertNotNull(result);
-        assertTrue(result.contains("Sơ đồ ghế") || result.contains("Không tìm thấy sơ đồ"));
+        assertTrue(result.contains("A1"));
     }
 
     @Test
@@ -87,28 +92,28 @@ public class BookBotSkillsTest {
     }
 
     @Test
-    public void testConfirmBooking() {
-        System.out.println("--- Testing confirmBooking ---");
-        String seatCodes = "A5, A6";
-        int showtimeId = 1;
-        double totalAmount = 160000;
-        String result = bookBotSkills.confirmBooking(showtimeId, seatCodes, totalAmount);
+    public void testConfirmBooking_Success() throws Exception {
+        System.out.println("--- Testing confirmBooking (Mocked Success) ---");
+        // SeatSelectionDTO(int seatId, String seatCode, int rowIndex, int columnIndex, int seatTypeId, double price, String status)
+        SeatSelectionDTO s = new SeatSelectionDTO(10, "A1", 0, 0, 1, 80000.0, "AVAILABLE");
+        
+        when(seatDAO.getSeatsByShowtime(1)).thenReturn(Arrays.asList(s));
+        when(invoiceDAO.insert(any(), any())).thenReturn(555);
+
+        String result = bookBotSkills.confirmBooking(1, "A1", 80000);
         System.out.println(result);
         assertNotNull(result);
         assertTrue(result.contains("BOOKING_SUCCESS"));
+        assertTrue(result.contains("555"));
     }
 
     @Test
-    public void testCancelInvoice() {
-        System.out.println("--- Testing cancelInvoice (ID: 999) ---");
-        // We use a high ID or non-existent one to check error handling, 
-        // or a real one if we want to confirm status change.
-        // Since it's a real API call, let's just check it doesn't crash on invalid input.
+    public void testCancelInvoice() throws Exception {
+        System.out.println("--- Testing cancelInvoice (Mocked) ---");
         String result = bookBotSkills.cancelInvoice(999);
         System.out.println(result);
         assertNotNull(result);
-        // It might return success even if ID not found depending on DAO implementation
-        // but here it just sets status to Canceled.
-        assertTrue(result.contains("thành công") || result.contains("Lỗi"));
+        assertTrue(result.contains("thành công"));
+        // Verification of invoiceDAO.updateStatus(999, "Canceled") could be added
     }
 }

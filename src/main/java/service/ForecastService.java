@@ -1,7 +1,6 @@
 package service;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.message.AiMessage;
@@ -12,7 +11,7 @@ import dao.InvoiceDAO;
 import dao.TicketsSoldDAO;
 import model.ForecastDTO;
 import model.ForecastResult;
-import utils.ConfigLoader;
+import ai.CineAgentProvider;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,17 +24,22 @@ import java.util.TreeMap;
  * Intelligence logic is mirrored here for UI use, while the Agent uses AnalystBotSkills.
  */
 public class ForecastService {
-    private final InvoiceDAO invoiceDAO = new InvoiceDAO();
-    private final TicketsSoldDAO ticketsSoldDAO = new TicketsSoldDAO();
+    private final InvoiceDAO invoiceDAO;
+    private final TicketsSoldDAO ticketsSoldDAO;
     private final ObjectMapper mapper = new ObjectMapper();
     private final ChatLanguageModel model;
 
     public ForecastService() {
-        this.model = OpenAiChatModel.builder()
-                .apiKey(ConfigLoader.get("ai.api.key"))
-                .baseUrl("https://api.groq.com/openai/v1")
-                .modelName("llama-3.3-70b-versatile")
-                .build();
+        this.invoiceDAO = new InvoiceDAO();
+        this.ticketsSoldDAO = new TicketsSoldDAO();
+        // Sử dụng logic xoay tua key và model chuyên sâu
+        this.model = CineAgentProvider.createAdminAgentModel(); // Cần thêm helper này hoặc khởi tạo thủ công
+    }
+
+    public ForecastService(InvoiceDAO invoiceDAO, TicketsSoldDAO ticketsSoldDAO, ChatLanguageModel model) {
+        this.invoiceDAO = invoiceDAO;
+        this.ticketsSoldDAO = ticketsSoldDAO;
+        this.model = model;
     }
 
     /**

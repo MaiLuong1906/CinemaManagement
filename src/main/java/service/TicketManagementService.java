@@ -16,7 +16,21 @@ import model.TicketSoldBySlot_ViewDTO;
  */
 public class TicketManagementService {
     // dung cho lay cac service cho thong ke ve ban ra
-    TicketsSoldDAO ticketsSoldDAO = new TicketsSoldDAO();
+    private final TicketsSoldDAO ticketsSoldDAO;
+    private final Ticket_Movie_ViewDAO ticket_Movie_ViewDAO;
+    private final TicketSoldBySlot_ViewDAO bySlot_ViewDAO;
+
+    public TicketManagementService() {
+        this.ticketsSoldDAO = new TicketsSoldDAO();
+        this.ticket_Movie_ViewDAO = new Ticket_Movie_ViewDAO();
+        this.bySlot_ViewDAO = new TicketSoldBySlot_ViewDAO();
+    }
+
+    public TicketManagementService(TicketsSoldDAO ticketsSoldDAO, Ticket_Movie_ViewDAO ticket_Movie_ViewDAO, TicketSoldBySlot_ViewDAO bySlot_ViewDAO) {
+        this.ticketsSoldDAO = ticketsSoldDAO;
+        this.ticket_Movie_ViewDAO = ticket_Movie_ViewDAO;
+        this.bySlot_ViewDAO = bySlot_ViewDAO;
+    }
     // lay ra so ve theo thang
     public int getMothlyTicketsSold() throws SQLException{
         return ticketsSoldDAO.countSoldTicketsThisMonth();
@@ -32,8 +46,6 @@ public class TicketManagementService {
     
     // 
     // tat ca cac ham service cho thong ke ve 
-    // tong ve theo phim
-    Ticket_Movie_ViewDAO ticket_Movie_ViewDAO = new Ticket_Movie_ViewDAO();
     // ham lay ra so page
     public int returnNumberPage(){
         try {
@@ -50,8 +62,6 @@ public class TicketManagementService {
             throw new RuntimeException("Lỗi truy suất dữ liệu!!!");
         }
     }
-    // ve theo gio chieu
-    TicketSoldBySlot_ViewDAO bySlot_ViewDAO = new TicketSoldBySlot_ViewDAO();
     public List<TicketSoldBySlot_ViewDTO> getTicketSoldBySlotCurrentMonth() {
         try {
             return bySlot_ViewDAO.getAll();

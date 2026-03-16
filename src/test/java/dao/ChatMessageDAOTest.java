@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class ChatMessageDAOTest {
+public class ChatMessageDAOTest extends BaseDAOTest {
 
     @Test
     public void testToolMessagePersistence() {
