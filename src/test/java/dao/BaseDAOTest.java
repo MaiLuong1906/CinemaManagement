@@ -4,7 +4,10 @@ import org.h2.tools.RunScript;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -29,7 +32,13 @@ public abstract class BaseDAOTest {
                 } catch (Exception e) {
                     // Ignore if already exists or built-in
                 }
-                RunScript.execute(conn, new FileReader("src/test/resources/h2-schema.sql"));
+                InputStream schemaStream = BaseDAOTest.class.getResourceAsStream("/h2-schema.sql");
+                if (schemaStream == null) {
+                    throw new IllegalStateException("Schema file not found on classpath: /h2-schema.sql");
+                }
+                try (Reader reader = new InputStreamReader(schemaStream, StandardCharsets.UTF_8)) {
+                    RunScript.execute(conn, reader);
+                }
             } else {
                 throw new IllegalStateException("Failed to connect to H2 in-memory database.");
             }
