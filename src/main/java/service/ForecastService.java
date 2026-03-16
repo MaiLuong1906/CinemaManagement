@@ -13,6 +13,7 @@ import dao.TicketsSoldDAO;
 import model.ForecastDTO;
 import model.ForecastResult;
 import util.ConfigLoader;
+import ai.CineAgentProvider;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
