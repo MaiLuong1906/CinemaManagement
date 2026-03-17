@@ -113,8 +113,8 @@ public class BookBotSkills {
         );
     }
 
-    @Tool("Xác nhận và tiến hành đặt vé sau khi người dùng đã đồng ý (Cần showtimeId, seatCodes, totalAmount)")
-    public String confirmBooking(@P("ID suất chiếu") int showtimeId, @P("Mã ghế") String seatCodes, @P("Tổng tiền") double totalAmount) {
+    @Tool("Xác nhận và tiến hành đặt vé sau khi người dùng đã đồng ý (Cần showtimeId, movieName, seatCodes, totalAmount)")
+    public String confirmBooking(@P("ID suất chiếu") int showtimeId, @P("Tên phim") String movieName, @P("Mã ghế") String seatCodes, @P("Tổng tiền") double totalAmount) {
         ai.ToolLogger.log(userId, "{\"tool\": \"Đang xử lý giao dịch...\"}");
         System.out.println("[AI-DEBUG] Tool confirmBooking called for UserID: " + this.userId + ", Showtime: " + showtimeId + ", Seats: " + seatCodes);
         

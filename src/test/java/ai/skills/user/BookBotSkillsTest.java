@@ -100,10 +100,10 @@ public class BookBotSkillsTest {
         when(seatDAO.getSeatsByShowtime(1)).thenReturn(Arrays.asList(s));
         when(invoiceDAO.insert(any(), any())).thenReturn(555);
 
-        String result = bookBotSkills.confirmBooking(1, "A1", 80000);
+        String result = bookBotSkills.confirmBooking(1, "Mock Movie", "A1", 80000);
         System.out.println(result);
         assertNotNull(result);
-        assertTrue(result.contains("BOOKING_SUCCESS"));
+        assertTrue(result.contains("PAYMENT_INFO"));
         assertTrue(result.contains("555"));
     }
 
